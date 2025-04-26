@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CowTracker - Ana Sayfa</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="../assets/styles/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <div class="container py-4">
+
+    <!-- Dashboard Cards -->
+    <div class="row g-3 mb-5">
+      <div class="col-md-3">
+        <div class="card text-white bg-primary">
+          <div class="card-body">
+            <h5 class="card-title">🐄 3 ineğin doğurmasına 5 gün kaldı</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-white bg-success shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🐮 2 buzağının sütten kesilmesine 12 gün kaldı</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-white bg-warning shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🐂 Toplam 5 düve</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-white bg-danger shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">💉 Son 7 günde 3 aşı yapıldı</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menü Butonları -->
+    <div class="row g-4" id="allButtons">
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-outline-primary btn-lg" id="cows">İnekler</button>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-success btn-lg" id="animals">Tüm Hayvanlar</button>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-outline-success btn-lg" id="calves">Buzağılar</button>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-outline-warning btn-lg" id="heifers">Düveler</button>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-outline-info btn-lg" id="bulls">Danalar</button>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button class="btn btn-outline-danger btn-lg" id="vaccines">Aşılar</button>
+      </div>
+    </div>
+
+  </div>
+  
+  <!-- Sayfa içi JS -->
+  <script src="../src/index.js"></script>
+
+</body>
+</html>

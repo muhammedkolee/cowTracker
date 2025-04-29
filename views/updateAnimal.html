@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
+</head>
+<body>
+    <div class="container my-4">
+        <div class="card p-4 shadow rounded-4">
+          <h2 class="text-center mb-4">Hayvan Bilgilerini Güncelle</h2>
+      
+          <form id="updateForm">
+            <div class="row g-4">
+              
+              <!-- Küpe Numarası -->
+              <div class="col-md-6">
+                <label for="earTag" class="form-label" >Küpe Numarası</label>
+                <input type="text" class="form-control" id="earringNumberTag" placeholder="12345">
+              </div>
+      
+              <!-- Hayvan Adı -->
+              <div class="col-md-6">
+                <label for="animalName" class="form-label">Hayvan Adı</label>
+                <input type="text" class="form-control" id="animalName" placeholder="Pamuk">
+              </div>
+      
+              <!-- Doğum Tarihi -->
+              <div class="col-md-6">
+                <label for="birthDate" class="form-label">Doğum Tarihi</label>
+                <input type="date" class="form-control" id="birthDate">
+              </div>
+      
+              <!-- Türü -->
+              <div class="col-md-6">
+                <label for="animalType" class="form-label">Türü</label>
+                <select class="form-select" id="animalType">
+                  <option selected disabled>Tür Seçiniz</option>
+                  <option value="inek">İnek</option>
+                  <option value="düve">Düve</option>
+                  <option value="dana">Dana</option>
+                  <option value="buzağı">Buzağı</option>
+                </select>
+              </div>
+      
+              <!-- Anne Küpe No -->
+              <div class="col-md-6">
+                <label for="motherEarTag" class="form-label">Anne Küpe No</label>
+                <input type="text" class="form-control" id="motherEarTag" placeholder="54321">
+              </div>
+      
+              <!-- Anne Adı -->
+              <div class="col-md-6">
+                <label for="motherName" class="form-label">Anne Adı</label>
+                <input type="text" class="form-control" id="motherName" placeholder="Boncuk">
+              </div>
+      
+              <!-- Tür Bazlı Ekstra Alanlar (Buraya Dinamik Alanlar Gelecek) -->
+              <div id="dynamicFields" class="col-12"></div>
+      
+            </div>
+      
+            <!-- Kaydet Butonu -->
+            <div class="text-end mt-4">
+              <button type="submit" class="btn btn-success px-4">Kaydet</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    <script src="../src/updateAnimal.js"></script>      
+</body>
+</html>

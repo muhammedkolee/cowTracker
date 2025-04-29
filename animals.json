@@ -1,5 +1,5 @@
 {
-    "animals": [
+    "cows": [
         {
             "id": "0",
             "name": "Hayvan0",
@@ -948,7 +948,7 @@
         {
             "earringNo": "TR442142123",
             "name": "Dana 1",
-            "birthDate": "22.09.2024",
+            "birthDate": "22.04.2025",
             "motherEarringNo": "TR134235245",
             "motherName": "İnek3"
         },
@@ -986,6 +986,618 @@
             "birthDate": "22.09.2024",
             "motherEarringNo": "TR134235245",
             "motherName": "İnek3"
+        }
+    ],
+    "vaccines": [
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        },
+        {
+            "earringNo": "TR442142123",
+            "name": "Dana 1",
+            "vaccineName" : "Ademin",
+            "vaccineDate" : "20.04.2025"
+        }
+    ],
+    "animals":[
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"cow",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"calf",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"bull",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR1888888",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
+        },
+        {
+            "earringNo":"TR134235245",
+            "name":"Hayvan1",
+            "birthDate": "22.01.2025",
+            "type":"heifer",
+            "motherEarringNo":"TR999423429",
+            "motherName":"İnek3"
         }
     ]
 }

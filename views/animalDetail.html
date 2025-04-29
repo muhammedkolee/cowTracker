@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hayvan Detayı</title>
+        <link href="../assets/styles/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                background-color: #f0f2f5;
+            }
+            .main-card {
+                max-width: 900px;
+                margin: 20px auto;
+                background: white;
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                position: relative;
+            }
+            .earring-number {
+                font-size: 32px;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .info-section {
+                display: flex;
+                gap: 20px;
+            }
+            .sub-card {
+                background-color: #fafafa;
+                border-radius: 15px;
+                padding: 20px;
+                flex: 1;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .animal-info,
+            .vaccine-item {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            .action-buttons {
+                margin-top: 30px; /* Üstteki kartlardan 30px boşluk */
+                display: flex;
+                gap: 15px;
+                justify-content: flex-end; /* Sağ tarafa hizala */
+                padding-right: 20px; /* Sağdan 20px içeride dursun */
+                padding-bottom: 20px; /* Alttan 20px içeride dursun */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container my-4">
+            <div class="card p-4 shadow rounded-4">
+                <h2 class="text-center mb-4" id="earringNoTag">Küpe No: 12345</h2>
+
+                <div class="row g-4">
+                    <!-- Sol Card: İnek Bilgileri -->
+                    <div class="col-md-4">
+                        <div class="card h-100 p-3 shadow-sm rounded-4">
+                            <h5 class="text-center mb-3">İnek Bilgileri</h5>
+                            <p><strong>İsim:</strong> Pamuk</p>
+                            <p><strong>Tohumlama Tarihi:</strong> 12.05.2024</p>
+                            <p><strong>Beklenen Doğum:</strong> 15.02.2025</p>
+                            <p><strong>Kuruya Çıkış:</strong> 20.01.2025</p>
+                            <p><strong>Boğa İsmi:</strong> Şimşek</p>
+                            <p><strong>Gebelik Durumu:</strong> Gebe</p>
+                        </div>
+                    </div>
+
+                    <!-- Orta Card: Aşılar -->
+                    <div class="col-md-4">
+                        <div
+                            class="card h-100 p-3 shadow-sm rounded-4 overflow-auto"
+                            style="max-height: 400px"
+                        >
+                            <h5 class="text-center mb-3">Aşılar</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Şap Aşısı</strong> - 15.01.2025
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Brucella Aşısı</strong> - 20.02.2025
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>İBR</strong> - 10.03.2025
+                                </li>
+                                <!-- Daha fazla aşı -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Sağ Card: Doğurduğu Buzağılar -->
+                    <div class="col-md-4">
+                        <div
+                            class="card h-100 p-3 shadow-sm rounded-4 overflow-auto"
+                            style="max-height: 400px"
+                        >
+                            <h5 class="text-center mb-3">
+                                Doğurduğu Buzağılar
+                            </h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Küpe:</strong> 54321 
+                                    <br>
+                                    <strong>İsim:</strong> Boncuk 
+                                    <br>
+                                    <strong>Doğum:</strong> 15.02.2023
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Küpe:</strong> 54322 
+                                    <br>
+                                    <strong>İsim:</strong> Karakız 
+                                    <br>
+                                    <strong>Doğum:</strong> 20.03.2024
+                                </li>
+                                <!-- Daha fazla buzağı -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sil ve Düzenle Butonları -->
+                <div class="action-buttons mt-4">
+                    <button class="btn btn-primary">Düzenle</button>
+                    <button class="btn btn-danger">Sil</button>
+                </div>
+            </div>
+        </div>
+        <script src="../src/animalDetail.js"></script>
+    </body>
+</html>

@@ -29,7 +29,11 @@ app.on("ready", () => {
     mainWindow.setMenu(null);
 
     // Load index.html to Main Window.
-    mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
+    mainWindow
+        .loadFile(path.join(__dirname, "../views/index.html"))
+        .then(() => {
+            mainWindow.webContents.send("sendDatas", datas);
+        });
 
     //Dev
     //This block will be deleted after dev phase.
@@ -51,19 +55,90 @@ app.on("ready", () => {
 
     // To open main menu.
     ipcMain.on("ipcMain:openMenu", () => {
-        mainWindow.loadFile(path.join(__dirname, "../views/index.html")); // Loading main page.
+        mainWindow
+            .loadFile(path.join(__dirname, "../views/index.html"))
+            .then(() => {
+                mainWindow.webContents.send("sendDatas", datas);
+            }); // Loading main page.
     });
 
     // To open Add Cow menu.
-    ipcMain.on("ipcMain:openAddCowMenu", () => {
-        const addCowMenu = new BrowserWindow({
+    ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
+        const addAnimalMenu = new BrowserWindow({
             width: 800,
-            height: 600,
+            height: 1000,
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+                nodeIntegration: false,
+                contextIsolation: true,
+                enableRemoteModule: false,
+            }
         });
 
-        addCowMenu.setMenu(null);
+        addAnimalMenu.setMenu(null);
 
-        addCowMenu.loadFile(path.join(__dirname, "../views/cow_add.html"));
+        addAnimalMenu.webContents.on("before-input-event", (event, input) => {
+            if (input.key === "F12" && input.type === "keyDown") {
+                addAnimalMenu.toggleDevTools();
+            }
+        });
+
+        
+        addAnimalMenu.loadFile(path.join(__dirname, "../views/addAnimal.html")).then(() => {
+            addAnimalMenu.webContents.send("sendAnimalType", animalType);
+        });
+    });
+
+    ipcMain.on("ipcMain:openAnimalDetail", (event, datas) => {
+        const animalDetailWindow = new BrowserWindow({
+            width: 1100,
+            height: 650,
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+                nodeIntegration: false,
+                contextIsolation: true,
+                enableRemoteModule: false,
+            },
+        });
+
+        animalDetailWindow.setMenu(null);
+
+        animalDetailWindow.webContents.on(
+            "before-input-event",
+            (event, input) => {
+                if (input.key === "F12" && input.type === "keyDown") {
+                    animalDetailWindow.toggleDevTools();
+                }
+            }
+        );
+
+        animalDetailWindow
+            .loadFile(path.join(__dirname, "../views/animalDetail.html"))
+            .then(() => {
+                animalDetailWindow.webContents.send("sendDetailDatas", datas);
+            });
+    });
+
+    ipcMain.on("ipcMain:openUpdateAnimal", (event, earringNumber) => {
+        const updateAnimalWindow = new BrowserWindow({
+            width: 1100,
+            height: 650,
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+                nodeIntegration: false,
+                contextIsolation: true,
+                enableRemoteModule: false,
+            },
+        });
+
+        updateAnimalWindow
+            .loadFile(path.join(__dirname, "../views/updateAnimal.html"))
+            .then(() => {
+                updateAnimalWindow.webContents.send(
+                    "sendUpdateDatas",
+                    earringNumber
+                );
+            });
     });
 });
 

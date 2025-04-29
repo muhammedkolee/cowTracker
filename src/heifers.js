@@ -1,7 +1,7 @@
-let menuButton = document.getElementById("btn-menu");
-let titleHeifer = document.getElementById("titleHeifer");
-let addHeiferButton = document.getElementById("btn-add-heifer");
-let heiferTableBody = document.getElementById("heiferTableBody");
+const menuButton = document.getElementById("btn-menu");
+const titleHeifer = document.getElementById("titleHeifer");
+const addHeiferButton = document.getElementById("btn-add-heifer");
+const heiferTableBody = document.getElementById("heiferTableBody");
 
 menuButton.addEventListener("click", () => {
     window.electronAPI.openMenu();
@@ -12,6 +12,39 @@ window.addEventListener("DOMContentLoaded", () => {
     window.electronAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
+});
+
+addHeiferButton.addEventListener("click", () => {
+    window.electronAPI.openAddAnimalMenu("heifer");
+});
+
+heiferTableBody.addEventListener("click", function (event) {
+    const target = event.target;
+    let tableRow = target.closest("tr");
+    let earringNo = tableRow.querySelector("#earringNo");
+
+    if (target.id === "infoIco") {
+        // infoButtonClick(earringNo.textContent);
+        let datas = { earringNo: earringNo.textContent, type: "cow" };
+        window.electronAPI.openAnimalDetail(datas);
+    } 
+    
+    else if (target.id === "updateIco") {
+        datas = earringNo.textContent;
+        window.electronAPI.openUpdateAnimal(earringNo.textContent);
+    } 
+    
+    else if (target.id === "deleteIco") {
+        const sure = window.confirm(
+            "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+        if (sure) {
+            // Remove cow from the databases.
+            console.log("Veri silindi.");
+        } else {
+            // Anything.
+            console.log("Veri silinmedi.");
+        }
+    }
 });
 
 function showDatas(datas) {
@@ -52,9 +85,18 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
         nav.appendChild(navDiv);
 
-        navDiv.appendChild(deleteButton);
-        navDiv.appendChild(updateButton);
+        earringNo.id = "earringNo";
+
+        deleteIco.id = "deleteIco";
+        infoIco.id = "infoIco";
+        updateIco.id = "updateIco";
+        deleteButton.id = "deleteIco";
+        infoButton.id = "infoIco";
+        updateButton.id = "updateIco";
+
         navDiv.appendChild(infoButton);
+        navDiv.appendChild(updateButton);
+        navDiv.appendChild(deleteButton);
 
         deleteButton.appendChild(deleteIco);
         infoButton.appendChild(infoIco);

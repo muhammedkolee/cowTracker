@@ -1,6 +1,7 @@
-let menuButton = document.getElementById("btn-menu");
-let titleCalve = document.getElementById("titleCalve");
-let calvesTableBody = document.getElementById("calvesTableBody");
+const menuButton = document.getElementById("btn-menu");
+const titleCalf = document.getElementById("titleCalf");
+const calvesTableBody = document.getElementById("calvesTableBody");
+const addCalfButton = document.getElementById("btn-add-calf");
 
 menuButton.addEventListener("click", () => {
     window.electronAPI.openMenu();
@@ -12,9 +13,44 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// To open add cow menu.
+addCalfButton.addEventListener("click", () => {
+    let animalType = "calf";
+    window.electronAPI.openAddAnimalMenu(animalType);
+});
+
+calvesTableBody.addEventListener("click", function (event) {
+    const target = event.target;
+    let tableRow = target.closest("tr");
+    let earringNo = tableRow.querySelector("#earringNo");
+
+    if (target.id === "infoIco") {
+        // infoButtonClick(earringNo.textContent);
+        let datas = { earringNo: earringNo.textContent, type: "cow" };
+        window.electronAPI.openAnimalDetail(datas);
+    } 
+    
+    else if (target.id === "updateIco") {
+        datas = earringNo.textContent;
+        window.electronAPI.openUpdateAnimal(earringNo.textContent);
+    } 
+    
+    else if (target.id === "deleteIco") {
+        const sure = window.confirm(
+            "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+        if (sure) {
+            // Remove cow from the databases.
+            console.log("Veri silindi.");
+        } else {
+            // Anything.
+            console.log("Veri silinmedi.");
+        }
+    }
+});
+
 function showDatas(datas) {
     let count = 1;
-    datas.calves.forEach((calve) => {
+    datas.calves.forEach((calf) => {
         let tableRow = document.createElement("tr");
         let number = document.createElement("th");
         let earringNo = document.createElement("th");
@@ -69,20 +105,29 @@ function showDatas(datas) {
         tableRow.appendChild(motherName);
         tableRow.appendChild(nav);
 
-        number.textContent = count.toString();
-        earringNo.textContent = calve.earringNo;
-        name.textContent = calve.name;
-        birthDate.textContent = calve.birthDate;
+        earringNo.id = "earringNo";
 
-        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calve.birthDate);
+        deleteIco.id = "deleteIco";
+        infoIco.id = "infoIco";
+        updateIco.id = "updateIco";
+        deleteButton.id = "deleteIco";
+        infoButton.id = "infoIco";
+        updateButton.id = "updateIco";
+
+        number.textContent = count.toString() + "-)";
+        earringNo.textContent = calf.earringNo;
+        name.textContent = calf.name;
+        birthDate.textContent = calf.birthDate;
+
+        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calf.birthDate);
         days.textContent = daysC;
         lt2.textContent = lt2Date;
         lt1.textContent = lt1Date;
         shutDate.textContent = shutDateC;
         shutDay.textContent = daysS;
 
-        motherEarringNo.textContent = calve.motherEarringNo;
-        motherName.textContent = calve.motherName;
+        motherEarringNo.textContent = calf.motherEarringNo;
+        motherName.textContent = calf.motherName;
 
         tableRow.className += "table-primary";
         if (daysS <= 15) {
@@ -94,7 +139,7 @@ function showDatas(datas) {
 
         count += 1;
     });
-    titleCalve.textContent = "Listede toplam " + (count - 1).toString() + " adet buzağı var";
+    titleCalf.textContent = "Listede toplam " + (count - 1).toString() + " adet buzağı var";
 }
 
 

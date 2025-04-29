@@ -1,26 +1,70 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CowTracker - Aşılar</title>
-  
-  <!-- Bootstrap CSS -->
-  <link href="../assets/styles/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CowTracker - İnekler</title>
 
-  <div class="container py-4 text-center">
-    <h1 class="mb-4">🐄 İnekler</h1>
-    <p class="lead">Burada ineklerle ilgili işlemleri yapabileceksiniz.</p>
-    <hr>
-    <p>Bu sayfa şu anda geliştirme aşamasında.</p>
-    <br>
-    <br>
-    <button class="btn btn-outline-success" id="btn-menu">Ana Menü</button>
-  </div>
-  
-  <script src="../src/vaccines.js"></script> <!-- İleride gerekirse -->
-</body>
+        <!-- Bootstrap CSS -->
+        <link href="../assets/styles/bootstrap.min.css" rel="stylesheet" />
+        <link
+            href="../assets/images/icons/font/bootstrap-icons.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="bg-light" style="padding-bottom: 70px">
+        <div class="container mt-5 mb-4">
+            <h2 class="mb-4 text-center" id="titleVaccine"></h2>
+            <div class="table-responsive" style="overflow-x: visible">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr
+                            style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 10;
+                                background-color: #343a40;
+                            "
+                        >
+                            <th>Sayı</th>
+                            <th>Küpe Numarası</th>
+                            <th>İnek Adı</th>
+                            <th>Aşı Adı</th>
+                            <th>Aşı Tarihi</th>
+                            <th>Kaç Gün Oldu</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaccineTableBody">
+                        <!-- JavaScript ile satırlar buraya eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <button
+                class="btn btn-success me-2 mb-3"
+                id="btn-add-cow"
+                style="
+                    bottom: 20px;
+                    right: 120px;
+                    position: fixed;
+                    z-index: 100;
+                "
+            >
+                Yeni Aşı Ekle
+            </button>
+            <button
+            class="btn btn-primary mb-3"
+            id="btn-menu"
+            style="bottom: 20px; right: 10px; position: fixed; z-index: 100"
+        >
+            Ana Menü
+        </button>
+        </div>
+
+        <script src="../src/vaccines.js"></script>
+        <!-- İleride gerekirse -->
+    </body>
 </html>

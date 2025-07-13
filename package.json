@@ -17,6 +17,10 @@
   "license": "MIT",
   "description": "A simple desktop app for cow tracking.",
   "devDependencies": {
-    "electron": "^35.2.0"
+    "electron": "^35.2.0",
+    "electron-rebuild": "^3.2.9"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.3"
   }
 }

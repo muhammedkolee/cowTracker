@@ -4,8 +4,9 @@
         <meta charset="UTF-8" />
         <title>Hayvan Ekle</title>
         <link href="../assets/styles/bootstrap.min.css" rel="stylesheet" />
+
     </head>
-    <body class="bg-light">
+    <body class="bg-light" id="addAnimalBody">
         <div class="container mt-4">
             <h3 class="text-center mb-4">Yeni Hayvan Ekle</h3>
 
@@ -45,12 +46,12 @@
                         <input type="text" class="form-control" id="motherEarringNo"/>
                     </div> -->
                 </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-lg btn-success">
-                        Ekle
-                    </button>
-                </div>
             </form>
+            <div class="text-center">
+                <button id="addButton" class="btn btn-lg btn-success mb-3">
+                    Ekle
+                </button>
+            </div>
         </div>
 
         <script src="../src/addAnimal.js"></script>

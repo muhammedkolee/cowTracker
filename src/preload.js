@@ -1,48 +1,80 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("electronAPI", {
-    openPage: (pageId) => {
-        ipcRenderer.send("ipcMain:openPage", pageId);
-    },
-
-    openMenu: () => {
-        ipcRenderer.send("ipcMain:openMenu");
-    },
-
-    openAddAnimalMenu: (animalType) => {
-        ipcRenderer.send("ipcMain:openAddAnimalMenu", animalType);
-    },
-
-    receiveDatas: (callback) => {
-        ipcRenderer.on("sendDatas", (event, datas) => {
-            callback(datas);
-        });
-    },
-
-    openAnimalDetail: (datas) => {
-        ipcRenderer.send("ipcMain:openAnimalDetail", datas);
-    },
-
-    receiveDetailDatas: (callback) => {
-        ipcRenderer.on("sendDetailDatas", (event, datas) => {
-            callback(datas);
-        });
-    },
-
-    openUpdateAnimal: (earringNumber) => {
-        ipcRenderer.send("ipcMain:openUpdateAnimal", earringNumber);
-    },
-
-    receiveUpdateDatas: (callback) => {
-        ipcRenderer.on("sendUpdateDatas", (event, datas) => {
-            callback(datas);
-        });
-    },
-
+contextBridge.exposeInMainWorld("addAnimalAPI", {
     receiveAnimalType: (callback) => {
         ipcRenderer.on("sendAnimalType", (event, animalType) => {
             callback(animalType);
         });
     },
-    
+
+    addAnimal: (datas) => {
+        ipcRenderer.send("ipcMain:addAnimal", datas);
+    },
+
+    addResult: (callback) => {
+        ipcRenderer.on("addResult", (event, data) => {
+            callback(data);
+        });
+    }
+});
+
+contextBridge.exposeInMainWorld("animalDetailAPI", {
+    receiveDetailDatas: (callback) => {
+        ipcRenderer.on("sendDetailDatas", (event, allDatas) => {
+            callback(allDatas);
+        });
+    }
+});
+
+contextBridge.exposeInMainWorld("animalsAPI", {
+    receiveDatas: (callback) => {
+        ipcRenderer.on("sendDatas", (event, datas) => {
+            callback(datas);
+        });
+    },
+});
+
+contextBridge.exposeInMainWorld("updateAPI", {
+    updateAnimalDatas: (allDatas) => {
+        ipcRenderer.send("ipcMain:updateAnimalDatas", allDatas);
+    }
+});
+
+contextBridge.exposeInMainWorld("electronAPI", {
+    // ***
+    openPage: (pageId) => {
+        ipcRenderer.send("ipcMain:openPage", pageId);
+    },
+
+    // ***
+    openMenu: () => {
+        ipcRenderer.send("ipcMain:openMenu");
+    },
+
+    // ***
+    openAddAnimalMenu: (animalType) => {
+        ipcRenderer.send("ipcMain:openAddAnimalMenu", animalType);
+    },
+
+    // ***
+    openAnimalDetail: (datas) => {
+        ipcRenderer.send("ipcMain:openAnimalDetail", datas);
+    },
+
+    // ***
+    openUpdateAnimal: (datas) => {
+        // console.log(datas)
+        ipcRenderer.send("ipcMain:openUpdateAnimal", datas);
+    },
+
+    receiveUpdateDatas: (callback) => {
+        ipcRenderer.on("sendUpdateDatas", (event, allDatas) => {
+            console.log(allDatas)
+            callback(allDatas);
+        });
+    },
+
+    openMainWindow: () => {
+        ipcRenderer.send("ipcMain:getAnimalsDatas");
+    }
 });

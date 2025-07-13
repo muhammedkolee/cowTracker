@@ -1,72 +1,164 @@
-const menuButton = document.getElementById("btn-menu");
-const titleCow = document.getElementById("titleCow");
-const addCowButton = document.getElementById("btn-add-cow");
-const cowTableBody = document.getElementById("cowTableBody");
+const loadingTemplate = `
+        <style>
+            .loader {
+                border: 16px solid #90EE90; /* Green */
+                border-top: 16px solid #0000FF; /* Blue */
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+            }
 
-// To open main menu.
-menuButton.addEventListener("click", () => {
-    window.electronAPI.openMenu();
-});
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;">
+            <div class="loader"></div>
+            <h2 style="margin-left: 10px;">Hayvan Bilgileri Yükleniyor...</h2>
+        </div>
 
-// To open add cow menu.
-addCowButton.addEventListener("click", () => {
-    let animalType = "cow";
-    window.electronAPI.openAddAnimalMenu(animalType);
-});
+`;
+
+const layout = `
+        <div class="container mt-5 mb-4">
+            <h2 class="mb-4 text-center" id="titleCow"></h2>
+            <div class="table-responsive" style="overflow-x: visible">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr
+                            style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 10;
+                                background-color: #343a40;
+                            "
+                        >
+                            <th>Sayı</th>
+                            <th>Küpe Numarası</th>
+                            <th>İnek Adı</th>
+                            <th>Tohumlama Tarihi</th>
+                            <th>Doğuracağı Tarih *</th>
+                            <th>Doğuma Kalan Gün *</th>
+                            <th>Hamile Günü *</th>
+                            <th>Kuruya Çıkartma Tarihi *</th>
+                            <th>Dana Adı</th>
+                            <th>Gebelik Kontrol</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cowTableBody">
+                        <!-- JavaScript ile satırlar buraya eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <button
+                class="btn btn-success me-2 mb-3"
+                id="btn-add-cow"
+                style="
+                    bottom: 20px;
+                    right: 120px;
+                    position: fixed;
+                    z-index: 100;
+                "
+            >
+                Yeni İnek Ekle
+            </button>
+        </div>
+        <button
+            class="btn btn-primary mb-3"
+            id="btn-menu"
+            style="bottom: 20px; right: 10px; position: fixed; z-index: 100"
+        >
+            Ana Menü
+        </button>
+
+`;
+
+const cowsBody = document.getElementById("cowsBody");
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
-    window.electronAPI.receiveDatas((datas) => {
+    cowsBody.innerHTML = loadingTemplate;
+    window.animalsAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
 });
 
-cowTableBody.addEventListener("click", function (event) {
-    const target = event.target;
-    let tableRow = target.closest("tr");
-    let earringNo = tableRow.querySelector("#earringNo");
-
-    if (target.id === "infoIco") {
-        // infoButtonClick(earringNo.textContent);
-        let datas = { earringNo: earringNo.textContent, type: "cow" };
-        window.electronAPI.openAnimalDetail(datas);
-    } 
-    
-    else if (target.id === "updateIco") {
-        datas = earringNo.textContent;
-        window.electronAPI.openUpdateAnimal(earringNo.textContent);
-    } 
-    
-    else if (target.id === "deleteIco") {
-        const sure = window.confirm(
-            "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
-        if (sure) {
-            // Remove cow from the databases.
-            console.log("Veri silindi.");
-        } else {
-            // Anything.
-            console.log("Veri silinmedi.");
-        }
-    } else if (target.id === "applyIco") {
-        const sure = window.confirm(
-            "Şu küpe numaralı hayvan doğurdu olarak işaretlenecek: " +
-                earringNo.textContent +
-                "\nOnaylıyor musunuz?"
-        );
-        if (sure) {
-            window.confirm("Güncellendi.");
-            // Update cow's datas.
-        } else {
-            window.confirm("Iptal edildi.");
-            // Anything.
-        }
-    }
-});
-
 // Datas will be show the user.
 function showDatas(datas) {
+    cowsBody.innerHTML = layout;
+
+    const menuButton = document.getElementById("btn-menu");
+    const titleCow = document.getElementById("titleCow");
+    const addCowButton = document.getElementById("btn-add-cow");
+    const cowTableBody = document.getElementById("cowTableBody");
+    
+    // To open main menu.
+    menuButton.addEventListener("click", () => {
+        window.electronAPI.openMenu();
+    });
+    
+    // To open add cow menu.
+    addCowButton.addEventListener("click", () => {
+        let animalType = "cow";
+        window.electronAPI.openAddAnimalMenu(animalType);
+    });
+    
+    
+    cowTableBody.addEventListener("click", function (event) {
+        const target = event.target;
+        let tableRow = target.closest("tr");
+        let earringNo = tableRow.querySelector("#earringNo");
+    
+        if (target.id === "infoIco") {
+            // infoButtonClick(earringNo.textContent);
+            let datas = { earringNo: earringNo.textContent, type: "cow" };
+            window.electronAPI.openAnimalDetail(datas);
+        } 
+        
+        else if (target.id === "updateIco") {
+            datas = {earringNo: earringNo.textContent, type: "cow"};
+            window.electronAPI.openUpdateAnimal(datas);
+        } 
+        
+        else if (target.id === "deleteIco") {
+            const sure = window.confirm(
+                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+            if (sure) {
+                // Remove cow from the databases.
+                console.log("Veri silindi.");
+            } else {
+                // Anything.
+                console.log("Veri silinmedi.");
+            }
+        } else if (target.id === "applyIco") {
+            const sure = window.confirm(
+                "Şu küpe numaralı hayvan doğurdu olarak işaretlenecek: " +
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
+            );
+            if (sure) {
+                window.confirm("Güncellendi.");
+                // Update cow's datas.
+            } else {
+                window.confirm("Iptal edildi.");
+                // Anything.
+            }
+        }
+    });
+
     let count = 1;
-    datas.cows.forEach((animal) => {
+    datas.forEach((animal) => {
+        // console.log("datas",datas);
+        // console.log("animal",animal);
         let tableRow = document.createElement("tr");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
@@ -101,6 +193,15 @@ function showDatas(datas) {
         infoIco.className = "bi bi-info-circle-fill";
         updateIco.className = "bi bi-arrow-up-square-fill";
         applyIco.className = "bi bi-cake-fill";
+
+        deleteIco.title = "Hayvanı Sil";
+        deleteButton.title = "Hayvanı Sil";
+        infoIco.title = "Hayvan Bilgisini Göster";
+        infoButton.title = "Hayvan Bilgisini Göster";
+        updateIco.title = "Hayvanı Güncelle";
+        updateButton.title = "Hayvanı Güncelle";
+        applyIco.title = "Doğurdu Olarak İşaretle";
+        applyButton.title = "Doğurdu Olarak İşaretle";
 
         nav.appendChild(navDiv);
 
@@ -139,19 +240,26 @@ function showDatas(datas) {
         applyButton.id = "applyIco";
 
         number.textContent = count.toString() + "-)";
-        earringNo.textContent = animal.earringNo;
-        name.textContent = animal.name;
-        inseminationDate.textContent = animal.inseminationDate;
-        whenBirth.textContent = calculateWhenBirth(animal.inseminationDate);
-        leftDay.textContent = calculateLeftDay(animal.inseminationDate);
-        passDay.textContent = calculatePassDay(animal.inseminationDate);
-        kuruDate.textContent = calculateKuruDate(animal.inseminationDate);
-        bullName.textContent = animal.bullName;
-        isPregnant.textContent = animal.isPregnant;
+        earringNo.textContent = animal.EarringNo;
+        // console.log(animal)
+        // console.log(animal.Name)
+        name.textContent = animal.Name;
+        inseminationDate.textContent = new Date(animal.InseminationDate).toLocaleDateString("tr-TR");
+        whenBirth.textContent = calculateWhenBirth(animal.InseminationDate);
+        leftDay.textContent = calculateLeftDay(animal.InseminationDate);
+        passDay.textContent = calculatePassDay(animal.InseminationDate);
+        kuruDate.textContent = calculateKuruDate(animal.InseminationDate);
+        bullName.textContent = animal.BullName;
+        isPregnant.textContent = animal.CheckedDate;
 
-        tableRow.className = "table-primary";
-        if (parseInt(calculateLeftDay(animal.inseminationDate)) < 20) {
+        if (parseInt(calculateLeftDay(animal.InseminationDate)) <= 30 && parseInt(calculateLeftDay(animal.InseminationDate)) > 0) {
+            tableRow.className = "table-success";
+        }
+        else if (parseInt(calculateLeftDay(animal.InseminationDate)) <= 0) {
             tableRow.className = "table-danger";
+        }
+        else {
+            tableRow.className = "table-primary";
         }
         count += 1;
     });
@@ -160,11 +268,11 @@ function showDatas(datas) {
 }
 
 // Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).
-function parseTurkishDate(wDate) {
-    let [day, month, year] = wDate.split(".");
-    let date = new Date(`${year}-${month}-${day}`);
-    return date;
-}
+// function parseTurkishDate(wDate) {
+//     let [day, month, year] = wDate.split(".");
+//     let date = new Date(`${year}-${month}-${day}`);
+//     return date;
+// }
 
 // Get today's date as JavaScript date.
 function getTodayDate() {
@@ -178,28 +286,34 @@ function getTodayDate() {
 
 // Calculate dates.
 function calculateWhenBirth(inseminationDate) {
-    let date = parseTurkishDate(inseminationDate);
+    let date = new Date(inseminationDate);
     date.setDate(date.getDate() + 280);
+
+    // console.log("calculateWhenBirth: ",date.toLocaleDateString("tr-TR"));
     return date.toLocaleDateString("tr-TR");
 }
 
 function calculateKuruDate(inseminationDate) {
-    let date = parseTurkishDate(inseminationDate);
+    let date = new Date(inseminationDate);
     date.setDate(date.getDate() + 220);
+
+    // console.log("calculateKuruDate: ", date.toLocaleDateString("tr-TR"));
     return date.toLocaleDateString("tr-TR");
 }
 
 function calculateLeftDay(inseminationDate) {
     let today = getTodayDate();
-    let date = parseTurkishDate(inseminationDate);
+    let date = new Date(inseminationDate);
     date.setDate(date.getDate() + 280);
 
+    // console.log("calculateLeftDay: ",Math.ceil((date - today) / (1000 * 60 * 60 * 24)));
     return Math.ceil((date - today) / (1000 * 60 * 60 * 24));
 }
 
 function calculatePassDay(inseminationDate) {
     let today = getTodayDate();
-    let date = parseTurkishDate(inseminationDate);
+    let date = new Date(inseminationDate);
 
+    // console.log("calculatePassDay: ",Math.ceil((today - date) / (1000 * 60 * 60 * 24)));
     return Math.ceil((today - date) / (1000 * 60 * 60 * 24));
 }

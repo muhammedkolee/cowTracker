@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,61 +12,99 @@
           <h2 class="text-center mb-4">Hayvan Bilgilerini Güncelle</h2>
       
           <form id="updateForm">
-            <div class="row g-4">
+            <div class="row g-4" id="inputsTag">
               
               <!-- Küpe Numarası -->
               <div class="col-md-6">
-                <label for="earTag" class="form-label" >Küpe Numarası</label>
-                <input type="text" class="form-control" id="earringNumberTag" placeholder="12345">
+                <label for="earringNo" class="form-label" >Küpe Numarası</label>
+                <input type="text" class="form-control fw-bold" id="earringNo">
               </div>
       
               <!-- Hayvan Adı -->
               <div class="col-md-6">
-                <label for="animalName" class="form-label">Hayvan Adı</label>
-                <input type="text" class="form-control" id="animalName" placeholder="Pamuk">
+                <label for="name" class="form-label">Hayvan Adı</label>
+                <input type="text" class="form-control fw-bold" id="name">
               </div>
       
               <!-- Doğum Tarihi -->
               <div class="col-md-6">
                 <label for="birthDate" class="form-label">Doğum Tarihi</label>
-                <input type="date" class="form-control" id="birthDate">
+                <input type="date" class="form-control fw-bold" id="birthDate">
               </div>
       
               <!-- Türü -->
               <div class="col-md-6">
                 <label for="animalType" class="form-label">Türü</label>
-                <select class="form-select" id="animalType">
+                <select class="form-select fw-bold" id="animalType">
                   <option selected disabled>Tür Seçiniz</option>
-                  <option value="inek">İnek</option>
-                  <option value="düve">Düve</option>
-                  <option value="dana">Dana</option>
-                  <option value="buzağı">Buzağı</option>
+                  <option value="cow" class="fw-bold">İnek</option>
+                  <option value="heifer" class="fw-bold">Düve</option>
+                  <option value="bull" class="fw-bold">Dana</option>
+                  <option value="calf" class="fw-bold">Buzağı</option>
+                </select>
+              </div>
+
+              <!-- Cinsiyeti -->
+              <div class="col-md-6">
+                <label for="gender" class="form-label">Cinsiyeti</label>
+                <select class="form-select fw-bold" id="gender">
+                  <option selected disabled>Cinsiyet Seçiniz</option>
+                  <option value="true" class="fw-bold">Dişi</option>
+                  <option value="false" class="fw-bold">Erkek</option>
                 </select>
               </div>
       
               <!-- Anne Küpe No -->
               <div class="col-md-6">
-                <label for="motherEarTag" class="form-label">Anne Küpe No</label>
-                <input type="text" class="form-control" id="motherEarTag" placeholder="54321">
+                <label for="motherEarringNo" class="form-label">Anne Küpe No</label>
+                <input type="text" class="form-control fw-bold" id="motherEarringNo">
               </div>
       
               <!-- Anne Adı -->
               <div class="col-md-6">
                 <label for="motherName" class="form-label">Anne Adı</label>
-                <input type="text" class="form-control" id="motherName" placeholder="Boncuk">
+                <input type="text" class="form-control fw-bold" id="motherName">
+              </div>
+
+              <!-- Son Doğurduğu Tarih -->
+              <div class="col-md-6">
+                <label for="lastBirthDate" class="form-label">Son Doğurduğu Tarih</label>
+                <input type="date" class="form-control  fw-bold" id="lastBirthDate">
+              </div>
+
+              <!-- Tohumlama Tarihi -->
+              <div class="col-md-6">
+                <label for="inseminationDate" class="form-label">Tohumlama Tarihi</label>
+                <input type="date" class="form-control fw-bold" id="inseminationDate">
+              </div>
+
+              <!-- Dana İsmi -->
+              <div class="col-md-6">
+                <label for="bullName" class="form-label">Dana Adı</label>
+                <input type="text" class="form-control fw-bold" id="bullName">
+              </div>
+
+              <!-- Gebelik Kontrol Tarihi -->
+              <div class="col-md-6">
+                <label for="checkDate" class="form-label">Gebelik Kontrol Tarihi</label>
+                <input type="date" class="form-control fw-bold" id="checkDate">
               </div>
       
-              <!-- Tür Bazlı Ekstra Alanlar (Buraya Dinamik Alanlar Gelecek) -->
-              <div id="dynamicFields" class="col-12"></div>
       
             </div>
       
             <!-- Kaydet Butonu -->
             <div class="text-end mt-4">
-              <button type="submit" class="btn btn-success px-4">Kaydet</button>
+              <button type="submit" class="btn btn-success px-4" id="updateButton">Kaydet</button>
             </div>
           </form>
         </div>
+        <p class="text-danger text-end d-flex align-items-center mt-1">
+          After update the animal type, other datas will be deleted!    
+          <svg class="ms-1" xmlns="../assets/images/exclamation-octagon-fill.svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-octagon-fill" viewBox="0 0 16 16">
+            <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+          </svg>
+        </p>
       </div>
     <script src="../src/updateAnimal.js"></script>      
 </body>

@@ -1,48 +1,135 @@
-const menuButton = document.getElementById("btn-menu");
-const titleVaccine = document.getElementById("titleVaccine");
-const vaccineTableBody = document.getElementById("vaccineTableBody");
+const loadingTemplate = `
+        <style>
+            .loader {
+                border: 16px solid #90EE90; /* Green */
+                border-top: 16px solid #0000FF; /* Blue */
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+            }
 
-menuButton.addEventListener("click", () => {
-    window.electronAPI.openMenu();
-});
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+        <div style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;">
+            <div class="loader"></div>
+            <h2 style="margin-left: 10px;">Hayvan Bilgileri Yükleniyor...</h2>
+        </div>
+
+`;
+
+const layout = `
+        <div class="container mt-5 mb-4">
+            <h2 class="mb-4 text-center" id="titleVaccine"></h2>
+            <div class="table-responsive" style="overflow-x: visible">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr
+                            style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 10;
+                                background-color: #343a40;
+                            "
+                        >
+                            <th>Sayı</th>
+                            <th>Küpe Numarası</th>
+                            <th>İnek Adı</th>
+                            <th>Aşı Adı</th>
+                            <th>Aşı Tarihi</th>
+                            <th>Kaç Gün Oldu</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaccineTableBody">
+                        <!-- JavaScript ile satırlar buraya eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <button
+                class="btn btn-success me-2 mb-3"
+                id="btn-add-cow"
+                style="
+                    bottom: 20px;
+                    right: 120px;
+                    position: fixed;
+                    z-index: 100;
+                "
+            >
+                Yeni Aşı Ekle
+            </button>
+            <button
+            class="btn btn-primary mb-3"
+            id="btn-menu"
+            style="bottom: 20px; right: 10px; position: fixed; z-index: 100"
+        >
+            Ana Menü
+        </button>
+        </div>
+
+`;
+
+const vaccinesBody = document.getElementById("vaccinesBody");
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
-    window.electronAPI.receiveDatas((datas) => {
+    vaccinesBody.innerHTML = loadingTemplate;
+    window.animalsAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
 });
 
-vaccineTableBody.addEventListener("click", function (event) {
-    const target = event.target;
-    let tableRow = target.closest("tr");
-    let earringNo = tableRow.querySelector("#earringNo");
-
-    if (target.id === "infoIco") {
-        // infoButtonClick(earringNo.textContent);
-        let datas = { earringNo: earringNo.textContent, type: "cow" };
-        window.electronAPI.openAnimalDetail(datas);
-    } 
-    
-    else if (target.id === "updateIco") {
-        datas = earringNo.textContent;
-        window.electronAPI.openUpdateAnimal(earringNo.textContent);
-    } 
-    
-    else if (target.id === "deleteIco") {
-        const sure = window.confirm(
-            "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
-        if (sure) {
-            // Remove cow from the databases.
-            console.log("Veri silindi.");
-        } else {
-            // Anything.
-            console.log("Veri silinmedi.");
-        }
-    }
-});
 
 function showDatas(datas) {
+    vaccinesBody.innerHTML = layout;
+    
+    const menuButton = document.getElementById("btn-menu");
+    const titleVaccine = document.getElementById("titleVaccine");
+    const vaccineTableBody = document.getElementById("vaccineTableBody");
+    
+    menuButton.addEventListener("click", () => {
+        window.electronAPI.openMenu();
+    });
+    
+    
+    vaccineTableBody.addEventListener("click", function (event) {
+        const target = event.target;
+        let tableRow = target.closest("tr");
+        let earringNo = tableRow.querySelector("#earringNo");
+    
+        if (target.id === "infoIco") {
+            // infoButtonClick(earringNo.textContent);
+            let datas = { earringNo: earringNo.textContent, type: "cow" };
+            window.electronAPI.openAnimalDetail(datas);
+        } 
+        
+        else if (target.id === "updateIco") {
+            datas = earringNo.textContent;
+            window.electronAPI.openUpdateAnimal(earringNo.textContent);
+        } 
+        
+        else if (target.id === "deleteIco") {
+            const sure = window.confirm(
+                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+            if (sure) {
+                // Remove cow from the databases.
+                console.log("Veri silindi.");
+            } else {
+                // Anything.
+                console.log("Veri silinmedi.");
+            }
+        }
+    });
+
     let count = 1;
     datas.vaccines.forEach((vaccine) => {
         let tableRow = document.createElement("tr");

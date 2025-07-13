@@ -13,46 +13,9 @@
             rel="stylesheet"
         />
     </head>
-    <body class="bg-light" style="padding-bottom: 70px">
-        <div class="container mt-5 mb-4">
-            <h2 class="mb-4 text-center" id="titleBull"></h2>
-            <div class="table-responsive" style="overflow-x: visible">
-                <table class="table table-hover align-middle text-center">
-                    <thead class="table-dark">
-                        <tr
-                            style="
-                                position: sticky;
-                                top: 0;
-                                z-index: 10;
-                                background-color: #343a40;
-                            "
-                        >
-                            <th>Sayı</th>
-                            <th>Küpe Numarası</th>
-                            <th>Dana Adı</th>
-                            <th>Doğum Tarihi</th>
-                            <th>Kaç Günlük *</th>
-                            <th>Anne Küpe No</th>
-                            <th>Anne Adı</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bullTableBody">
-                        <!-- JavaScript ile satırlar buraya eklenecek -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="text-end mt-3">
-            <button class="btn btn-success me-2 mb-3" id="btn-add-bull" style="bottom: 20px; right: 120px; position: fixed; z-index: 100;">
-                Yeni Dana Ekle
-            </button>
-            <button class="btn btn-primary mb-3" id="btn-menu" style="bottom: 20px; right: 10px; position: fixed; z-index: 100">
-                Ana Menü
-            </button>
-        </div>
+    <body class="bg-light" style="padding-bottom: 70px" id="bullsBody">
 
-        <script src="../src/bulls.js"></script>
-        <!-- İleride gerekirse -->
     </body>
+    <script src="../src/bulls.js"></script>
+    <!-- İleride gerekirse -->
 </html>

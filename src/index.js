@@ -12,20 +12,34 @@ buttons.addEventListener("click", function (e) {
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
-    window.electronAPI.receiveDatas((datas) => {
+    window.animalsAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
 });
 
-showDatas(datas);
 
 function showDatas(datas) {
-    cowNumber.textContent =
-        datas.cows.length.toString() + " adet inek kayıtlı.";
-    heiferNumber.textContent =
-        datas.heifers.length.toString() + " adet düve kayıtlı.";
-    calfNumber.textContent =
-        datas.calves.length.toString() + " adet buzağı kayıtlı.";
-    bullNumber.textContent =
-        datas.bulls.length.toString() + " adet dana kayıtlı.";
+    let cows = 0;
+    let heifers = 0;
+    let calves = 0;
+    let bulls = 0;
+
+    datas.forEach(animal => {
+        if (animal.Type === "cow"){
+            cows++;
+        }
+        else if (animal.Type === "heifer"){
+            heifers++;
+        }
+        else if (animal.Type === "calf"){
+            calves++;
+        }
+        else if (animal.Type === "bull"){
+            bulls++;
+        }
+    });
+    cowNumber.textContent = cows.toString() + " adet inek kayıtlı.";
+    heiferNumber.textContent = heifers.toString() + " adet düve kayıtlı.";
+    calfNumber.textContent = calves.toString() + " adet buzağı kayıtlı.";
+    bullNumber.textContent = bulls.toString() + " adet dana kayıtlı.";
 }

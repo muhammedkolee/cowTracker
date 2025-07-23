@@ -3,6 +3,8 @@ const addAnimalForm = document.getElementById("addAnimalDiv");
 const addButton = document.getElementById("addButton");
 const addAnimalBody = document.getElementById("addAnimalBody");
 
+// Deneme
+
 const deneme = document.getElementById("deneme");
 
 window.addEventListener("DOMContentLoaded", () => {

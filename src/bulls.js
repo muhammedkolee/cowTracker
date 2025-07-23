@@ -77,6 +77,11 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// After update database, refresh the table.
+window.electronAPI.refresh((datas) => {
+    showDatas(datas);
+});
+
 function showDatas(datas) {
     bullsBody.innerHTML = layout;
 
@@ -114,8 +119,8 @@ function showDatas(datas) {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
-                // Delete the cow from the databases.
-                console.log("Veri silindi.");
+                const datas = {EarringNo: earringNo.textContent, Type: "bull", pageName: "bulls" }
+                window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
                 console.log("Veri silinmedi.");

@@ -1,11 +1,53 @@
 {
   "name": "cowtracker",
-  "version": "1.0.0",
+  "productName": "Cow Tracker",
+  "version": "1.1.0",
   "main": "src/main.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "electron-builder"
   },
+  "build": {
+    "appId": "com.muhammedkolee.cowtracker",
+    "productName": "Cow Tracker",
+    "copyright": "Copyright © Muhammed Kole",
+    "directories": {
+      "output": "dist"
+    },
+    
+      "files": [
+        "dist/**/*",
+        "src/**/*",
+        "icon.ico"
+      ],
+    
+      "extraResources": [
+    
+      ],
+    
+      "win": {
+        "target": [
+          "nsis",
+          "msi"
+        ],
+        "icon": "icon.ico"
+      },
+    
+      "nsis": {
+        "oneClick": false,
+        "perMachine": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "Cow Tracker",
+        "license": "license.md"
+      },
+    
+      "msi": {
+        "shortcutName": "Cow Tracker"
+      }
+  },
+
   "keywords": [
     "cow",
     "tracker",
@@ -17,10 +59,12 @@
   "license": "MIT",
   "description": "A simple desktop app for cow tracking.",
   "devDependencies": {
-    "electron": "^35.2.0",
+    "electron": "^35.7.2",
+    "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.3"
+    "@supabase/supabase-js": "^2.50.3",
+    "electron-squirrel-startup": "^1.0.1"
   }
 }

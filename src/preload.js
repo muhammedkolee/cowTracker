@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld("animalDetailAPI", {
 contextBridge.exposeInMainWorld("animalsAPI", {
     receiveDatas: (callback) => {
         ipcRenderer.on("sendDatas", (event, datas) => {
+            console.log(datas);
             callback(datas);
         });
     },
@@ -76,5 +77,17 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     openMainWindow: () => {
         ipcRenderer.send("ipcMain:getAnimalsDatas");
-    }
+    },
+
+    removeAnimal: (datas) => {
+        ipcRenderer.send("ipcMain:removeAnimal", datas);
+    },
+
+    refresh: (callback) => {
+        ipcRenderer.on("refresh", (event, datas) => {
+            callback(datas);
+        });
+    },
+
+
 });

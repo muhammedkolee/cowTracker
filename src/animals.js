@@ -78,7 +78,10 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
+// After update database, refresh the table.
+window.electronAPI.refresh((datas) => {
+    showDatas(datas);
+});
 
 function showDatas(datas) {
     animalsBody.innerHTML = layout;
@@ -144,7 +147,20 @@ function showDatas(datas) {
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
                 // Remove cow from the databases.
-                console.log("Veri silindi.");
+                const datas = {EarringNo: earringNo.textContent, pageName: "animals"}
+                if (type.textContent === "İnek") {
+                    datas.Type = "cow";
+                }
+                else if (type.textContent === "Düve") {
+                    datas.Type = "heifer";
+                }
+                else if (type.textContent === "Buzağı") {
+                    datas.Type = "calf";
+                }
+                else if (type.textContent === "Dana") {
+                    datas.Type = "bull";
+                }
+                window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
                 console.log("Veri silinmedi.");

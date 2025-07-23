@@ -92,6 +92,11 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// After update database, refresh the table.
+window.electronAPI.refresh((datas) => {
+    showDatas(datas);
+});
+
 // Datas will be show the user.
 function showDatas(datas) {
     cowsBody.innerHTML = layout;
@@ -100,7 +105,7 @@ function showDatas(datas) {
     const titleCow = document.getElementById("titleCow");
     const addCowButton = document.getElementById("btn-add-cow");
     const cowTableBody = document.getElementById("cowTableBody");
-    
+
     // To open main menu.
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
@@ -134,7 +139,8 @@ function showDatas(datas) {
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
                 // Remove cow from the databases.
-                console.log("Veri silindi.");
+                const datas = {EarringNo: earringNo.textContent, Type: "cow", pageName: "cows" }
+                window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
                 console.log("Veri silinmedi.");
@@ -266,13 +272,6 @@ function showDatas(datas) {
     titleCow.textContent =
         "Listede toplam " + (count - 1).toString() + " adet inek var.";
 }
-
-// Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).
-// function parseTurkishDate(wDate) {
-//     let [day, month, year] = wDate.split(".");
-//     let date = new Date(`${year}-${month}-${day}`);
-//     return date;
-// }
 
 // Get today's date as JavaScript date.
 function getTodayDate() {

@@ -1,3 +1,6 @@
+// To add shortcut to desktop
+if (require('electron-squirrel-startup')) return;
+
 // Frameworks
 const { app, BrowserWindow, Menu, ipcMain, screen } = require("electron");
 const path = require("path");
@@ -9,11 +12,6 @@ const { createClient } = require('@supabase/supabase-js');
 const supabaseUrl = 'https://keixqunsvrtxhtjbxqlr.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaXhxdW5zdnJ0eGh0amJ4cWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MjExMjQsImV4cCI6MjA2NzM5NzEyNH0.EU-7sz48RYWPR-Nn9hiuYlZvWVDNrMg2xvI3ha4Z0xk';
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Database files and directories' path.
-// const userDataPath = app.getPath("userData");
-// const dbsPath = path.join(userDataPath, "dbs");
-// const backupsPath = path.join(userDataPath, "backups");
 
 // If app is ready, run this block. 
 app.on("ready", () => {
@@ -67,7 +65,6 @@ app.on("ready", () => {
                 }
                 else if (pageName === "cows"){
                     const datas = await getCowsDatas();
-                    console.log(datas);
                     mainWindow.webContents.send("sendDatas", datas);
                 }
                 else if (pageName === "heifers"){
@@ -93,8 +90,8 @@ app.on("ready", () => {
     ipcMain.on("ipcMain:openMenu", () => {
         mainWindow
             .loadFile(path.join(__dirname, "../views/index.html"))
-            .then(() => {
-                mainWindow.webContents.send("sendDatas", getAnimalsDatas());
+            .then(async () => {
+                mainWindow.webContents.send("sendDatas", await getAnimalsDatas());
             });
     });
 
@@ -159,7 +156,6 @@ app.on("ready", () => {
 
                 if (datas.type === "cow"){
                     const allDatas = await getCowDatas(datas);
-                    console.log(allDatas);
 
                     animalDetailWindow.webContents.send("sendDetailDatas", allDatas);
                 }
@@ -240,7 +236,6 @@ app.on("ready", () => {
         else if (datas.animalDatas.Type === "heifer") {
             const { data: heifersData, error: heifersError } = await supabase.from("Heifers").insert(datas.heiferDatas);
             if (heifersError) {
-                console.log(heifersError);
                 event.sender.send("addResult", false);
             }
         }
@@ -283,6 +278,60 @@ app.on("ready", () => {
         }
         else {
             console.log("İşlem başarıyla tamamlandı!");
+        }
+    });
+
+    ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
+        if (datas.Type === "cow"){
+            const response = await supabase.from("Cows").delete().eq("EarringNo", datas.EarringNo);
+            if (response.status === 204) {
+                console.log("Islem basarili.");
+            }
+            else {
+            console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
+            }
+        }
+        else if (datas.Type === "heifer") {
+            const response = await supabase.from("Heifers").delete().eq("EarringNo", datas.EarringNo);
+            if (response.status === 204) {
+                console.log("Islem basarili.");
+            }
+
+            else {
+            console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
+            }
+        }
+        else if (datas.Type === "calf") {
+            const response = await supabase.from("Calves").delete().eq("EarringNo", datas.EarringNo);
+            if (response.status === 204) {
+                console.log("Islem basarili.");
+            }
+            else {
+            console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
+            }        
+        }
+        const response = await supabase.from("Animals").delete().eq("EarringNo", datas.EarringNo);
+        if (response.status === 204) {
+            console.log("İşlem Başarılı!");
+        }
+        else {
+            console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
+        }
+
+        if (datas.pageName === "animals") {
+            event.sender.send("refresh", await getAnimalsDatas());
+        }
+        else if (datas.pageName === "cows") {
+            event.sender.send("refresh", await getCowsDatas());
+        }
+        else if (datas.pageName === "heifers") {
+            event.sender.send("refresh", await getHeifersDatas());
+        }
+        else if (datas.pageName === "calves") {
+            event.sender.send("refresh", await getCalvesDatas());
+        }
+        else if (datas.pageName === "bulls") {
+            event.sender.send("refresh", await getBullsDatas());
         }
     });
 });

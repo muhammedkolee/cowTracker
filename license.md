@@ -1,0 +1,1 @@
+Bu sözleşmeyi kabul ederek hayvan verilerinin veritabanına kaydedilmesini ve işlenmesini kabul etmiş olursunuz.

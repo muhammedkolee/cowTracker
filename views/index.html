@@ -1,76 +1,46 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CowTracker - Ana Sayfa</title>
-  
-  <!-- Bootstrap CSS -->
-  <link href="../assets/styles/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
 
-  <div class="container py-4">
+  <!-- Tailwind CSS -->
+  <link href="../styles/output.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="container mx-auto px-4 py-6">
 
     <!-- Dashboard Cards -->
-    <div class="row g-3 mb-5">
-      <div class="col-md-3">
-        <div class="card text-white bg-primary">
-          <div class="card-body">
-            <h5 class="card-title" id="cowNumber"></h5>
-          </div>
-        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="bg-blue-600 text-white rounded-xl shadow p-4">
+        <h5 class="text-lg font-semibold" id="cowNumber"></h5>
       </div>
-      <div class="col-md-3">
-        <div class="card text-white bg-success shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title" id="calfNumber"></h5>
-          </div>
-        </div>
+      <div class="bg-green-600 text-white rounded-xl shadow p-4">
+        <h5 class="text-lg font-semibold" id="calfNumber"></h5>
       </div>
-      <div class="col-md-3">
-        <div class="card text-white bg-warning shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title" id="heiferNumber"></h5>
-          </div>
-        </div>
+      <div class="bg-yellow-500 text-white rounded-xl shadow p-4">
+        <h5 class="text-lg font-semibold" id="heiferNumber"></h5>
       </div>
-      <div class="col-md-3">
-        <div class="card text-white bg-danger shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title" id="bullNumber"></h5>
-          </div>
-        </div>
+      <div class="bg-red-600 text-white rounded-xl shadow p-4">
+        <h5 class="text-lg font-semibold" id="bullNumber"></h5>
       </div>
     </div>
 
     <!-- Menü Butonları -->
-    <div class="row g-4" id="allButtons">
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-outline-primary btn-lg" id="cows" style="font-weight: bold;">İnekler</button>
-      </div>
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-success btn-lg" id="animals" style="font-weight: bold;">Tüm Hayvanlar</button>
-      </div>
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-outline-success btn-lg" id="calves" style="font-weight: bold;">Buzağılar</button>
-      </div>
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-outline-warning btn-lg" id="heifers" style="font-weight: bold;">Düveler</button>
-      </div>
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-outline-info btn-lg" id="bulls" style="font-weight: bold;">Danalar</button>
-      </div>
-      <div class="col-md-4 d-grid">
-        <button class="btn btn-outline-danger btn-lg" id="vaccines" style="font-weight: bold;">Aşılar</button>
-      </div>
+    <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <button class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300" id="cows">İnekler</button>
+      <button class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700" id="animals">Tüm Hayvanlar</button>
+      <button class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300" id="calves">Buzağılar</button>
+      <button class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300" id="heifers">Düveler</button>
+      <button class="px-4 py-3 text-cyan-700 font-bold border-2 border-cyan-500 rounded-xl hover:bg-cyan-300" id="bulls">Danalar</button>
+      <button class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300" id="vaccines">Aşılar</button>
     </div>
 
   </div>
-  
-  <!-- Sayfa içi JS -->
-  <script src="../src/index.js"></script>
 
+  <script src="../src/index.js"></script>
 </body>
 </html>

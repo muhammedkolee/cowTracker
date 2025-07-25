@@ -1,27 +1,8 @@
 const loadingTemplate = `
-        <style>
-            .loader {
-                border: 16px solid #90EE90; /* Green */
-                border-top: 16px solid #0000FF; /* Blue */
-                border-radius: 50%;
-                width: 120px;
-                height: 120px;
-                animation: spin 2s linear infinite;
-            }
-
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-        <div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;">
-            <div class="loader"></div>
-            <h2 style="margin-left: 10px;">Hayvan Bilgileri Yükleniyor...</h2>
-        </div>
+    <div class="flex items-center justify-center h-screen space-x-4">
+        <div class="w-28 h-28 border-[16px] border-green-300 border-t-blue-600 rounded-full animate-spin"></div>
+        <h2 class="text-xl font-semibold text-gray-800">Hayvan Bilgileri Yükleniyor...</h2>
+    </div>
 `;
 
 const buttons = document.getElementById("allButtons");
@@ -36,14 +17,12 @@ buttons.addEventListener("click", function (e) {
     }
 });
 
-// After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     showLoading();
     window.animalsAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
 });
-
 
 function showDatas(datas) {
     let cows = 0;

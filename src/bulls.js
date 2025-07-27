@@ -1,70 +1,57 @@
 const loadingTemplate = `
-        <style>
-            .loader {
-                border: 16px solid #90EE90; /* Green */
-                border-top: 16px solid #0000FF; /* Blue */
-                border-radius: 50%;
-                width: 120px;
-                height: 120px;
-                animation: spin 2s linear infinite;
-            }
+                <style>
+                    .loader {
+                        border: 16px solid #90EE90; /* Green */
+                        border-top: 16px solid #0000FF; /* Blue */
+                        border-radius: 50%;
+                        width: 120px;
+                        height: 120px;
+                        animation: spin 2s linear infinite;
+                    }
 
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-        <div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;">
-            <div class="loader"></div>
-            <h2 style="margin-left: 10px;">Hayvan Bilgileri Yükleniyor...</h2>
-        </div>
-
-`;
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+                <div class="flex items-center justify-center h-screen">
+                    <div class="loader"></div>
+                    <h2 class="ml-2 text-xl font-semibold">Hayvan Bilgileri Yükleniyor...</h2>
+                </div>
+        `;
 
 const layout = `
-        <div class="container mt-5 mb-4">
-            <h2 class="mb-4 text-center" id="titleBull"></h2>
-            <div class="table-responsive" style="overflow-x: visible">
-                <table class="table table-hover align-middle text-center">
-                    <thead class="table-dark">
-                        <tr
-                            style="
-                                position: sticky;
-                                top: 0;
-                                z-index: 10;
-                                background-color: #343a40;
-                            "
-                        >
-                            <th>Sayı</th>
-                            <th>Küpe Numarası</th>
-                            <th>Dana Adı</th>
-                            <th>Doğum Tarihi</th>
-                            <th>Kaç Günlük *</th>
-                            <th>Anne Küpe No</th>
-                            <th>Anne Adı</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bullTableBody">
-                        <!-- JavaScript ile satırlar buraya eklenecek -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="text-end mt-3">
-            <button class="btn btn-success me-2 mb-3" id="btn-add-bull" style="bottom: 20px; right: 120px; position: fixed; z-index: 100;">
-                Yeni Dana Ekle
-            </button>
-            <button class="btn btn-primary mb-3" id="btn-menu" style="bottom: 20px; right: 10px; position: fixed; z-index: 100">
-                Ana Menü
-            </button>
-        </div>
-
-`;
+                <div class="container mx-auto mt-5 mb-4 px-4">
+                    <h2 class="mb-4 text-center text-2xl font-bold" id="titleBull"></h2>
+                    <div class="overflow-x-auto shadow-lg rounded-lg">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead class="bg-gray-800 text-white">
+                                <tr class="sticky top-0 z-10 bg-gray-800">
+                                    <th class="px-4 py-3 text-center font-semibold">Sayı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Dana Adı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Doğum Tarihi</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Kaç Günlük *</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Anne Küpe No</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Anne Adı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bullTableBody" class="divide-y divide-gray-200">
+                                <!-- JavaScript ile satırlar buraya eklenecek -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-right mt-3">
+                    <button class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors" id="btn-add-bull">
+                        Yeni Dana Ekle
+                    </button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-3 fixed bottom-5 right-2 z-50 shadow-lg transition-colors" id="btn-menu">
+                        Ana Menü
+                    </button>
+                </div>
+        `;
 
 const bullsBody = document.getElementById("bullsBody");
 
@@ -89,37 +76,37 @@ function showDatas(datas) {
     const titleBull = document.getElementById("titleBull");
     const bullTableBody = document.getElementById("bullTableBody");
     const addBullButton = document.getElementById("btn-add-bull");
-    
+
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
     });
-    
-    
+
+
     addBullButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu("bull");
     });
-    
+
     bullTableBody.addEventListener("click", function (event) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
-    
+
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
             let datas = { earringNo: earringNo.textContent, type: "cow" };
             window.electronAPI.openAnimalDetail(datas);
-        } 
-        
+        }
+
         else if (target.id === "updateIco") {
-            datas = {earringNo: earringNo.textContent, type: "bull"};
+            datas = { earringNo: earringNo.textContent, type: "bull" };
             window.electronAPI.openUpdateAnimal(earringNo.textContent);
-        } 
-        
+        }
+
         else if (target.id === "deleteIco") {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
-                const datas = {EarringNo: earringNo.textContent, Type: "bull", pageName: "bulls" }
+                const datas = { EarringNo: earringNo.textContent, Type: "bull", pageName: "bulls" }
                 window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
@@ -139,30 +126,50 @@ function showDatas(datas) {
         let motherEarringNo = document.createElement("td");
         let motherName = document.createElement("td");
 
-        tableRow.style.fontWeight = "bold";
+        // Base styling for all cells
+        const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
+        number.className = cellClasses;
+        earringNo.className = cellClasses;
+        name.className = cellClasses;
+        birthDate.className = cellClasses;
+        age.className = cellClasses;
+        motherEarringNo.className = cellClasses;
+        motherName.className = cellClasses;
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
         let deleteButton = document.createElement("button");
         let updateButton = document.createElement("button");
         let infoButton = document.createElement("button");
-        let deleteIco = document.createElement("i");
-        let infoIco = document.createElement("i");
-        let updateIco = document.createElement("i");
+        deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
+        infoButton.innerHTML = `<svg id="infoIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="infoIco" stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>`;
+        updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
 
-        navDiv.className = "d-flex justify-content-center gap-1";
-        deleteButton.className = "btn btn-sm btn-danger";
-        infoButton.className = "btn btn-sm btn-info";
-        updateButton.className = "btn btn-sm btn-primary";
-        deleteIco.className = "bi bi-trash";
-        infoIco.className = "bi bi-info-circle-fill";
-        updateIco.className = "bi bi-arrow-up-square-fill";
+        // let deleteIco = document.createElement("i");
+        // let infoIco = document.createElement("i");
+        // let updateIco = document.createElement("i");
 
-        deleteIco.title = "Hayvanı Sil";
+        nav.className = cellClasses;
+        navDiv.className = "flex justify-center gap-1";
+        deleteButton.className = "bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        infoButton.className = "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        updateButton.className = "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+
+        // Lucide icons
+        // deleteIco.setAttribute("data-lucide", "trash-2");
+        // infoIco.setAttribute("data-lucide", "info");
+        // updateIco.setAttribute("data-lucide", "edit");
+
+        // Icon styling
+        // deleteIco.className = "w-4 h-4";
+        // infoIco.className = "w-4 h-4";
+        // updateIco.className = "w-4 h-4";
+
+        // deleteIco.title = "Hayvanı Sil";
         deleteButton.title = "Hayvanı Sil";
-        infoIco.title = "Hayvan Bilgisini Göster";
+        // infoIco.title = "Hayvan Bilgisini Göster";
         infoButton.title = "Hayvan Bilgisini Göster";
-        updateIco.title = "Hayvanı Güncelle";
+        // updateIco.title = "Hayvanı Güncelle";
         updateButton.title = "Hayvanı Güncelle";
 
         nav.appendChild(navDiv);
@@ -171,9 +178,9 @@ function showDatas(datas) {
         navDiv.appendChild(updateButton);
         navDiv.appendChild(deleteButton);
 
-        deleteButton.appendChild(deleteIco);
-        infoButton.appendChild(infoIco);
-        updateButton.appendChild(updateIco);
+        // deleteButton.appendChild(deleteIco);
+        // infoButton.appendChild(infoIco);
+        // updateButton.appendChild(updateIco);
 
         bullTableBody.appendChild(tableRow);
         tableRow.appendChild(number);
@@ -187,9 +194,9 @@ function showDatas(datas) {
 
         earringNo.id = "earringNo";
 
-        deleteIco.id = "deleteIco";
-        infoIco.id = "infoIco";
-        updateIco.id = "updateIco";
+        // deleteIco.id = "deleteIco";
+        // infoIco.id = "infoIco";
+        // updateIco.id = "updateIco";
         deleteButton.id = "deleteIco";
         infoButton.id = "infoIco";
         updateButton.id = "updateIco";
@@ -198,14 +205,15 @@ function showDatas(datas) {
         earringNo.textContent = bull.EarringNo;
         name.textContent = bull.Name;
         birthDate.textContent = bull.BirthDate;
-        
-        tableRow.className = "table-primary";
+
+        // Row color and age display based on days old
+        tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors";
         let ageC = calculateDays(bull.BirthDate);
-        if (ageC < 30){
-            tableRow.className = "table-success";
+        if (ageC < 30) {
+            tableRow.className = "bg-green-100 hover:bg-green-200 transition-colors";
             age.textContent = ageC.toString() + " Gün";
         }
-        else if (ageC >= 30 && ageC < 366){
+        else if (ageC >= 30 && ageC < 366) {
             age.textContent = parseInt(ageC / 12).toString() + " Ay " + "(" + ageC.toString() + " Gün)";
         }
         motherEarringNo.textContent = bull.MotherEarringNo;
@@ -213,6 +221,7 @@ function showDatas(datas) {
 
         count += 1;
     });
+
     titleBull.textContent = "Listede toplam " + (count - 1).toString() + " dana var.";
 }
 
@@ -232,7 +241,7 @@ function getTodayDate() {
 //     return date;
 // }
 
-function calculateDays(ageDate){
+function calculateDays(ageDate) {
     let today = getTodayDate();
     const age = new Date(ageDate);
 

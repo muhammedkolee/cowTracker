@@ -4,18 +4,34 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CowTracker - İnekler</title>
+        <title>CowTracker - Aşılar</title>
 
-        <!-- Bootstrap CSS -->
-        <link href="../assets/styles/bootstrap.min.css" rel="stylesheet" />
-        <link
-            href="../assets/images/icons/font/bootstrap-icons.css"
-            rel="stylesheet"
-        />
+        <link href="../styles/output.css" rel="stylesheet" />        
+
+        <!-- Tailwind CSS -->
+        <!-- <style>
+            /* Custom icons using Unicode symbols as fallback for Bootstrap icons */
+            .icon-trash::before { content: '🗑️'; }
+            .icon-info::before { content: 'ℹ️'; }
+            .icon-edit::before { content: '✏️'; }
+            
+            /* Loading spinner animation */
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .loader {
+                border: 16px solid #90EE90;
+                border-top: 16px solid #0000FF;
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+            }
+        </style> -->
     </head>
-    <body class="bg-light" style="padding-bottom: 70px" id="vaccinesBody">
+    <body class="bg-gray-100 pb-20" id="vaccinesBody">
 
     </body>
     <script src="../src/vaccines.js"></script>
-    <!-- İleride gerekirse -->
 </html>

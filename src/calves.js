@@ -106,7 +106,7 @@ function showDatas(datas) {
 
         else if (target.id === "updateIco") {
             datas = { earringNo: earringNo.textContent, type: "calf" };
-            if (window.electronAPI) window.electronAPI.openUpdateAnimal(earringNo.textContent);
+            if (window.electronAPI) window.electronAPI.openUpdateAnimal({earringNo: earringNo.textContent, type: "calf"});
         }
 
         else if (target.id === "deleteIco") {
@@ -156,7 +156,7 @@ function showDatas(datas) {
 
 
         // Tailwind classes
-        tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
+        // tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -230,10 +230,10 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
         name.textContent = calf.Name;
-        birthDate.textContent = calf.BirthDate;
+        birthDate.textContent = new Date(calf.BirthDate).toLocaleDateString("tr-TR");
 
         let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calf.BirthDate);
-        days.textContent = daysC;
+        days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
         lt2.textContent = lt2Date;
         lt1.textContent = lt1Date;
         shutDate.textContent = shutDateC;
@@ -244,9 +244,9 @@ function showDatas(datas) {
 
         // Gender-based background color
         if (calf.Gender) {
-            tableRow.style.backgroundColor = "#fce7f3"; // pink-100
+            tableRow.className = "bg-red-100 hover:bg-red-200 transition-colors duration-150"; // pink-100
         } else {
-            tableRow.style.backgroundColor = "#dbeafe"; // blue-100
+            tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors duration-150"; // blue-100
         }
 
         count += 1;
@@ -284,4 +284,4 @@ function calculateDates(birthDate) {
         daysC: daysDate,
         daysS: daysShut
     };
-}
+};

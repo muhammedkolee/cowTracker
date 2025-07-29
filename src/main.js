@@ -18,6 +18,10 @@ app.on("ready", () => {
     // Get primary display to maximize window.
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
+
+    // DEV
+    updateDatabase();
+    // DEV
     
     // Create Main Window
     const mainWindow = new BrowserWindow({
@@ -253,26 +257,31 @@ app.on("ready", () => {
         }
     });
 
-    ipcMain.on("ipcMain:updateAnimalDatas", (event, allDatas) => {
+    ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
+        console.log("main.js: ", allDatas);
         if (allDatas.animalData.Type === "cow"){
-            const { error } = supabase.from("Cows").update(allDatas.cowData).eq(allDatas.animalData.EarringNo);
+            const { error } = await supabase.from("Cows").update(allDatas.cowData).eq("EarringNo", allDatas.animalData.EarringNo);
             if (error){
                 console.log("Bir hata oluştu: ", error);
             }
         }
         else if (allDatas.animalData.Type === "heifer"){
-            const { error } = supabase.from("Heifers").update(allDatas.heiferData).eq(allDatas.animalData.EarringNo);
+            const { error } = await supabase.from("Heifers").update(allDatas.heiferData).eq("EarringNo", allDatas.animalData.EarringNo);
             if (error){
                 console.log("Bir hata oluştu: ", error);
             }
         }
         else if (allDatas.animalData.Type === "calf"){
-            const { error } = supabase.from("Calves").update(allDatas.calfData).eq(allDatas.animalData.EarringNo);
+            console.log(allDatas.calfData)
+            const { error } = await supabase.from("Calves").update(allDatas.calfData).eq("EarringNo", allDatas.animalData.EarringNo);
             if (error){
                 console.log("Bir hata oluştu: ", error);
             }
+            else {
+                console.log("Tamamlandi!");
+            }
         }
-        const { error } = supabase.from("Animals").update(allDatas.animalData).eq(allDatas.animalData.EarringNo);
+        const { error } = await supabase.from("Animals").update(allDatas.animalData).eq("EarringNo", allDatas.animalData.EarringNo);
         if (error) {
             console.log("Bir hata oluştu: ", error);
         }
@@ -458,10 +467,65 @@ async function getVaccinesDatas() {
     return data
 }
 
-/*
-    *** cows sayfasında cow name gözükmüyor => (yalnızca cowDatas alınıyor.)
-    heifers => (?)
-    bulls => Tarihsel verileri düzelt, dananın kaç günlük olduğu gözükmüyor.
-    calves => Buzağının erillik/dişilik value'leri string değere göre değil booelan değere dönüştürüldü.
-*/
+async function updateDatabase() {
+    const calvesDatas = await getCalvesDatas();
 
+    calvesDatas.forEach( async (calf) => {
+        let calfBirthDate = new Date(calf.BirthDate);
+
+        if (((getTodayDate() - calfBirthDate) / (1000 * 60 * 60 * 24)) < 365) {
+            console.log("Sikinti yok.");
+        }
+        else {
+            console.log("Isleme baslaniyor...");
+            // const response = await supabase.from("Cows").delete().eq("EarringNo", datas.EarringNo);
+            // const { data: cowsData, error: cowsError } = await supabase.from("Cows").insert(datas.cowDatas);
+            // const { error } = await supabase.from("Calves").update(allDatas.calfData).eq("EarringNo", allDatas.animalData.EarringNo);
+
+
+            const responseDelete = await supabase.from("Calves").delete().eq("EarringNo", calf.EarringNo);
+
+            if (calf.Gender) {
+                const { data: addHeiferData, error: addHeiferError } = await supabase.from("Heifers").insert({EarringNo: calf.EarringNo, Name: calf.Name, LastBirthDate: getTodayDate()});
+                
+                const { data: updateCalfData, error: updateCalfError } = await supabase.from("Animals").update({ Type: "heifer" }).eq("EarringNo", calf.EarringNo);
+
+            }
+            else {
+                const { data: addBullData, error: addBullError } = await supabase.from("Animals").update({ Type: "bull" }).eq("EarringNo", calf.EarringNo);
+            }
+            const { data: infoData, error: infoError } = await supabase.from("Information").insert({ Info: (calf.EarringNo + ` küpe numaralı buzağı "Düve" olarak kaydedildi!`)});
+            console.log(infoError);
+            console.log("else bloğuna girildi.");
+        }
+    });
+
+
+    const heifersDatas = await getHeifersDatas();
+    let closestHeifers = [];
+
+    heifersDatas.forEach( async (heifer) => {
+        if ((getTodayDate() - new Date(heifer.LastBirthDate)) >= 40 || (getTodayDate() - new Date(heifer.LastBirthDate)) <= 90) {
+            closestHeifers.push({EarringNo: heifer.EarringNo, Name: heifer.Name});
+        };
+    });
+
+
+    const cowsDatas = await getCowsDatas();
+    let closestCows = [];
+
+    cowsDatas.forEach(cow => {
+        if ((((new Date(cow.InseminationDate) - getTodayDate()) / (1000 * 60 * 60 * 24)) + 280) <= 20) {
+            closestCows.push({EarringNo: cow.EarringNo, Name: cow.Name});
+        };
+    });
+}
+
+function getTodayDate() {
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = String(today.getMonth() + 1).padStart(2, "0");
+    let day = String(today.getDate()).padStart(2, "0");
+
+    return new Date(`${year}-${month}-${day}`);
+}

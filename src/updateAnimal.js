@@ -61,6 +61,7 @@ updateButton.addEventListener("click", () => {
     allDatas.animalData.MotherEarringNo = motherEarringNo.value;
     allDatas.animalData.MotherName = motherName.value;
     allDatas.animalData.Type = animalType.value;
+    console.log("type: ", animalType.value);
     
     if (animalType.value === "cow") {
         allDatas.cowData = {};
@@ -70,6 +71,7 @@ updateButton.addEventListener("click", () => {
         allDatas.cowData.InseminationDate = inseminationDate.value;
         allDatas.cowData.BullName = bullName.value;
         allDatas.cowData.CheckedDate = checkDate.value;
+        // allDatas.animalData.Type = "cow";
     }
     else if (animalType.value === "heifer") {
         allDatas.heiferData = {};
@@ -77,14 +79,17 @@ updateButton.addEventListener("click", () => {
         allDatas.heiferData.EarringNo = earringNo.value;
         allDatas.heiferData.Name = name.value;
         allDatas.heiferData.LastBirthDate = lastBirthDate.value;
+        // allDatas.animalData.Type = "heifer";
     }
     else if (animalType.value === "calf"){
+        console.log("updateAnimal.js girildi");
         allDatas.calfData = {};
 
         allDatas.calfData.EarringNo = earringNo.value;
         allDatas.calfData.Name = name.value;
         allDatas.calfData.Gender = gender.value === "true" ? true : false;
         allDatas.calfData.BirthDate = birthDate.value;
+        // allDatas.animalData.Type = "calf";
     }
 
     window.updateAPI.updateAnimalDatas(allDatas);

@@ -104,6 +104,7 @@ addButton.addEventListener("click", () => {
 
         newAnimalDatas.calfDatas.EarringNo = earringNo.value;
         newAnimalDatas.calfDatas.Name = animalName.value;
+        newAnimalDatas.calfDatas.BirthDate = birthDate.value;
 
         if (genderInput.value === "girl"){
             newAnimalDatas.calfDatas.Gender = true; // Dişi ise true

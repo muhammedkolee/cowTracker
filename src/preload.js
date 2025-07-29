@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld("animalsAPI", {
 contextBridge.exposeInMainWorld("updateAPI", {
     updateAnimalDatas: (allDatas) => {
         ipcRenderer.send("ipcMain:updateAnimalDatas", allDatas);
+        console.log("preload.js: ", allDatas);
     }
 });
 

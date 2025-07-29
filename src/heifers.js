@@ -23,10 +23,10 @@ const loadingTemplate = `
 const layout = `
                 <div class="container mx-auto mt-5 mb-4 px-4">
                     <h2 class="mb-4 text-center text-2xl font-bold" id="titleHeifer"></h2>
-                    <div class="overflow-x-auto shadow-lg rounded-lg">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead class="bg-gray-800 text-white">
-                                <tr class="sticky top-0 z-10 bg-gray-800">
+                    <div class="shadow-lg rounded-lg">
+                        <table class="min-w-full bg-white">
+                            <thead class="sticky top-0 z-10 bg-gray-800 text-white">
+                                <tr class="bg-gray-800">
                                     <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                                     <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                                     <th class="px-4 py-3 text-center font-semibold">İnek Adı</th>

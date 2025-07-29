@@ -23,10 +23,10 @@ const loadingTemplate = `
 const layout = `
         <div class="container mx-auto mt-5 mb-4 px-4">
             <h2 class="mb-4 text-center text-2xl font-bold" id="titleVaccine"></h2>
-            <div class="overflow-x-auto">
+            <div>
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                    <thead class="bg-gray-800 text-white">
-                        <tr class="sticky top-0 z-10 bg-gray-800">
+                    <thead class="sticky top-0 z-10 bg-gray-800 text-white">
+                        <tr class="bg-gray-800">
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe Numarası</th>
                             <th class="px-4 py-3 text-center">İnek Adı</th>

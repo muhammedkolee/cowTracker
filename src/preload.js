@@ -35,7 +35,7 @@ contextBridge.exposeInMainWorld("animalDetailAPI", {
 contextBridge.exposeInMainWorld("animalsAPI", {
     receiveDatas: (callback) => {
         ipcRenderer.on("sendDatas", (event, datas) => {
-            console.log(datas);
+            // console.log(datas);
             callback(datas);
         });
     },

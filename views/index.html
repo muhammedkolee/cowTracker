@@ -30,7 +30,7 @@
     </div>
 
     <!-- Menü Butonları -->
-    <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
       <button class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300" id="cows">İnekler</button>
       <button class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700" id="animals">Tüm Hayvanlar</button>
       <button class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300" id="calves">Buzağılar</button>
@@ -39,7 +39,114 @@
       <button class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300" id="vaccines">Aşılar</button>
     </div>
 
+    <!-- Veri Kutuları -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+      
+      <!-- Yaklaşan Düveler Kutusu -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+        <div class="bg-purple-600 text-white px-4 py-3 rounded-t-xl">
+          <h3 class="text-lg font-semibold">Yaklaşan Düveler</h3>
+        </div>
+        <div class="p-4 h-64 overflow-y-auto" id="closestHeifersContainer">
+          <!-- Veriler JavaScript ile doldurulacak -->
+        </div>
+      </div>
+
+      <!-- Yaklaşan İnekler Kutusu -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+        <div class="bg-blue-600 text-white px-4 py-3 rounded-t-xl">
+          <h3 class="text-lg font-semibold">Yaklaşan İnekler</h3>
+        </div>
+        <div class="p-4 h-64 overflow-y-auto" id="closestCowsContainer">
+          <!-- Veriler JavaScript ile doldurulacak -->
+        </div>
+      </div>
+
+      <!-- Bilgi/Güncellemeler Kutusu -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+        <div class="bg-green-600 text-white px-4 py-3 rounded-t-xl">
+          <h3 class="text-lg font-semibold">Son Güncellemeler</h3>
+        </div>
+        <div class="p-4 h-64 overflow-y-auto" id="infoContainer">
+          <!-- Veriler JavaScript ile doldurulacak -->
+        </div>
+      </div>
+
+    </div>
+
   </div>
+
+  <!-- <script>
+    // updateDatas örnek verisi
+    const updateDatas = {
+      closestHeifers: [
+        // { EarringNo: 'TRDeneme1', Name: 'Deneme1' },
+        // { EarringNo: 'TRDeneme3', Name: 'Deneme3' },
+        // { EarringNo: 'TRDeneme5', Name: 'Deneme5' },
+        // { EarringNo: 'TRDeneme6', Name: 'Deneme6' },
+        // { EarringNo: 'TRDeneme7', Name: 'Deneme7' }
+      ],
+      closestCows: [
+        { EarringNo: 'DE951621155', Name: 'Polis' },
+        { EarringNo: 'DE952509655', Name: 'Emzik' }
+      ],
+      info: [
+        {
+          Info: 'TRDeneme6 küpe numaralı buzağı "Düve" olarak kaydedildi!',
+          CreatedAt: '2025-07-29T00:00:00+00:00'
+        },
+        {
+          Info: 'TRDeneme7 küpe numaralı buzağı "Düve" olarak kaydedildi!',
+          CreatedAt: '2025-07-29T10:57:43.63688+00:00'
+        }
+      ]
+    };
+
+    // Verileri kutulara doldur
+    function populateDataBoxes() {
+      // Yaklaşan Düveler
+      const heifersContainer = document.getElementById('closestHeifersContainer');
+      if (updateDatas.closestHeifers && updateDatas.closestHeifers.length > 0) {
+        heifersContainer.innerHTML = updateDatas.closestHeifers.map(heifer => `
+          <div class="mb-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+            <div class="font-semibold text-gray-800">${heifer.Name}</div>
+            <div class="text-sm text-gray-600">${heifer.EarringNo}</div>
+          </div>
+        `).join('');
+      } else {
+        heifersContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+      }
+
+      // Yaklaşan İnekler
+      const cowsContainer = document.getElementById('closestCowsContainer');
+      if (updateDatas.closestCows && updateDatas.closestCows.length > 0) {
+        cowsContainer.innerHTML = updateDatas.closestCows.map(cow => `
+          <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+            <div class="font-semibold text-gray-800">${cow.Name}</div>
+            <div class="text-sm text-gray-600">${cow.EarringNo}</div>
+          </div>
+        `).join('');
+      } else {
+        cowsContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+      }
+
+      // Bilgi/Güncellemeler
+      const infoContainer = document.getElementById('infoContainer');
+      if (updateDatas.info && updateDatas.info.length > 0) {
+        infoContainer.innerHTML = updateDatas.info.map(item => `
+          <div class="mb-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+            <div class="text-sm text-gray-800 mb-2">${item.Info}</div>
+            <div class="text-xs text-gray-500">${new Date(item.CreatedAt).toLocaleDateString('tr-TR')} ${new Date(item.CreatedAt).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}</div>
+          </div>
+        `).join('');
+      } else {
+        infoContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+      }
+    }
+
+    // Sayfa yüklendiğinde verileri doldur
+    document.addEventListener('DOMContentLoaded', populateDataBoxes);
+  </script> -->
 
   <script src="../src/index.js"></script>
 </body>

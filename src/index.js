@@ -18,10 +18,15 @@ buttons.addEventListener("click", function (e) {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-    showLoading();
-    window.animalsAPI.receiveDatas((datas) => {
-        showDatas(datas);
-    });
+    if (navigator.onLine) {
+        showLoading();
+        window.animalsAPI.receiveDatas((datas) => {
+            showDatas(datas);
+        });
+    }
+    else {
+        window.offline.openOfflinePage();
+    }
 });
 
 function showDatas(datas) {

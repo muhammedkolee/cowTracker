@@ -1,5 +1,11 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld("offline", {
+    openOfflinePage: () => {
+        ipcRenderer.send("ipcMain:openOfflinePage");
+    }
+});
+
 contextBridge.exposeInMainWorld("addAnimalAPI", {
     receiveAnimalType: (callback) => {
         ipcRenderer.on("sendAnimalType", (event, animalType) => {

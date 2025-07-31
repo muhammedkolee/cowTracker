@@ -57,6 +57,10 @@ app.on("ready", () => {
     });
     //Dev
 
+    ipcMain.on("ipcMain:openOfflinePage", () => {
+        mainWindow.loadFile(path.join(__dirname, "../views/offlinePage.html"));
+    });
+
     // To open page which user want to open. pageName => file name without .html
     ipcMain.on("ipcMain:openPage", (event, pageName) => {
         mainWindow

@@ -66,7 +66,7 @@ updateButton.addEventListener("click", () => {
     if (animalType.value === "cow") {
         allDatas.cowData = {};
 
-        allDatas.cowData.earringNo = earringNo.value;
+        allDatas.cowData.EarringNo = earringNo.value;
         allDatas.cowData.Name = name.value;
         allDatas.cowData.InseminationDate = inseminationDate.value;
         allDatas.cowData.BullName = bullName.value;

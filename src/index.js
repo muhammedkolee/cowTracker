@@ -76,10 +76,11 @@ function fillDataBoxes(updatedDatas) {
           <div class="mb-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
             <div class="font-semibold text-gray-800">${heifer.Name}</div>
             <div class="text-sm text-gray-600">${heifer.EarringNo}</div>
+            <div class="text-sm text-gray-600">${heifer.Date}</div>
           </div>
         `).join('');
       } else {
-        heifersContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+        heifersContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Yaklaşan Düve Bulunmuyor!</div>';
       }
 
       // Yaklaşan İnekler
@@ -89,10 +90,11 @@ function fillDataBoxes(updatedDatas) {
           <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
             <div class="font-semibold text-gray-800">${cow.Name}</div>
             <div class="text-sm text-gray-600">${cow.EarringNo}</div>
+            <div class="text-sm text-gray-600">${cow.Date}</div>
           </div>
         `).join('');
       } else {
-        cowsContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+        cowsContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Yaklaşan İnek Bulunmuyor!</div>';
       }
 
       // Bilgi/Güncellemeler
@@ -105,6 +107,6 @@ function fillDataBoxes(updatedDatas) {
           </div>
         `).join('');
       } else {
-        infoContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Henüz veri bulunmuyor</div>';
+        infoContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Güncelleme Yok!</div>';
       }
 }

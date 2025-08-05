@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Aşı Ekle</title>
+        <link rel="stylesheet" href="../styles/output.css" />
+    </head>
+    <body class="bg-gray-100 min-h-screen" id="addVaccineBody">
+        <div class="container mx-auto px-4 py-8 max-w-2xl">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-8">
+                Yeni Aşı Ekle
+            </h3>
+
+            <form id="addVaccineForm" class="bg-white rounded-lg shadow-md p-6">
+                <div id="addVaccineDiv" class="space-y-6">
+                    <!-- Küpe Numarası -->
+                    <div>
+                        <label
+                            for="animalEarringNo"
+                            class="block text-sm font-semibold text-gray-700 mb-2"
+                        >
+                            Hayvan Seçimi
+                        </label>
+                        <select
+                            class="w-full px-3 overflow-y-auto max-h-48 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                            id="animalEarringNo"
+                        >
+                            <option value="">Hayvan seçiniz...</option>
+                        </select>
+                    </div>
+
+                    <!-- Aşı Türü -->
+                    <div>
+                        <label
+                            for="vaccineName"
+                            class="block text-sm font-semibold text-gray-700 mb-2"
+                        >
+                            Aşı Türü
+                        </label>
+                        <input
+                            type="text"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            id="vaccineName"
+                            required
+                            placeholder="Aşı adını giriniz"
+                        />
+                    </div>
+
+                    <!-- Aşı Tarihi -->
+                    <div>
+                        <label
+                            for="vaccineDate"
+                            class="block text-sm font-semibold text-gray-700 mb-2"
+                        >
+                            Aşı Tarihi
+                        </label>
+                        <input
+                            type="date"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            id="vaccineDate"
+                            required
+                        />
+                    </div>
+
+                    <!-- Hayvan Seçimi -->
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 mb-3"
+                        >
+                            Hangi Hayvanlar
+                        </label>
+                        <div class="space-y-3">
+                            <!-- Tüm Hayvanlar Radio -->
+                            <div class="flex items-center">
+                                <input
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                                    type="radio"
+                                    name="animalSelection"
+                                    id="allAnimals"
+                                    value="all"
+                                />
+                                <label
+                                    class="ml-2 text-sm font-medium text-gray-700"
+                                    for="allAnimalsRadioButton"
+                                >
+                                    Tüm Hayvanlar
+                                </label>
+                            </div>
+
+                            <!-- İnekler Checkbox -->
+                            <div class="flex items-center">
+                                <input
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    type="checkbox"
+                                    id="cows"
+                                    value="cow"
+                                />
+                                <label
+                                    class="ml-2 text-sm font-medium text-gray-700"
+                                    for="cows"
+                                >
+                                    İnekler
+                                </label>
+                            </div>
+
+                            <!-- Düveler Checkbox -->
+                            <div class="flex items-center">
+                                <input
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    type="checkbox"
+                                    id="heifers"
+                                    value="heifer"
+                                />
+                                <label
+                                    class="ml-2 text-sm font-medium text-gray-700"
+                                    for="heifers"
+                                >
+                                    Düveler
+                                </label>
+                            </div>
+
+                            <!-- Danalar Checkbox -->
+                            <div class="flex items-center">
+                                <input
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    type="checkbox"
+                                    id="bulls"
+                                    value="bull"
+                                />
+                                <label
+                                    class="ml-2 text-sm font-medium text-gray-700"
+                                    for="bulls"
+                                >
+                                    Danalar
+                                </label>
+                            </div>
+
+                            <!-- Buzağılar Checkbox -->
+                            <div class="flex items-center">
+                                <input
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    type="checkbox"
+                                    id="calves"
+                                    value="calf"
+                                />
+                                <label
+                                    class="ml-2 text-sm font-medium text-gray-700"
+                                    for="calves"
+                                >
+                                    Buzağılar
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Ekle Butonu -->
+            <div class="text-center mt-6">
+                <button
+                    id="addVaccineButton"
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300"
+                >
+                    Aşı Kaydını Ekle
+                </button>
+            </div>
+        </div>
+
+        <script src="../src/addVaccine.js"></script>
+    </body>
+</html>

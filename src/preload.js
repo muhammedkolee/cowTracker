@@ -48,6 +48,23 @@ contextBridge.exposeInMainWorld("updateAPI", {
     }
 });
 
+contextBridge.exposeInMainWorld("vaccineAPI", {
+    openAddVaccine: () => {
+        ipcRenderer.send("ipcMain:openAddVaccine");
+    },
+
+    receiveAnimalsDatas: (callback) => {
+        ipcRenderer.on("sendAnimalsDatas", (event, animalsDatas) => {
+            console.log("preload.js: ", animalsDatas);
+            callback(animalsDatas);
+        });
+    },
+
+    sendVaccineDatas: (vaccineDatas) => {
+        ipcRenderer.send("ipcMain:receiveVaccineDatas", vaccineDatas);
+    }
+});
+
 contextBridge.exposeInMainWorld("electronAPI", {
     // ***
     openPage: (pageId) => {
@@ -95,6 +112,4 @@ contextBridge.exposeInMainWorld("electronAPI", {
             callback(datas);
         });
     },
-
-
 });

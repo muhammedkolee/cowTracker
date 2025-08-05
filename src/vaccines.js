@@ -29,7 +29,6 @@ const layout = `
                         <tr class="bg-gray-800">
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe Numarası</th>
-                            <th class="px-4 py-3 text-center">İnek Adı</th>
                             <th class="px-4 py-3 text-center">Aşı Adı</th>
                             <th class="px-4 py-3 text-center">Aşı Tarihi</th>
                             <th class="px-4 py-3 text-center">Kaç Gün Oldu</th>
@@ -43,7 +42,7 @@ const layout = `
             </div>
         </div>
         <div class="fixed bottom-5 right-3 flex gap-2">
-            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-add-cow">
+            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-add-vaccine">
                 Yeni Aşı Ekle
             </button>
             <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-menu">
@@ -57,12 +56,11 @@ const vaccinesBody = document.getElementById("vaccinesBody");
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     vaccinesBody.innerHTML = loadingTemplate;
-    if (window.animalsAPI) {
-        window.animalsAPI.receiveDatas((datas) => {
-            showDatas(datas);
-        });
-    }
+    window.animalsAPI.receiveDatas((datas) => {
+        showDatas(datas);
+    });
 });
+
 
 function showDatas(datas) {
     vaccinesBody.innerHTML = layout;
@@ -70,9 +68,14 @@ function showDatas(datas) {
     const menuButton = document.getElementById("btn-menu");
     const titleVaccine = document.getElementById("titleVaccine");
     const vaccineTableBody = document.getElementById("vaccineTableBody");
+    const addVaccine = document.getElementById("btn-add-vaccine");
 
     menuButton.addEventListener("click", () => {
-        if (window.electronAPI) window.electronAPI.openMenu();
+        window.electronAPI.openMenu();
+    });
+
+    addVaccine.addEventListener("click", () => {
+        window.vaccineAPI.openAddVaccine();
     });
 
     vaccineTableBody.addEventListener("click", function (event) {
@@ -80,12 +83,7 @@ function showDatas(datas) {
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
 
-        if (target.id === "infoIco") {
-            let datas = { earringNo: earringNo.textContent, type: "cow" };
-            if (window.electronAPI) window.electronAPI.openAnimalDetail(datas);
-        }
-
-        else if (target.id === "updateIco") {
+        if (target.id === "updateIco") {
             datas = earringNo.textContent;
             if (window.electronAPI) window.electronAPI.openUpdateAnimal(earringNo.textContent);
         }
@@ -104,11 +102,10 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.vaccines.forEach((vaccine) => {
+    datas.forEach((vaccine) => {
         let tableRow = document.createElement("tr");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
-        let name = document.createElement("td");
         let vaccineName = document.createElement("td");
         let vaccineDate = document.createElement("td");
         let days = document.createElement("td");
@@ -117,16 +114,13 @@ function showDatas(datas) {
         let navDiv = document.createElement("div");
         let deleteButton = document.createElement("button");
         let updateButton = document.createElement("button");
-        let infoButton = document.createElement("button");
         let deleteIco = document.createElement("span");
-        let infoIco = document.createElement("span");
         let updateIco = document.createElement("span");
 
         // Tailwind classes
-        tableRow.className = "hover:bg-gray-50 transition-colors duration-150 font-bold bg-yellow-100";
+        tableRow.className = "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
         number.className = "px-4 py-3 text-center";
         earringNo.className = "px-4 py-3 text-center";
-        name.className = "px-4 py-3 text-center";
         vaccineName.className = "px-4 py-3 text-center";
         vaccineDate.className = "px-4 py-3 text-center";
         days.className = "px-4 py-3 text-center";
@@ -134,27 +128,29 @@ function showDatas(datas) {
 
         navDiv.className = "flex justify-center gap-1";
         deleteButton.className = "px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors duration-200";
-        infoButton.className = "px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors duration-200";
         updateButton.className = "px-2 py-1 bg-indigo-500 hover:bg-indigo-600 text-white text-xs rounded transition-colors duration-200";
 
-        deleteIco.className = "icon-trash";
-        infoIco.className = "icon-info";
-        updateIco.className = "icon-edit";
+        deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
+        updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
+        
+
+        deleteButton.className =
+            "bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
+        updateButton.className =
+            "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
+        
 
         nav.appendChild(navDiv);
 
-        navDiv.appendChild(infoButton);
         navDiv.appendChild(updateButton);
         navDiv.appendChild(deleteButton);
 
         deleteButton.appendChild(deleteIco);
-        infoButton.appendChild(infoIco);
         updateButton.appendChild(updateIco);
 
         vaccineTableBody.appendChild(tableRow);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
-        tableRow.appendChild(name);
         tableRow.appendChild(vaccineName);
         tableRow.appendChild(vaccineDate);
         tableRow.appendChild(days);
@@ -163,18 +159,15 @@ function showDatas(datas) {
         earringNo.id = "earringNo";
 
         deleteIco.id = "deleteIco";
-        infoIco.id = "infoIco";
         updateIco.id = "updateIco";
         deleteButton.id = "deleteIco";
-        infoButton.id = "infoIco";
         updateButton.id = "updateIco";
 
         number.textContent = count.toString() + "-)";
-        earringNo.textContent = vaccine.earringNo;
-        name.textContent = vaccine.name;
-        vaccineName.textContent = vaccine.vaccineName;
-        vaccineDate.textContent = vaccine.vaccineDate;
-        days.textContent = calculateDays(vaccine.vaccineDate).toString();
+        earringNo.textContent = vaccine.EarringNo;
+        vaccineName.textContent = vaccine.VaccineName;
+        vaccineDate.textContent = new Date(vaccine.VaccineDate).toLocaleDateString("tr-TR");
+        days.textContent = calculateDays(vaccine.VaccineDate).toString();
 
         count += 1;
     });

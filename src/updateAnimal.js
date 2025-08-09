@@ -21,42 +21,48 @@ window.addEventListener("DOMContentLoaded", () => {
 
 animalType.addEventListener("change", () => {
     let type = animalType.value;
+    
+    // Reset all fields to enabled state first
+    resetFieldStates();
+    
     if (type === "cow"){
-        lastBirthDate.disabled = true;
-        inseminationDate.disabled = false;
-        bullName.disabled = false;
-        checkDate.disabled = false;
-        gender.disabled = true;
+        setFieldState(lastBirthDate, true);
+        setFieldState(inseminationDate, false);
+        setFieldState(bullName, false);
+        setFieldState(checkDate, false);
+        setFieldState(gender, true);
     }
     else if (type === "heifer"){
-        lastBirthDate.disabled = false;
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
-        gender.disabled = true;
+        setFieldState(lastBirthDate, false);
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
+        setFieldState(gender, true);
     }
     else if (type === "calf"){
-        lastBirthDate.disabled = true;
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
-        gender.disabled = false;
+        setFieldState(lastBirthDate, true);
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
+        setFieldState(gender, false);
     }
     else if (type === "bull"){
-        lastBirthDate.disabled = true;
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
-        gender.disabled = true;
+        setFieldState(lastBirthDate, true);
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
+        setFieldState(gender, true);
     }
 });
 
-updateButton.addEventListener("click", () => {
-    allDatas = {};
+updateButton.addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent form submission
+    
+    const allDatas = {};
     allDatas.animalData = {};
 
     allDatas.animalData.EarringNo = earringNo.value;
-    allDatas.animalData.Name = name.value;
+    allDatas.animalData.Name = nameTag.value;
     allDatas.animalData.BirthDate = birthDate.value;
     allDatas.animalData.MotherEarringNo = motherEarringNo.value;
     allDatas.animalData.MotherName = motherName.value;
@@ -67,31 +73,30 @@ updateButton.addEventListener("click", () => {
         allDatas.cowData = {};
 
         allDatas.cowData.EarringNo = earringNo.value;
-        allDatas.cowData.Name = name.value;
+        allDatas.cowData.Name = nameTag.value;
         allDatas.cowData.InseminationDate = inseminationDate.value;
         allDatas.cowData.BullName = bullName.value;
         allDatas.cowData.CheckedDate = checkDate.value;
-        // allDatas.animalData.Type = "cow";
     }
     else if (animalType.value === "heifer") {
         allDatas.heiferData = {};
 
         allDatas.heiferData.EarringNo = earringNo.value;
-        allDatas.heiferData.Name = name.value;
+        allDatas.heiferData.Name = nameTag.value;
         allDatas.heiferData.LastBirthDate = lastBirthDate.value;
-        // allDatas.animalData.Type = "heifer";
     }
     else if (animalType.value === "calf"){
-        console.log("updateAnimal.js girildi");
         allDatas.calfData = {};
 
         allDatas.calfData.EarringNo = earringNo.value;
-        allDatas.calfData.Name = name.value;
+        allDatas.calfData.Name = nameTag.value;
         allDatas.calfData.Gender = gender.value === "true" ? true : false;
         allDatas.calfData.BirthDate = birthDate.value;
-        // allDatas.animalData.Type = "calf";
     }
 
+    // Show loading state
+    showLoadingState();
+    
     window.updateAPI.updateAnimalDatas(allDatas);
 });
 
@@ -103,41 +108,88 @@ function showDatas(allDatas) {
     motherName.value = allDatas.animalData[0].MotherName;
     animalType.value = allDatas.animalData[0].Type;
 
+    // Reset all fields first
+    resetFieldStates();
+
     if (allDatas.animalData[0].Type == "cow"){
-        lastBirthDate.disabled = true;
+        setFieldState(lastBirthDate, true);
         inseminationDate.value = allDatas.cowData[0].InseminationDate;
         bullName.value = allDatas.cowData[0].BullName;
         checkDate.value = allDatas.cowData[0].CheckedDate;
         gender.value = "true";
-        gender.disabled = true;
+        setFieldState(gender, true);
     }
     else if (allDatas.animalData[0].Type === "heifer"){
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
         lastBirthDate.value = allDatas.heiferData[0].LastBirthDate;
         gender.value = "true";
-        gender.disabled = true;
+        setFieldState(gender, true);
     }
     else if(allDatas.animalData[0].Type === "calf"){
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
-        lastBirthDate.disabled = true;
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
+        setFieldState(lastBirthDate, true);
         gender.value = allDatas.calfData[0].Gender ? "true" : "false";
-        gender.disabled = false;
+        setFieldState(gender, false);
     }
     else if (allDatas.animalData[0].Type === "bull"){
-        inseminationDate.disabled = true;
-        bullName.disabled = true;
-        checkDate.disabled = true;
-        lastBirthDate.disabled = true;
+        setFieldState(inseminationDate, true);
+        setFieldState(bullName, true);
+        setFieldState(checkDate, true);
+        setFieldState(lastBirthDate, true);
         gender.value = "false";
-        gender.disabled = true;  
+        setFieldState(gender, true);
     }
 }
 
-// function parseTurkishDate(wDate) {
-//     let [day, month, year] = wDate.split(".");
-//     return `${year}-${month}-${day}`;
-// }
+// Helper function to set field state with Tailwind classes
+function setFieldState(element, disabled) {
+    element.disabled = disabled;
+    if (disabled) {
+        element.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-50');
+        element.classList.remove('hover:border-primary');
+    } else {
+        element.classList.remove('bg-gray-100', 'cursor-not-allowed', 'opacity-50');
+        element.classList.add('hover:border-primary');
+    }
+}
+
+// Helper function to reset all field states
+function resetFieldStates() {
+    const fields = [lastBirthDate, inseminationDate, bullName, checkDate, gender];
+    fields.forEach(field => {
+        setFieldState(field, false);
+    });
+}
+
+// Show loading state on button
+function showLoadingState() {
+    updateButton.disabled = true;
+    updateButton.innerHTML = `
+        <span class="flex items-center space-x-2">
+            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Kaydediliyor...</span>
+        </span>
+    `;
+    updateButton.classList.add('opacity-75', 'cursor-not-allowed');
+}
+
+// Reset button state (call this when update is complete)
+function resetButtonState() {
+    updateButton.disabled = false;
+    updateButton.innerHTML = `
+        <span class="flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Kaydet</span>
+        </span>
+    `;
+    updateButton.classList.remove('opacity-75', 'cursor-not-allowed');
+}

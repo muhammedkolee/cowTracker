@@ -1,5 +1,5 @@
 const type = document.getElementById("type");
-const addAnimalForm = document.getElementById("addAnimalDiv");
+const addAnimalForm = document.getElementById("addAnimalForm");
 const addButton = document.getElementById("addButton");
 const addAnimalBody = document.getElementById("addAnimalBody");
 
@@ -41,15 +41,6 @@ window.addAnimalAPI.addResult((result) => {
 addButton.addEventListener("click", () => {
     const newAnimalDatas = {};
     newAnimalDatas.animalDatas = {};
-
-    /*
-    
-                    animalName
-                    earringNo
-                    birthDate
-                    motherEarringNo
-                    motherName
-    */
 
     const earringNo = document.getElementById("earringNo");
     const animalName = document.getElementById("animalName");
@@ -122,31 +113,16 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.animalDatas.Type = "bull";
     }
 
+    // Show loading screen with Tailwind classes
     addAnimalBody.innerHTML = `
-        <style>
-            .loader {
-                border: 16px solid #f3f3f3; /* Light grey */
-                border-top: 16px solid #000000; /* black */
-                border-radius: 50%;
-                width: 120px;
-                height: 120px;
-                animation: spin 2s linear infinite;
-            }
-
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-        <div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;">
-            <div class="loader"></div>
-            <h2>Hayvan Ekleniyor...</h2>
+        <div class="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-32 w-32 border-b-2 border-primary mb-4"></div>
+                <h2 class="text-2xl font-semibold text-gray-700">Hayvan Ekleniyor...</h2>
+                <p class="text-gray-500 mt-2">Lütfen bekleyiniz</p>
+            </div>
         </div>
-            `;
+    `;
     window.addAnimalAPI.addAnimal(newAnimalDatas);
 });
 
@@ -171,14 +147,14 @@ function addCow() {
     let inseminationDateInput = document.createElement("input");
     inseminationDateInput.id = "inseminationDateInput";
 
-    inseminationDateDiv.className = "mb-3";
+    inseminationDateDiv.className = "space-y-2 pb-2";
 
-    inseminationDateLabel.for = "inseminationDateInput";
-    inseminationDateLabel.className = "form-label";
-    inseminationDateLabel.innerHTML = "<strong>Tohumlama Tarihi</strong>";
+    inseminationDateLabel.htmlFor = "inseminationDateInput";
+    inseminationDateLabel.className = "block text-sm font-semibold text-gray-700";
+    inseminationDateLabel.innerHTML = "Tohumlama Tarihi";
 
     inseminationDateInput.type = "date";
-    inseminationDateInput.className = "form-control";
+    inseminationDateInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
     inseminationDateInput.required = true;
 
     deneme.appendChild(inseminationDateDiv);
@@ -191,14 +167,14 @@ function addCow() {
     let bullNameInput = document.createElement("input");
     bullNameInput.id = "bullNameInput";
 
-    bullNameDiv.className = "mb-3";
+    bullNameDiv.className = "space-y-2 mt-6";
 
-    bullNameLabel.for = "bullNameInput";
-    bullNameLabel.className = "form-label";
-    bullNameLabel.innerHTML = "<strong>Dana Adı</strong>";
+    bullNameLabel.htmlFor = "bullNameInput";
+    bullNameLabel.className = "block text-sm font-semibold text-gray-700";
+    bullNameLabel.innerHTML = "Dana Adı";
 
     bullNameInput.type = "text";
-    bullNameInput.className = "form-control";
+    bullNameInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(bullNameDiv);
     bullNameDiv.appendChild(bullNameLabel);
@@ -210,14 +186,14 @@ function addCow() {
     let checkInput = document.createElement("input");
     checkInput.id = "checkInput";
 
-    checkDiv.className = "mb-3";
+    checkDiv.className = "space-y-2 mt-6";
 
-    checkLabel.for = "checkInput";
-    checkLabel.className = "form-label";
-    checkLabel.innerHTML = "<strong>Gebelik Kontrol</strong>";
+    checkLabel.htmlFor = "checkInput";
+    checkLabel.className = "block text-sm font-semibold text-gray-700";
+    checkLabel.innerHTML = "Gebelik Kontrol";
 
     checkInput.type = "date";
-    checkInput.className = "form-control";
+    checkInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(checkDiv);
     checkDiv.appendChild(checkLabel);
@@ -226,6 +202,7 @@ function addCow() {
 
 function addCalf() {
     deneme.innerHTML = template;
+    
     // Gender
     let genderDiv = document.createElement("div");
     let genderLabel = document.createElement("label");
@@ -235,18 +212,20 @@ function addCalf() {
     let girl = document.createElement("option");
     let boy = document.createElement("option");
 
-    genderDiv.className = "mb-3";
+    genderDiv.className = "space-y-2 mt-6";
 
-    genderLabel.for = "genderInput";
-    genderLabel.className = "form-label";
-    genderLabel.innerHTML = "<strong>Cinsiyet</strong>";
+    genderLabel.htmlFor = "genderInput";
+    genderLabel.className = "block text-sm font-semibold text-gray-700";
+    genderLabel.innerHTML = "Cinsiyet";
 
+    temp.value = "";
+    temp.text = "Seçiniz";
     girl.value = "girl";
     girl.text = "Dişi";
     boy.value = "boy";
     boy.text = "Erkek";
 
-    genderInput.className = "form-select";
+    genderInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
     genderInput.required = true;
 
     deneme.appendChild(genderDiv);
@@ -259,20 +238,21 @@ function addCalf() {
 
 function addHeifer() {
     deneme.innerHTML = template;
+    
     // Last Birth Date
     let lastBirthDateDiv = document.createElement("div");
     let lastBirthDateLabel = document.createElement("label");
     let lastBirthDateInput = document.createElement("input");
     lastBirthDateInput.id = "lastBirthDateInput";
 
-    lastBirthDateDiv.className = "mb-3";
+    lastBirthDateDiv.className = "space-y-2 mt-6";
 
-    lastBirthDateLabel.for = "lastBirthDateInput";
-    lastBirthDateLabel.className = "form-label";
-    lastBirthDateLabel.innerHTML = "<strong>Son Doğurduğu Tarih</strong>";
+    lastBirthDateLabel.htmlFor = "lastBirthDateInput";
+    lastBirthDateLabel.className = "block text-sm font-semibold text-gray-700";
+    lastBirthDateLabel.innerHTML = "Son Doğurduğu Tarih";
 
     lastBirthDateInput.type = "date";
-    lastBirthDateInput.className = "form-control";
+    lastBirthDateInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(lastBirthDateDiv);
     lastBirthDateDiv.appendChild(lastBirthDateLabel);
@@ -283,42 +263,32 @@ function addBull() {
     deneme.innerHTML = template;
 }
 
-/*
-<div class="mb-3">
-                    <label for="type" class="form-label"><strong>Türü</strong></label>
-                    <select class="form-select" id="type">
-                        <option value="">Seçiniz</option>
-                        <option value="cow">İnek</option>
-                        <option value="heifer">Düve</option>
-                        <option value="calf">Buzağı</option>
-                        <option value="bull">Dana</option>
-                    </select>
-                </div>
-*/
+// Updated template with Tailwind classes
 const template = `
+    <div class="space-y-6">
+        <div class="space-y-2">
+            <label for="animalName" class="block text-sm font-semibold text-gray-700">Hayvan Adı</label>
+            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="animalName"/>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="cowName" class="form-label"><strong>Hayvan Adı</strong></label>
-                        <input type="text" class="form-control" id="animalName"/>
-                    </div>
+        <div class="space-y-2">
+            <label for="earringNo" class="block text-sm font-semibold text-gray-700">Küpe Numarası</label>
+            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="earringNo" class="form-label"><strong>Küpe Numarası</strong></label>
-                        <input type="text" class="form-control" id="earringNo" required/>
-                    </div>
+        <div class="space-y-2">
+            <label for="birthDate" class="block text-sm font-semibold text-gray-700">Doğum Tarihi</label>
+            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="birthDate"/>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="birthDate" class="form-label"><strong>Doğum Tarihi</strong></label>
-                        <input type="date" class="form-control" id="birthDate"/>
-                    </div>
+        <div class="space-y-2">
+            <label for="motherEarringNo" class="block text-sm font-semibold text-gray-700">Anne Küpe Numarası</label>
+            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="motherEarringNo"/>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="motherEarringNo" class="form-label"><strong>Anne Küpe Numarası</strong></label>
-                        <input type="text" class="form-control" id="motherEarringNo"/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="motherEarringNo" class="form-label"><strong>Anne Adı</strong></label>
-                        <input type="text" class="form-control" id="motherName"/>
-                    </div>
-    `;
+        <div class="space-y-2">
+            <label for="motherName" class="block text-sm font-semibold text-gray-700">Anne Adı</label>
+            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="motherName"/>
+        </div>
+    </div>
+`;

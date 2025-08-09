@@ -19,7 +19,9 @@
     "files": [
       "dist/**/*",
       "src/**/*",
-      "icon.ico"
+      "icon.ico",
+      "styles/**/*",
+      "views/**/*"
     ],
     "extraResources": [],
     "win": {

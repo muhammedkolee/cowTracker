@@ -3,54 +3,37 @@
     <head>
         <meta charset="UTF-8" />
         <title>Hayvan Ekle</title>
-        <link href="../assets/styles/bootstrap.min.css" rel="stylesheet" />
-
+        <link rel="stylesheet" href="../styles/output.css">
     </head>
-    <body class="bg-light" id="addAnimalBody">
-        <div class="container mt-4">
-            <h3 class="text-center mb-4">Yeni Hayvan Ekle</h3>
+    <body class="bg-gray-50 min-h-screen" id="addAnimalBody">
+        <div class="container mx-auto px-4 py-8 max-w-2xl">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">Yeni Hayvan Ekle</h3>
 
-            <form id="addAnimalForm">
-                <div id="addAnimalDiv">
-                    <div class="mb-3">
-                        <label for="type" class="form-label"><strong>Türü</strong></label>
-                        <select class="form-select" id="type">
-                            <option value="">Seçiniz</option>
-                            <option value="cow">İnek</option>
-                            <option value="heifer">Düve</option>
-                            <option value="calf">Buzağı</option>
-                            <option value="bull">Dana</option>
-                        </select>
-                    </div>
-                    <div id="deneme">
+                <form id="addAnimalForm" class="space-y-6">
+                    <div id="addAnimalDiv">
+                        <div class="space-y-2">
+                            <label for="type" class="block text-sm font-semibold text-gray-700">Türü</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="type">
+                                <option value="">Seçiniz</option>
+                                <option value="cow">İnek</option>
+                                <option value="heifer">Düve</option>
+                                <option value="calf">Buzağı</option>
+                                <option value="bull">Dana</option>
+                            </select>
+                        </div>
                         
+                        <div id="deneme" class="mt-6 space-y-6">
+                            
+                        </div>
                     </div>
-                    <!-- 
-                    <div class="mb-3">
-                        <label for="cowName" class="form-label"><strong>Hayvan Adı</strong></label>
-                        <input type="text" class="form-control" id="animalName"/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="earringNo" class="form-label"><strong>Küpe Numarası</strong></label>
-                        <input type="text" class="form-control" id="earringNo" required/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="birthDate" class="form-label"><strong>Doğum Tarihi</strong></label>
-                        <input type="date" class="form-control" id="birthDate"/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="motherEarringNo" class="form-label"><strong>Anne Küpe Numarası</strong></label>
-                        <input type="text" class="form-control" id="motherEarringNo"/>
-                    </div> -->
+                </form>
+                
+                <div class="flex justify-center mt-8">
+                    <button id="addButton" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-md hover:shadow-lg transform hover:scale-105 duration-200 ease-in-out transition-colors">
+                        Ekle
+                    </button>
                 </div>
-            </form>
-            <div class="text-center">
-                <button id="addButton" class="btn btn-lg btn-success mb-3">
-                    Ekle
-                </button>
             </div>
         </div>
 

@@ -2,10 +2,19 @@
 if (require("electron-squirrel-startup")) return;
 
 // Frameworks
-const { app, BrowserWindow, Menu, ipcMain, screen } = require("electron");
+const { app, BrowserWindow, ipcMain, screen } = require("electron");
 const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
-const { eventNames } = require("process");
+
+// Import files for backend.
+const addAnimal = require("../backend/addAnimalF.js");
+const updateAnimal = require("../backend/updateAnimalF.js");
+const removeAnimal = require("../backend/removeAnimalF.js");
+const receiveVaccineDatas = require("../backend/receiveVaccineDatasF.js");
+const updateDatabase = require("../backend/updateDatabaseF.js");
+
+
+// const { eventNames } = require("process");
 // const os = require("os");
 // const fs = require("fs");
 
@@ -291,137 +300,26 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
 });
 // END OF THE MENUS
 
+
 // FUNCTIONS
 // Add Animal
 ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
-    const { data: animalsData, error: animalsError } = await supabase
-        .from("Animals")
-        .insert(datas.animalDatas);
-    if (datas.animalDatas.Type === "cow") {
-        const { data: cowsData, error: cowsError } = await supabase
-            .from("Cows")
-            .insert(datas.cowDatas);
-        if (cowsError) {
-            event.sender.send("addResult", false);
-        }
-    } else if (datas.animalDatas.Type === "heifer") {
-        const { data: heifersData, error: heifersError } = await supabase
-            .from("Heifers")
-            .insert(datas.heiferDatas);
-        if (heifersError) {
-            event.sender.send("addResult", false);
-        }
-    } else if (datas.animalDatas.Type === "calf") {
-        const { data: calvesData, error: calvesError } = await supabase
-            .from("Calves")
-            .insert(datas.calfDatas);
-        if (calvesError) {
-            event.sender.send("addResult", false);
-        }
-    }
-    if (animalsError) {
-        event.sender.send("addResult", false);
-    } else {
+    if(addAnimal(datas)) {
         event.sender.send("addResult", true);
+    } else {
+        event.sender.send("addResult", false);
     }
 });
 
 // Update Animal
 ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
-    const { data: willRemoveAnimal, error: animalError } = await supabase.from("Animals").select("*").eq("EarringNo", allDatas.animalData.EarringNo);
-    if (allDatas.animalData.Type === "cow") {
-            const { error } = await supabase
-            .from("Cows")
-            .insert(allDatas.cowData)
-            if (error) {
-                console.log("Bir hata oluştu: ", error);
-            }
-    } else if (allDatas.animalData.Type === "heifer") {
-            const { error } = await supabase
-            .from("Heifers")
-            .insert(allDatas.heiferData)
-            if (error) {
-                console.log(error);
-            }
-    } else if (allDatas.animalData.Type === "calf") {
-            const { error } = await supabase
-            .from("Calves")
-            .insert(allDatas.calfData)
-            if (error) {
-                console.log("Bir hata oluştu: ", error);
-            }
-    }
-    const { error } = await supabase
-        .from("Animals")
-        .update(allDatas.animalData)
-        .eq("EarringNo", allDatas.animalData.EarringNo);
-    if (error) {
-        console.log("Bir hata oluştu: ", error);
-    } else {
-        console.log("İşlem başarıyla tamamlandı!");
-    }
-
-    const response = await supabase.from(`${String(willRemoveAnimal[0].Type).charAt(0).toUpperCase() + String(willRemoveAnimal[0].Type).slice(1)}s`).delete().eq("EarringNo", allDatas.animalData.EarringNo);
-    if (response.statusText === 204) {
-        console.log("Hayvan basari ile silindi.");
-    }
-    else {
-        console.log("ssBir hata olustu: ", response.statusText);
-    }
+    updateAnimal(allDatas);
 });
 
 // Remove Animal
 ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
-    if (datas.Type === "cow") {
-        const response = await supabase
-            .from("Cows")
-            .delete()
-            .eq("EarringNo", datas.EarringNo);
-        if (response.status === 204) {
-            console.log("Islem basarili.");
-        } else {
-            console.log(
-                "Bir hata meydana geldi, Animals!\n",
-                response.statusText
-            );
-        }
-    } else if (datas.Type === "heifer") {
-        const response = await supabase
-            .from("Heifers")
-            .delete()
-            .eq("EarringNo", datas.EarringNo);
-        if (response.status === 204) {
-            console.log("Islem basarili.");
-        } else {
-            console.log(
-                "Bir hata meydana geldi, Animals!\n",
-                response.statusText
-            );
-        }
-    } else if (datas.Type === "calf") {
-        const response = await supabase
-            .from("Calves")
-            .delete()
-            .eq("EarringNo", datas.EarringNo);
-        if (response.status === 204) {
-            console.log("Islem basarili.");
-        } else {
-            console.log(
-                "Bir hata meydana geldi, Animals!\n",
-                response.statusText
-            );
-        }
-    }
-    const response = await supabase
-        .from("Animals")
-        .delete()
-        .eq("EarringNo", datas.EarringNo);
-    if (response.status === 204) {
-        console.log("İşlem Başarılı!");
-    } else {
-        console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
-    }
-
+    removeAnimal(datas);
+    
     if (datas.pageName === "animals") {
         event.sender.send("refresh", await getAnimalsDatas());
     } else if (datas.pageName === "cows") {
@@ -436,50 +334,7 @@ ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
 });
 
 ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
-    if (vaccineDatas.all) {
-        const { data, error } = await supabase.from("Animals").select("*");
-
-        data.forEach(async(animal) => {
-            const { error } = await supabase.from("Vaccines").insert({ VaccineName: vaccineDatas.VaccineName, VaccineDate: vaccineDatas.VaccineDate, EarringNo: animal.EarringNo })
-            if (error) {
-                console.log("Bir hata oluştu, fonksiyon durduruluyor.");
-                return 
-            }
-        });
-    }
-    else if (vaccineDatas.types) {
-        const animalsList = [];
-        if (vaccineDatas.types.cows) {
-            const { data: cowData, error: cowError } = await supabase.from("Cows").select("*");
-            cowData.forEach(async (cow) => {
-                const { error } = await supabase.from("Vaccines").insert({ VaccineName: vaccineDatas.VaccineName, VaccineDate: vaccineDatas.VaccineDate, EarringNo: cow.EarringNo })
-            });
-        }
-        if (vaccineDatas.types.heifers) {
-            const { data: heiferData, error: heiferError } = await supabase.from("Heifers").select("*");
-            heiferData.forEach(async (heifer) => {
-                const { error } = await supabase.from("Vaccines").insert({ VaccineName: vaccineDatas.VaccineName, VaccineDate: vaccineDatas.VaccineDate, EarringNo: heifer.EarringNo })
-            });
-        }
-        if (vaccineDatas.types.calves) {
-            const { data: calvesData, error: calvesError } = await supabase.from("Calves").select("*");
-            calvesData.forEach(async (calf) => {
-                const { error } = await supabase.from("Vaccines").insert({ VaccineName: vaccineDatas.VaccineName, VaccineDate: vaccineDatas.VaccineDate, EarringNo: calf.EarringNo })
-            });
-        }
-        if (vaccineDatas.types.bulls) {
-            const { data: bullsData, error: bullsError } = await supabase.from("Animals").select("*").eq("Type", "bull");
-            bullsData.forEach(async (bull) => {
-                const { error } = await supabase.from("Vaccines").insert({ VaccineName: vaccineDatas.VaccineName, VaccineDate: vaccineDatas.VaccineDate, EarringNo: bull.EarringNo })
-            });
-        }
-    }
-    else if (vaccineDatas.EarringNo) {
-        const { error } = await supabase.from("Vaccines").insert(vaccineDatas);
-        if (error) {
-            console.log(error);
-        }
-    }
+    receiveVaccineDatas(vaccineDatas);
 });
 // END OF THE FUNCTIONS
 
@@ -666,116 +521,6 @@ async function getVaccinesDatas() {
 }
 
 // Update database's datas.
-async function updateDatabase() {
-    const calvesDatas = await getCalvesDatas();
-
-    calvesDatas.forEach(async (calf) => {
-        let calfBirthDate = new Date(calf.BirthDate);
-
-        if ((getTodayDate() - calfBirthDate) / (1000 * 60 * 60 * 24) >= 365) {
-            console.log("Isleme baslaniyor...");
-            // const response = await supabase.from("Cows").delete().eq("EarringNo", datas.EarringNo);
-            // const { data: cowsData, error: cowsError } = await supabase.from("Cows").insert(datas.cowDatas);
-            // const { error } = await supabase.from("Calves").update(allDatas.calfData).eq("EarringNo", allDatas.animalData.EarringNo);
-
-            const responseDelete = await supabase
-                .from("Calves")
-                .delete()
-                .eq("EarringNo", calf.EarringNo);
-
-            if (calf.Gender) {
-                const { data: addHeiferData, error: addHeiferError } =
-                    await supabase.from("Heifers").insert({
-                        EarringNo: calf.EarringNo,
-                        Name: calf.Name,
-                        LastBirthDate: getTodayDate(),
-                    });
-
-                const { data: updateCalfData, error: updateCalfError } =
-                    await supabase
-                        .from("Animals")
-                        .update({ Type: "heifer" })
-                        .eq("EarringNo", calf.EarringNo);
-            } else {
-                const { data: addBullData, error: addBullError } =
-                    await supabase
-                        .from("Animals")
-                        .update({ Type: "bull" })
-                        .eq("EarringNo", calf.EarringNo);
-            }
-            const { data: infoData, error: infoError } = await supabase
-                .from("Information")
-                .insert({
-                    Info:
-                        calf.EarringNo +
-                        ` küpe numaralı buzağı "Düve" olarak kaydedildi!`,
-                });
-            console.log(infoError);
-            console.log("else bloğuna girildi.");
-        }
-    });
-
-    const heifersDatas = await getHeifersDatas();
-    let closestHeifers = [];
-
-    heifersDatas.forEach(async (heifer) => {
-        if (
-            (getTodayDate() - new Date(heifer.LastBirthDate)) /
-                (1000 * 60 * 60 * 24) >=
-                40 &&
-            (getTodayDate() - new Date(heifer.LastBirthDate)) /
-                (1000 * 60 * 60 * 24) <=
-                90
-        ) {
-            console.log("adw");
-            closestHeifers.push({
-                EarringNo: heifer.EarringNo,
-                Name: heifer.Name,
-                Date:
-                    (getTodayDate() - new Date(heifer.LastBirthDate)) /
-                    (1000 * 60 * 60 * 24),
-            });
-        }
-    });
-
-    const cowsDatas = await getCowsDatas();
-    let closestCows = [];
-
-    cowsDatas.forEach((cow) => {
-        if (
-            (new Date(cow.InseminationDate) - getTodayDate()) /
-                (1000 * 60 * 60 * 24) +
-                280 <=
-            20
-        ) {
-            closestCows.push({
-                EarringNo: cow.EarringNo,
-                Name: cow.Name,
-                Date:
-                    (new Date(cow.InseminationDate) - getTodayDate()) /
-                        (1000 * 60 * 60 * 24) +
-                    280,
-            });
-        }
-    });
-
-    const { data: info, error: infoError } = await supabase
-        .from("Information")
-        .select("*");
-
-    return {
-        closestHeifers: closestHeifers,
-        closestCows: closestCows,
-        info: info,
-    };
-}
-
-// Get Today's date as type of Date.
-function getTodayDate() {
-    let today = new Date();
-    let year = today.getFullYear();
-    let month = String(today.getMonth() + 1).padStart(2, "0");
-    let day = String(today.getDate()).padStart(2, "0");
-
-    return new Date(`${year}-${month}-${day}`);
-}
+// async function updateDatabase() {
+//     updateDatabase();
+// }

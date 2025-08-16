@@ -233,11 +233,21 @@ function showDatas(datas) {
         birthDate.textContent = new Date(calf.BirthDate).toLocaleDateString("tr-TR");
 
         let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calf.BirthDate);
-        days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
-        lt2.textContent = lt2Date;
-        lt1.textContent = lt1Date;
-        shutDate.textContent = shutDateC;
-        shutDay.textContent = daysS;
+        console.log(shutDateC);
+        if (new Date(shutDateC) < getTodayDate()) {
+            days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
+            lt2.textContent = "Sütten Kesildi";
+            lt1.textContent = "Sütten Kesildi";
+            shutDate.textContent = "Sütten Kesildi";
+            shutDay.textContent = "Sütten Kesildi";
+        } 
+        else {
+            days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
+            lt2.textContent = lt2Date.toLocaleDateString("tr-TR");
+            lt1.textContent = lt1Date.toLocaleDateString("tr-TR");
+            shutDate.textContent = shutDateC.toLocaleDateString("tr-TR");
+            shutDay.textContent = daysS;
+        }
 
         motherEarringNo.textContent = calf.MotherEarringNo;
         motherName.textContent = calf.MotherName;
@@ -278,9 +288,9 @@ function calculateDates(birthDate) {
     daysShut = Math.ceil((shutDate - today) / (1000 * 60 * 60 * 24));
 
     return {
-        lt2Date: lt2Date.toLocaleDateString("tr-TR"),
-        lt1Date: lt1Date.toLocaleDateString("tr-TR"),
-        shutDateC: shutDate.toLocaleDateString("tr-TR"),
+        lt2Date: lt2Date,
+        lt1Date: lt1Date,
+        shutDateC: shutDate,
         daysC: daysDate,
         daysS: daysShut
     };

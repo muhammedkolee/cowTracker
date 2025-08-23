@@ -19,6 +19,19 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+window.updateAPI.updateResult((updateResult) => {
+    if (updateResult) {
+        const confirmed = window.confirm("Hayvan Başarıyla Güncellendi!");
+        if (confirmed) {
+            window.close();
+        }
+        else (window.close());
+    }
+    else {
+        window.confirm("İşlem sırasında bir hata meydana geldi!");
+    }
+})
+
 animalType.addEventListener("change", () => {
     let type = animalType.value;
     

@@ -141,11 +141,11 @@ function showDatas(datas) {
         let deleteButton = document.createElement("button");
         let updateButton = document.createElement("button");
         let infoButton = document.createElement("button");
-        let shutButton = document.createElement("button");
+        // let shutButton = document.createElement("button");
         deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
         infoButton.innerHTML = `<svg id="infoIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="infoIco" stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>`;
         updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
-        shutButton.innerHTML = `<svg id="shutIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="shutIco" stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664" /></svg>`;
+        // shutButton.innerHTML = `<svg id="shutIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="shutIco" stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664" /></svg>`;
 
         // let deleteIco = document.createElement("span");
         // let infoIco = document.createElement("span");
@@ -174,7 +174,7 @@ function showDatas(datas) {
         deleteButton.className = "bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
         infoButton.className = "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
         updateButton.className = "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
-        shutButton.className = "px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition-colors duration-200";
+        // shutButton.className = "px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition-colors duration-200";
 
         // deleteIco.className = "icon-trash";
         // infoIco.className = "icon-info";
@@ -188,14 +188,14 @@ function showDatas(datas) {
         // updateIco.title = "Hayvanı Güncelle";
         updateButton.title = "Hayvanı Güncelle";
         // shutIco.title = "Sütten Kesildi Olarak İşaretle";
-        shutButton.title = "Sütten Kesildi Olarak İşaretle";
+        // shutButton.title = "Sütten Kesildi Olarak İşaretle";
 
         nav.appendChild(navDiv);
 
         navDiv.appendChild(infoButton);
         navDiv.appendChild(updateButton);
         navDiv.appendChild(deleteButton);
-        navDiv.appendChild(shutButton);
+        // navDiv.appendChild(shutButton);
 
         // deleteButton.appendChild(deleteIco);
         // infoButton.appendChild(infoIco);
@@ -225,7 +225,7 @@ function showDatas(datas) {
         deleteButton.id = "deleteIco";
         infoButton.id = "infoIco";
         updateButton.id = "updateIco";
-        shutButton.id = "shutIco";
+        // shutButton.id = "shutIco";
 
         number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
@@ -254,9 +254,9 @@ function showDatas(datas) {
 
         // Gender-based background color
         if (calf.Gender) {
-            tableRow.className = "bg-red-100 hover:bg-red-200 transition-colors duration-150"; // pink-100
+            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors duration-150";
         } else {
-            tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors duration-150"; // blue-100
+            tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors duration-150";
         }
 
         count += 1;

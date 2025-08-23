@@ -313,7 +313,12 @@ ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
 
 // Update Animal
 ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
-    updateAnimal(allDatas);
+    if (updateAnimal(allDatas)) {
+        event.sender.send("updateResult", true);
+    }
+    else {
+        event.sender.send("updateResult", false);
+    }
 });
 
 // Remove Animal
@@ -350,16 +355,19 @@ async function getCowDatas(datas) {
         .from("Animals")
         .select("*")
         .eq("EarringNo", datas.earringNo);
+
     const { data: cowData, error: cowError } = await supabase
         .from("Cows")
         .select("*")
         .eq("EarringNo", datas.earringNo);
-    const { data: calvesData, error: calvesError } = await supabase
+    
+        const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
         .select("*")
         .eq("Type", "calf")
         .eq("MotherEarringNo", datas.earringNo);
-    const { data: vaccinesData, error: vaccinesError } = await supabase
+    
+        const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
         .eq("EarringNo", datas.earringNo);

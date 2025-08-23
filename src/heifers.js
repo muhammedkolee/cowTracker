@@ -214,18 +214,18 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = heifer.EarringNo;
         name.textContent = heifer.Name;
-        lastBirth.textContent = heifer.LastBirthDate;
+        lastBirth.textContent = new Date(heifer.LastBirthDate).toLocaleDateString("tr-TR");
         tempDays.textContent = calculateDate(heifer.LastBirthDate);
 
         // Row color based on empty days
-        tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors";
+        tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
         if (
             calculateDate(heifer.LastBirthDate) >= 40 &&
             calculateDate(heifer.LastBirthDate) < 60
         ) {
-            tableRow.className = "bg-yellow-100 hover:bg-yellow-200 transition-colors";
+            tableRow.className = "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         } else if (calculateDate(heifer.LastBirthDate) >= 60) {
-            tableRow.className = "bg-red-100 hover:bg-red-200 transition-colors";
+            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors";
         }
         count += 1;
     });

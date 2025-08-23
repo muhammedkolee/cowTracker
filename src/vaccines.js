@@ -61,7 +61,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
 function showDatas(datas) {
     vaccinesBody.innerHTML = layout;
 
@@ -93,7 +92,11 @@ function showDatas(datas) {
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
                 // Remove cow from the databases.
-                console.log("Veri silindi.");
+                const vaccineDatas = {
+                    EarringNo: earringNo.textContent,
+                    
+                }
+                window.vaccineAPI.removeVaccine();
             } else {
                 // Anything.
                 console.log("Veri silinmedi.");

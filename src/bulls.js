@@ -204,18 +204,9 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = bull.EarringNo;
         name.textContent = bull.Name;
-        birthDate.textContent = bull.BirthDate;
-
-        // Row color and age display based on days old
-        tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors";
-        let ageC = calculateDays(bull.BirthDate);
-        if (ageC < 30) {
-            tableRow.className = "bg-green-100 hover:bg-green-200 transition-colors";
-            age.textContent = ageC.toString() + " Gün";
-        }
-        else if (ageC >= 30 && ageC < 366) {
-            age.textContent = parseInt(ageC / 12).toString() + " Ay " + "(" + ageC.toString() + " Gün)";
-        }
+        birthDate.textContent = new Date(bull.BirthDate).toLocaleDateString("tr-TR");
+        tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
+        age.textContent = String(calculateDays(bull.BirthDate)) + " (" + (calculateDays(bull.BirthDate)/30).toFixed(1) + " ay)";
         motherEarringNo.textContent = bull.MotherEarringNo;
         motherName.textContent = bull.MotherName;
 
@@ -234,12 +225,6 @@ function getTodayDate() {
 
     return new Date(`${year}-${month}-${day}`);
 }
-
-// function parseTurkishDate(wDate) {
-//     let [day, month, year] = wDate.split(".");
-//     let date = new Date(`${year}-${month}-${day}`);
-//     return date;
-// }
 
 function calculateDays(ageDate) {
     let today = getTodayDate();

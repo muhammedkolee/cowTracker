@@ -269,7 +269,7 @@ function showDatas(datas) {
         passDay.textContent = calculatePassDay(animal.InseminationDate);
         kuruDate.textContent = calculateKuruDate(animal.InseminationDate);
         bullName.textContent = animal.BullName;
-        isPregnant.textContent = animal.CheckedDate;
+        isPregnant.textContent = new Date(animal.CheckedDate).toLocaleDateString("tr-TR");
 
         // Row color based on days left for birth
         if (
@@ -277,13 +277,21 @@ function showDatas(datas) {
             parseInt(calculateLeftDay(animal.InseminationDate)) > 0
         ) {
             tableRow.className =
-                "bg-green-100 hover:bg-green-200 transition-colors";
-        } else if (parseInt(calculateLeftDay(animal.InseminationDate)) <= 0) {
+                "bg-green-200 hover:bg-green-300 transition-colors";
+        } else if (
+            parseInt(calculateLeftDay(animal.InseminationDate)) <= 0
+        ) {
             tableRow.className =
-                "bg-red-100 hover:bg-red-200 transition-colors";
+                "bg-red-200 hover:bg-red-300 transition-colors";
+        } else if (
+            parseInt(calculateLeftDay(animal.InseminationDate)) <= 80 &&
+            parseInt(calculateLeftDay(animal.InseminationDate)) > 30
+        ) {
+            tableRow.className = 
+                "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         } else {
             tableRow.className =
-                "bg-blue-100 hover:bg-blue-200 transition-colors";
+                "bg-blue-200 hover:bg-blue-300 transition-colors";
         }
         count += 1;
     });

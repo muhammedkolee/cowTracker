@@ -45,7 +45,13 @@ contextBridge.exposeInMainWorld("updateAPI", {
     updateAnimalDatas: (allDatas) => {
         ipcRenderer.send("ipcMain:updateAnimalDatas", allDatas);
         console.log("preload.js: ", allDatas);
-    }
+    },
+
+    updateResult: (callback) => {
+        ipcRenderer.on("updateResult", (event, data) => {
+            callback(data);
+        })
+    }   
 });
 
 contextBridge.exposeInMainWorld("vaccineAPI", {

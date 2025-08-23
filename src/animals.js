@@ -238,7 +238,7 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         name.textContent = animal.Name;
-        birthDate.textContent = animal.BirthDate;
+        birthDate.textContent = new Date(animal.BirthDate).toLocaleDateString("tr-TR");
         if (animal.Type === "cow"){
     type.textContent = "İnek";
         }
@@ -255,13 +255,13 @@ function showDatas(datas) {
         motherName.textContent = animal.MotherName;
                 
         // Row color based on animal type
-        tableRow.className = "bg-blue-100 hover:bg-blue-200 transition-colors";
+        tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
         if (animal.Type === "cow") {
-            tableRow.className = "bg-green-100 hover:bg-green-200 transition-colors";
+            tableRow.className = "bg-green-200 hover:bg-green-300 transition-colors";
         } else if (animal.Type === "heifer") {
-            tableRow.className = "bg-red-100 hover:bg-red-200 transition-colors";
+            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors";
         } else if (animal.Type === "calf") {
-            tableRow.className = "bg-yellow-100 hover:bg-yellow-200 transition-colors";
+            tableRow.className = "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         }
         count += 1;
     });

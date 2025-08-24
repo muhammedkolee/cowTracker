@@ -27,6 +27,7 @@ const layout = `
                         <table class="min-w-full bg-white">
                             <thead class="bg-gray-800 text-white">
                                 <tr class="sticky top-0 z-10 bg-gray-800">
+                                    <th class="px-4 py-3 text-center font-semibold">Id</th>
                                     <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                                     <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                                     <th class="px-4 py-3 text-center font-semibold">Dana Adı</th>
@@ -90,23 +91,24 @@ function showDatas(datas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let bullId = tableRow.querySelector("#bullId");
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { earringNo: earringNo.textContent, type: "cow" };
+            let datas = { animalId: bullId.textContent, type: "cow" };
             window.electronAPI.openAnimalDetail(datas);
         }
 
         else if (target.id === "updateIco") {
-            datas = { earringNo: earringNo.textContent, type: "bull" };
-            window.electronAPI.openUpdateAnimal(earringNo.textContent);
+            datas = { animalId: bullId.textContent, type: "bull" };
+            window.electronAPI.openUpdateAnimal(datas);
         }
 
         else if (target.id === "deleteIco") {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
-                const datas = { EarringNo: earringNo.textContent, Type: "bull", pageName: "bulls" }
+                const datas = { animalId: bullId.textContent, Type: "bull", pageName: "bulls" }
                 window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
@@ -118,6 +120,7 @@ function showDatas(datas) {
     let count = 1;
     datas.forEach((bull) => {
         let tableRow = document.createElement("tr");
+        let bullId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -128,6 +131,7 @@ function showDatas(datas) {
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
+        bullId.className = cellClasses;
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -183,6 +187,7 @@ function showDatas(datas) {
         // updateButton.appendChild(updateIco);
 
         bullTableBody.appendChild(tableRow);
+        tableRow.appendChild(bullId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -193,6 +198,7 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
+        bullId.id = "bullId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -201,6 +207,7 @@ function showDatas(datas) {
         infoButton.id = "infoIco";
         updateButton.id = "updateIco";
 
+        bullId.textContent = bull.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = bull.EarringNo;
         name.textContent = bull.Name;

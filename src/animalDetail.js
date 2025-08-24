@@ -72,16 +72,40 @@ function showDatas(allDatas) {
 
     const editButton = document.getElementById("editButton");
     const deleteButton = document.getElementById("deleteButton");
-    
+
     // If user click "Düzenle"
     editButton.addEventListener("click", () => {
-        console.log("deneme1");  
+        window.electronAPI.openUpdateAnimal({
+            animalId: allDatas.animalData[0].Id,
+            type: allDatas.animalData[0].Type,
+        });
+        window.close();
+    });
+
+    deleteButton.addEventListener("click", () => {
+        const sure = window.confirm(
+            "Şu küpe numaralı hayvan silinecek: " +
+                earringNoTag.textContent +
+                "\nOnaylıyor musunuz?"
+        );
+        if (sure) {
+            // Remove cow from the databases.
+            const datas = {
+                animalId: allDatas.animalData[0].Id,
+                Type: allDatas.animalData[0].Type,
+            };
+            window.electronAPI.removeAnimal(datas);
+            window.close();
+        } else {
+            // Anything.
+            console.log("Veri silinmedi.");
+        }
     });
 
     if (allDatas.animalData[0].Type === "cow") {
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
-        
+
         // Preparing calves' data of cow
         const infoDatas = document.getElementById("infoDatas");
         const animalInfo = document.getElementById("animalInfo");
@@ -93,12 +117,11 @@ function showDatas(allDatas) {
         const calfInfoName = document.createElement("h5");
         const calvesList = document.createElement("div");
 
-        
         infoDatas.appendChild(calvesInfo);
         calvesInfo.appendChild(subDiv);
         subDiv.appendChild(calfInfoName);
         subDiv.appendChild(calvesList);
-        
+
         calfInfoName.innerHTML += "Buzağı Bilgisi";
         infoName.innerHTML += "İnek Bilgisi";
 
@@ -106,22 +129,31 @@ function showDatas(allDatas) {
         animalInfo.className = "space-y-4";
         vaccinesInfo.className = "space-y-4";
 
-        subDiv.className = "bg-card-bg rounded-xl p-6 shadow-card h-full overflow-y-auto max-h-96";
-        calfInfoName.className = "text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2";
+        subDiv.className =
+            "bg-card-bg rounded-xl p-6 shadow-card h-full overflow-y-auto max-h-96";
+        calfInfoName.className =
+            "text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2";
         calvesList.className = "space-y-3";
 
-        if (allDatas.calvesData.length != 0){
-            allDatas.calvesData[0].forEach(calf => {
+        if (allDatas.calvesData.length != 0) {
+            allDatas.calvesData[0].forEach((calf) => {
                 const element = document.createElement("div");
                 calvesList.appendChild(element);
 
-                element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+                element.className =
+                    "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
                 element.innerHTML = `
                     <div class="space-y-2">
-                        <p class="text-sm"><span class="font-bold text-gray-800">Küpe:</span> <span class="text-gray-950">${calf.EarringNo}</span></p>
-                        <p class="text-sm"><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${calf.Name}</span></p>
-                        <p class="text-sm"><span class="font-bold text-gray-800">Doğum:</span> <span class="text-gray-950">${calf.BirthDate}</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">Küpe:</span> <span class="text-gray-950">${
+                            calf.EarringNo
+                        }</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                            calf.Name
+                        }</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">Doğum:</span> <span class="text-gray-950">${new Date(
+                            calf.BirthDate
+                        ).toLocaleDateString("tr-TR")}</span></p>
                     </div>
                 `;
             });
@@ -130,54 +162,84 @@ function showDatas(allDatas) {
         // Show Animal Data
         const animalInfoCard = document.getElementById("animalInfoCard");
 
-        animalInfoCard.innerHTML += 
-        `
+        animalInfoCard.innerHTML += `
             <div class="space-y-3 text-sm">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].Name}</span></p>
-                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${allDatas.animalData[0].BirthDate}</span></p>
+                    <p><span class="font-bold text-gray-800">Id:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].Id
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].Name
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${new Date(
+                        allDatas.animalData[0].BirthDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherEarringNo}</span></p>
-                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherName}</span></p>
+                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherEarringNo
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherName
+                    }</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Tohumlama Tarihi:</span> <span class="text-gray-950">${allDatas.cowData[0].InseminationDate}</span></p>
-                    <p><span class="font-bold text-gray-800">Tahmini Doğum Tarihi:</span> <span class="text-gray-950">${calculateWhenBirth(allDatas.cowData[0].InseminationDate)}</span></p>
-                    <p><span class="font-bold text-gray-800">Hamile Günü:</span> <span class="text-gray-950">${calculatePassDay(allDatas.cowData[0].InseminationDate)} gün</span></p>
-                    <p><span class="font-bold text-gray-800">Doğuma Kalan Gün:</span> <span id="colorSpan" class="${calculateLeftDay(allDatas.cowData[0].InseminationDate) <= 20 ? " text-red-600" : "text-gray-950"}">${calculateLeftDay(allDatas.cowData[0].InseminationDate)} gün</span></p>
-                    <p><span class="font-bold text-gray-800">Kuruya Çıkış:</span> <span class="text-gray-950">${calculateKuruDate(allDatas.cowData[0].InseminationDate)}</span></p>
-                    <p><span class="font-bold text-gray-800">Boğa İsmi:</span> <span class="text-gray-950">${allDatas.cowData[0].BullName}</span></p>
+                    <p><span class="font-bold text-gray-800">Tohumlama Tarihi:</span> <span class="text-gray-950">${new Date(
+                        allDatas.cowData[0].InseminationDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
+                    <p><span class="font-bold text-gray-800">Tahmini Doğum Tarihi:</span> <span class="text-gray-950">${calculateWhenBirth(
+                        allDatas.cowData[0].InseminationDate
+                    )}</span></p>
+                    <p><span class="font-bold text-gray-800">Hamile Günü:</span> <span class="text-gray-950">${calculatePassDay(
+                        allDatas.cowData[0].InseminationDate
+                    )} gün</span></p>
+                    <p><span class="font-bold text-gray-800">Doğuma Kalan Gün:</span> <span id="colorSpan" class="${
+                        calculateLeftDay(
+                            allDatas.cowData[0].InseminationDate
+                        ) <= 20
+                            ? " text-red-600"
+                            : "text-gray-950"
+                    }">${calculateLeftDay(
+            allDatas.cowData[0].InseminationDate
+        )} gün</span></p>
+                    <p><span class="font-bold text-gray-800">Kuruya Çıkış:</span> <span class="text-gray-950">${calculateKuruDate(
+                        allDatas.cowData[0].InseminationDate
+                    )}</span></p>
+                    <p><span class="font-bold text-gray-800">Boğa İsmi:</span> <span class="text-gray-950">${
+                        allDatas.cowData[0].BullName
+                    }</span></p>
                 </div>
             </div>
         `;
 
         // Show Vaccines Datas
         const vaccinesList = document.getElementById("vaccinesList");
-        allDatas.vaccinesData.forEach(vaccine => {
+        allDatas.vaccinesData.forEach((vaccine) => {
             let element = document.createElement("div");
 
             vaccinesList.appendChild(element);
 
-            element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+            element.className =
+                "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
-            element.innerHTML = 
-            `
+            element.innerHTML = `
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-gray-800">${vaccine.VaccineName}</span>
-                    <span class="text-sm text-gray-500">${vaccine.VaccineDate}</span>
+                    <span class="font-bold text-gray-800">${
+                        vaccine.VaccineName
+                    }</span>
+                    <span class="text-sm text-gray-500">${new Date(
+                        vaccine.VaccineDate
+                    ).toLocaleDateString("tr-TR")}</span>
                 </div>
             `;
         });
-
-    }
-    else if (allDatas.animalData[0].Type === "heifer"){
+    } else if (allDatas.animalData[0].Type === "heifer") {
         console.log(allDatas);
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
-        
+
         // Preparing calves' data of heifer
         const infoDatas = document.getElementById("infoDatas");
         const animalInfo = document.getElementById("animalInfo");
@@ -189,12 +251,11 @@ function showDatas(allDatas) {
         const calfInfoName = document.createElement("h5");
         const calvesList = document.createElement("div");
 
-        
         infoDatas.appendChild(calvesInfo);
         calvesInfo.appendChild(subDiv);
         subDiv.appendChild(calfInfoName);
         subDiv.appendChild(calvesList);
-        
+
         calfInfoName.innerHTML += "Buzağı Bilgisi";
         infoName.innerHTML += "Düve Bilgisi";
 
@@ -202,22 +263,31 @@ function showDatas(allDatas) {
         animalInfo.className = "space-y-4";
         vaccinesInfo.className = "space-y-4";
 
-        subDiv.className = "bg-card-bg rounded-xl p-6 shadow-card h-full overflow-y-auto max-h-96";
-        calfInfoName.className = "text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2";
+        subDiv.className =
+            "bg-card-bg rounded-xl p-6 shadow-card h-full overflow-y-auto max-h-96";
+        calfInfoName.className =
+            "text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2";
         calvesList.className = "space-y-3";
 
-        if (allDatas.calvesData.length !== 0){
-            allDatas.calvesData[0].forEach(calf => {
+        if (allDatas.calvesData.length !== 0) {
+            allDatas.calvesData[0].forEach((calf) => {
                 const element = document.createElement("div");
                 calvesList.appendChild(element);
 
-                element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+                element.className =
+                    "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
                 element.innerHTML = `
                     <div class="space-y-2">
-                        <p class="text-sm"><span class="font-bold text-gray-800">Küpe:</span> <span class="text-gray-950">${calf.EarringNo}</span></p>
-                        <p class="text-sm"><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${calf.Name}</span></p>
-                        <p class="text-sm"><span class="font-bold text-gray-800">Doğum:</span> <span class="text-gray-950">${calf.BirthDate}</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">Küpe:</span> <span class="text-gray-950">${
+                            calf.EarringNo
+                        }</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                            calf.Name
+                        }</span></p>
+                        <p class="text-sm"><span class="font-bold text-gray-800">Doğum:</span> <span class="text-gray-950">${new Date(
+                            calf.BirthDate
+                        ).toLocaleDateString("tr-TR")}</span></p>
                     </div>
                 `;
             });
@@ -226,76 +296,104 @@ function showDatas(allDatas) {
         // Show Animal Data
         const animalInfoCard = document.getElementById("animalInfoCard");
 
-        animalInfoCard.innerHTML += 
-        `
+        animalInfoCard.innerHTML += `
             <div class="space-y-3 text-sm">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].Name}</span></p>
-                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${allDatas.animalData[0].BirthDate}</span></p>
+                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].Name
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${new Date(
+                        allDatas.animalData[0].BirthDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherEarringNo}</span></p>
-                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherName}</span></p>
+                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherEarringNo
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherName
+                    }</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Son Doğurduğu Tarih:</span> <span class="text-gray-950">${allDatas.heiferData[0].LastBirthDate}</span></p>
-                    <p><span class="font-bold text-gray-800">Boş Gün Sayısı:</span> <span class="text-orange-600 font-medium">${calculatelastBirthDate(allDatas.heiferData[0].LastBirthDate)} gün</span></p>
+                    <p><span class="font-bold text-gray-800">Son Doğurduğu Tarih:</span> <span class="text-gray-950">${new Date(
+                        allDatas.heiferData[0].LastBirthDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
+                    <p><span class="font-bold text-gray-800">Boş Gün Sayısı:</span> <span class="text-orange-600 font-medium">${calculatelastBirthDate(
+                        allDatas.heiferData[0].LastBirthDate
+                    )} gün</span></p>
                 </div>
             </div>
         `;
 
         // Show Vaccines Datas
         const vaccinesList = document.getElementById("vaccinesList");
-        allDatas.vaccinesData.forEach(vaccine => {
+        allDatas.vaccinesData.forEach((vaccine) => {
             let element = document.createElement("div");
 
             vaccinesList.appendChild(element);
 
-            element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+            element.className =
+                "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
-            element.innerHTML = 
-            `
+            element.innerHTML = `
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-gray-800">${vaccine.VaccineName}</span>
-                    <span class="text-sm text-gray-500">${vaccine.VaccineDate}</span>
+                    <span class="font-bold text-gray-800">${
+                        vaccine.VaccineName
+                    }</span>
+                    <span class="text-sm text-gray-500">${new Date(
+                        vaccine.VaccineDate
+                    ).toLocaleDateString("tr-TR")}</span>
                 </div>
             `;
         });
-
-    }
-    else if (allDatas.animalData[0].Type === "calf"){
+    } else if (allDatas.animalData[0].Type === "calf") {
         console.log("çalıştı");
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
-        
+
         // Show Animal Data
         const animalInfoCard = document.getElementById("animalInfoCard");
 
-        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateCalfDates(allDatas.animalData[0].BirthDate);
+        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateCalfDates(
+            allDatas.animalData[0].BirthDate
+        );
 
         const infoName = document.getElementById("infoName");
         infoName.innerHTML += "Buzağı Bilgisi";
 
-        animalInfoCard.innerHTML += 
-        `
+        animalInfoCard.innerHTML += `
             <div class="space-y-3 text-sm">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].Name}</span></p>
-                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${allDatas.animalData[0].BirthDate}</span></p>
+                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].Name
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${new Date(
+                        allDatas.animalData[0].BirthDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherEarringNo}</span></p>
-                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherName}</span></p>
+                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherEarringNo
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherName
+                    }</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
                     <p><span class="font-bold text-gray-800">Kaç Günlük:</span> <span class="text-primary font-medium">${daysC} gün</span></p>
-                    <p><span class="font-bold text-gray-800">2 LT Düşürme Tarihi:</span> <span class="text-gray-950">${lt2Date}</span></p>
-                    <p><span class="font-bold text-gray-800">1 LT Düşürme Tarihi:</span> <span class="text-gray-950">${lt1Date}</span></p>
-                    <p><span class="font-bold text-gray-800">Sütten Kesme Tarihi:</span> <span class="text-gray-950">${shutDateC}</span></p>
+                    <p><span class="font-bold text-gray-800">2 LT Düşürme Tarihi:</span> <span class="text-gray-950">${lt2Date.toLocaleDateString(
+                        "tr-TR"
+                    )}</span></p>
+                    <p><span class="font-bold text-gray-800">1 LT Düşürme Tarihi:</span> <span class="text-gray-950">${lt1Date.toLocaleDateString(
+                        "tr-TR"
+                    )}</span></p>
+                    <p><span class="font-bold text-gray-800">Sütten Kesme Tarihi:</span> <span class="text-gray-950">${shutDateC.toLocaleDateString(
+                        "tr-TR"
+                    )}</span></p>
                     <p><span class="font-bold text-gray-800">Sütten Kesmeye Kalan Gün:</span> <span class="text-red-600 font-medium">${daysS} gün</span></p>
                 </div>
             </div>
@@ -303,66 +401,81 @@ function showDatas(allDatas) {
 
         // Show Vaccines Datas
         const vaccinesList = document.getElementById("vaccinesList");
-        allDatas.vaccinesData.forEach(vaccine => {
+        allDatas.vaccinesData.forEach((vaccine) => {
             let element = document.createElement("div");
 
             vaccinesList.appendChild(element);
 
-            element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+            element.className =
+                "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
-            element.innerHTML = 
-            `
+            element.innerHTML = `
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-gray-800">${vaccine.VaccineName}</span>
-                    <span class="text-sm text-gray-500">${vaccine.VaccineDate}</span>
+                    <span class="font-bold text-gray-800">${
+                        vaccine.VaccineName
+                    }</span>
+                    <span class="text-sm text-gray-500">${new Date(
+                        vaccine.VaccineDate
+                    ).toLocaleDateString("tr-TR")}</span>
                 </div>
             `;
         });
-
-    }
-    else if (allDatas.animalData[0].Type === "bull"){
+    } else if (allDatas.animalData[0].Type === "bull") {
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
-        
+
         // Show Animal Data
         const animalInfoCard = document.getElementById("animalInfoCard");
 
         const infoName = document.getElementById("infoName");
         infoName.innerHTML += "Dana Bilgisi";
 
-        animalInfoCard.innerHTML += 
-        `
+        animalInfoCard.innerHTML += `
             <div class="space-y-3 text-sm">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].Name}</span></p>
-                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${allDatas.animalData[0].BirthDate}</span></p>
+                    <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].Name
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Doğum Tarihi:</span> <span class="text-gray-950">${new Date(
+                        allDatas.animalData[0].BirthDate
+                    ).toLocaleDateString("tr-TR")}</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherEarringNo}</span></p>
-                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${allDatas.animalData[0].MotherName}</span></p>
+                    <p><span class="font-bold text-gray-800">Anne Küpe No:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherEarringNo
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Anne İsim:</span> <span class="text-gray-950">${
+                        allDatas.animalData[0].MotherName
+                    }</span></p>
                 </div>
                 <hr class="border-gray-300">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Kaç Günlük:</span> <span class="text-primary font-medium">${calculateBullDays(allDatas.animalData[0].BirthDate)} gün</span></p>
+                    <p><span class="font-bold text-gray-800">Kaç Günlük:</span> <span class="text-primary font-medium">${calculateBullDays(
+                        allDatas.animalData[0].BirthDate
+                    )} gün</span></p>
                 </div>
             </div>
         `;
 
         // Show Vaccines Datas
         const vaccinesList = document.getElementById("vaccinesList");
-        allDatas.vaccinesData.forEach(vaccine => {
+        allDatas.vaccinesData.forEach((vaccine) => {
             let element = document.createElement("div");
 
             vaccinesList.appendChild(element);
 
-            element.className = "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
+            element.className =
+                "bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition duration-200";
 
-            element.innerHTML = 
-            `
+            element.innerHTML = `
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-gray-800">${vaccine.VaccineName}</span>
-                    <span class="text-sm text-gray-500">${vaccine.VaccineDate}</span>
+                    <span class="font-bold text-gray-800">${
+                        vaccine.VaccineName
+                    }</span>
+                    <span class="text-sm text-gray-500">${new Date(
+                        vaccine.VaccineDate
+                    ).toLocaleDateString("tr-TR")}</span>
                 </div>
             `;
         });
@@ -420,14 +533,12 @@ function calculatelastBirthDate(lastBirth) {
     console.log(getTodayDate);
     return Math.ceil((getTodayDate() - lastBirthDate) / (1000 * 60 * 60 * 24));
 }
-
-function calculateCalfDates(birthDate){
-    dateBirth = new Date(birthDate);
-    let lt2Date = dateBirth;
-    let lt1Date = dateBirth;
-    let shutDate  = dateBirth;
-    let daysDate = dateBirth;
-    let daysShut = dateBirth;
+function calculateCalfDates(birthDate) {
+    let lt2Date = new Date(birthDate);
+    let lt1Date = new Date(birthDate);
+    let shutDate = new Date(birthDate);
+    let daysDate = new Date(birthDate);
+    let daysShut = new Date(birthDate);
     let today = getTodayDate();
 
     lt2Date.setDate(lt2Date.getDate() + 75);
@@ -437,15 +548,15 @@ function calculateCalfDates(birthDate){
     daysShut = Math.ceil((shutDate - today) / (1000 * 60 * 60 * 24));
 
     return {
-        lt2Date: lt2Date.toLocaleDateString("tr-TR"),
-        lt1Date: lt1Date.toLocaleDateString("tr-TR"),
-        shutDateC: shutDate.toLocaleDateString("tr-TR"),
+        lt2Date: lt2Date,
+        lt1Date: lt1Date,
+        shutDateC: shutDate,
         daysC: daysDate,
-        daysS: daysShut
+        daysS: daysShut,
     };
 }
 
-function calculateBullDays(age){
+function calculateBullDays(age) {
     let today = getTodayDate();
     let days = parseTurkishDate(age);
 

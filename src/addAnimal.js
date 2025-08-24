@@ -2,8 +2,12 @@ const type = document.getElementById("type");
 const addAnimalForm = document.getElementById("addAnimalForm");
 const addButton = document.getElementById("addButton");
 const addAnimalBody = document.getElementById("addAnimalBody");
+const motherEarringNoSelect = document.getElementById("motherEarringNoSelect");
 
 const deneme = document.getElementById("deneme");
+
+// Anne hayvan verileri için global değişken
+let motherAnimalsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.addAnimalAPI.receiveAnimalType((animalType) => {
@@ -21,7 +25,55 @@ window.addEventListener("DOMContentLoaded", () => {
             type.value = "bull";
         }
     });
+
+    window.addAnimalAPI.receiveMothersEarringNo((EarringNos) => {
+        // console.log("EarringNos: ", EarringNos)
+        // Verilerin Geleceği Kısım!!!
+        motherAnimalsData = EarringNos;
+        setupMotherEarringSelection();
+    });
 });
+
+// Anne küpe numarası seçim sistemi
+function setupMotherEarringSelection() {
+    const motherEarringInput = document.getElementById("motherEarringNoSelect");
+    const datalist = document.getElementById("motherEarringNumbers");
+    
+    if (!motherEarringInput || !datalist) return;
+    
+    // Datalist'i doldur
+    datalist.innerHTML = '';
+    motherAnimalsData.forEach(animal => {
+        const option = document.createElement('option');
+        option.value = animal.EarringNo;
+        option.textContent = `${animal.EarringNo} - ${animal.Name}`;
+        datalist.appendChild(option);
+    });
+    
+    // Input değiştiğinde anne adını güncelle
+    motherEarringInput.addEventListener('input', updateMotherName);
+    motherEarringInput.addEventListener('change', updateMotherName);
+}
+
+function updateMotherName() {
+    const selectedEarringNo = document.getElementById('motherEarringNoSelect').value;
+    const motherNameInput = document.getElementById('motherName');
+    
+    if (!motherNameInput) return;
+    
+    // Seçilen küpe numarasına karşılık gelen hayvanı bul
+    const selectedAnimal = motherAnimalsData.find(animal => animal.EarringNo === selectedEarringNo);
+    
+    if (selectedAnimal) {
+        motherNameInput.value = selectedAnimal.Name;
+        motherNameInput.classList.remove('bg-gray-50');
+        motherNameInput.classList.add('bg-white');
+    } else {
+        motherNameInput.value = '';
+        motherNameInput.classList.remove('bg-white');
+        motherNameInput.classList.add('bg-gray-50');
+    }
+}
 
 window.addAnimalAPI.addResult((result) => {
     if (result) {
@@ -45,7 +97,7 @@ addButton.addEventListener("click", () => {
     const earringNo = document.getElementById("earringNo");
     const animalName = document.getElementById("animalName");
     const birthDate = document.getElementById("birthDate");
-    const motherEarringNo = document.getElementById("motherEarringNo");
+    const motherEarringNo = document.getElementById("motherEarringNoSelect"); // ID değişti
     const motherName = document.getElementById("motherName");
     
     if (type.value === "cow") {
@@ -140,6 +192,7 @@ type.addEventListener("change", () => {
 
 function addCow() {
     deneme.innerHTML = template;
+    setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
 
     // Insemination Date
     let inseminationDateDiv = document.createElement("div");
@@ -202,6 +255,7 @@ function addCow() {
 
 function addCalf() {
     deneme.innerHTML = template;
+    setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
     
     // Gender
     let genderDiv = document.createElement("div");
@@ -238,6 +292,7 @@ function addCalf() {
 
 function addHeifer() {
     deneme.innerHTML = template;
+    setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
     
     // Last Birth Date
     let lastBirthDateDiv = document.createElement("div");
@@ -261,9 +316,10 @@ function addHeifer() {
 
 function addBull() {
     deneme.innerHTML = template;
+    setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
 }
 
-// Updated template with Tailwind classes
+// Updated template with Tailwind classes - SELECT'i INPUT+DATALIST ile değiştirdim
 const template = `
     <div class="space-y-6">
         <div class="space-y-2">
@@ -282,13 +338,26 @@ const template = `
         </div>
 
         <div class="space-y-2">
-            <label for="motherEarringNo" class="block text-sm font-semibold text-gray-700">Anne Küpe Numarası</label>
-            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="motherEarringNo"/>
+            <label for="motherEarringNoSelect" class="block text-sm font-semibold text-gray-700">Anne Küpe Numarası</label>
+            <input 
+                type="text" 
+                list="motherEarringNumbers" 
+                id="motherEarringNoSelect" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" 
+                placeholder="Küpe numarası yazın veya seçin"
+                autocomplete="off"
+            >
+            <datalist id="motherEarringNumbers"></datalist>
         </div>
-
+        
         <div class="space-y-2">
             <label for="motherName" class="block text-sm font-semibold text-gray-700">Anne Adı</label>
-            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="motherName"/>
+            <input 
+                type="text" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 bg-gray-50" 
+                id="motherName" 
+                placeholder="Küpe numarası seçildiğinde otomatik doldurulur"
+            />
         </div>
     </div>
 `;

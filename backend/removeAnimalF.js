@@ -5,7 +5,7 @@ async function removeAnimal(datas) {
         const response = await supabase
             .from("Cows")
             .delete()
-            .eq("EarringNo", datas.EarringNo);
+            .eq("Id", datas.animalId);
         if (response.status === 204) {
             console.log("Islem basarili.");
         } else {
@@ -18,7 +18,7 @@ async function removeAnimal(datas) {
         const response = await supabase
             .from("Heifers")
             .delete()
-            .eq("EarringNo", datas.EarringNo);
+            .eq("Id", datas.animalId);
         if (response.status === 204) {
             console.log("Islem basarili.");
         } else {
@@ -31,7 +31,7 @@ async function removeAnimal(datas) {
         const response = await supabase
             .from("Calves")
             .delete()
-            .eq("EarringNo", datas.EarringNo);
+            .eq("Id", datas.animalId);
         if (response.status === 204) {
             console.log("Islem basarili.");
         } else {
@@ -44,24 +44,14 @@ async function removeAnimal(datas) {
     const response = await supabase
         .from("Animals")
         .delete()
-        .eq("EarringNo", datas.EarringNo);
+        .eq("Id", datas.animalId);
     if (response.status === 204) {
         console.log("İşlem Başarılı!");
     } else {
         console.log("Bir hata meydana geldi, Animals!\n", response.statusText);
     }
 
-    if (datas.pageName === "animals") {
-        event.sender.send("refresh", await getAnimalsDatas());
-    } else if (datas.pageName === "cows") {
-        event.sender.send("refresh", await getCowsDatas());
-    } else if (datas.pageName === "heifers") {
-        event.sender.send("refresh", await getHeifersDatas());
-    } else if (datas.pageName === "calves") {
-        event.sender.send("refresh", await getCalvesDatas());
-    } else if (datas.pageName === "bulls") {
-        event.sender.send("refresh", await getBullsDatas());
-    }
+    return;
 }
 
 module.exports = removeAnimal;

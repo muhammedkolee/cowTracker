@@ -26,6 +26,7 @@ const layout = `
                     <table class="min-w-full bg-white">
                         <thead class="bg-gray-800 text-white">
                             <tr class="sticky top-0 z-10 bg-gray-800">
+                                <th class="px-2 py-3 text-center font-semibold text-sm">Id</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Sayı</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Küpe Numarası</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">İnek Adı</th>
@@ -100,13 +101,14 @@ function showDatas(datas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let cowId = tableRow.querySelector("#cowId");
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { earringNo: earringNo.textContent, type: "cow" };
+            let datas = { animalId: cowId.textContent, type: "cow" };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { earringNo: earringNo.textContent, type: "cow" };
+            datas = { animalId: cowId.textContent, type: "cow" };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -117,7 +119,7 @@ function showDatas(datas) {
             if (sure) {
                 // Remove cow from the databases.
                 const datas = {
-                    EarringNo: earringNo.textContent,
+                    animalId: cowId.textContent,
                     Type: "cow",
                     pageName: "cows",
                 };
@@ -147,6 +149,7 @@ function showDatas(datas) {
         // console.log("datas",datas);
         // console.log("animal",animal);
         let tableRow = document.createElement("tr");
+        let cowId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -161,6 +164,7 @@ function showDatas(datas) {
         // Base styling for all cells
         const cellClasses =
             "px-2 py-3 text-center font-bold text-sm whitespace-nowrap border-b border-gray-200";
+        cowId.className = cellClasses;
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -233,6 +237,7 @@ function showDatas(datas) {
         // applyButton.appendChild(applyIco);
 
         cowTableBody.appendChild(tableRow);
+        tableRow.appendChild(cowId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -246,6 +251,7 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
+        cowId.id = "cowId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -256,6 +262,7 @@ function showDatas(datas) {
         updateButton.id = "updateIco";
         applyButton.id = "applyIco";
 
+        cowId.textContent = animal.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         // console.log(animal)

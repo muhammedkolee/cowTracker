@@ -1,57 +1,99 @@
 const supabase = require("./databaseConnection");
 
 async function updateAnimal(allDatas) {
-    const { data: willRemoveAnimal, error: animalError } = await supabase.from("Animals").select("*").eq("EarringNo", allDatas.animalData.EarringNo);
-    
+    const { data: willRemoveAnimal, error: animalError } = await supabase
+        .from("Animals")
+        .select("*")
+        .eq("Id", allDatas.animalData.Id);
+
     if (allDatas.animalData.Type == willRemoveAnimal[0].Type) {
-        const error = await supabase.from(`${String(willRemoveAnimal[0].Type).charAt(0).toUpperCase() + String(willRemoveAnimal[0].Type).slice(1)}s`).update(allDatas.animalData).eq("EarringNo", allDatas.animalData.EarringNo);
-    }
+        if (willRemoveAnimal[0].Type == "cow") {
+            const error = await supabase
+                .from("Cows")
+                .update(allDatas.cowData)
+                .eq("Id", allDatas.animalData.Id);
+            if (error) {
+                console.log("Bir sorun oluştu: ", error);
+            }
+        } else if (willRemoveAnimal[0].Type == "heifer") {
+            const error = await supabase
+                .from("Heifers")
+                .update(allDatas.heiferData)
+                .eq("Id", allDatas.animalData.Id);
+            if (error) {
+                console.log("Bir hata meydana geldi: ", error);
+            }
+        } else if (willRemoveAnimal[0].Type == "calf") {
+            const error = await supabase
+                .from("Calves")
+                .update(allDatas.calfData)
+                .eq("Id", allDatas.animalData.Id);
+            if (error) {
+                console.log("Bir hata: ", error);
+            }
+        }
+    } else {
+        const animalId = willRemoveAnimal[0].Id;
+        if (willRemoveAnimal[0].Type == "calf") {
+            const response = await supabase
+                .from("Calves")
+                .delete()
+                .eq("Id", willRemoveAnimal[0].Id);
+            if (response.status != 204) {
+                console.log("bir hata oluştu: ", response.statusText);
+            }
+        } else if (willRemoveAnimal[0].Type == "cow") {
+            const response = await supabase
+                .from("Cows")
+                .delete()
+                .eq("Id", willRemoveAnimal[0].Id);
+            if (response.status != 204) {
+                console.log("Bir hata oluştu: ", response.statusText);
+            }
+        } else if (willRemoveAnimal[0].Type == "heifer") {
+            const response = await supabase
+                .from("Heifers")
+                .delete()
+                .eq("Id", willRemoveAnimal[0].Id);
+            if (response.status != 204) {
+                console.log("Bir hata meydana geldi: ", response.statusText);
+            }
+        }
 
-    else {
-
-        if (allDatas.animalData.Type === "cow") {
+        if (allDatas.animalData.Type == "cow") {
+            allDatas.cowData.Id = animalId;
             const { error } = await supabase
-            .from("Cows")
-            .insert(allDatas.cowData)
+                .from("Cows")
+                .insert(allDatas.cowData);
             if (error) {
                 console.log("Bir hata oluştu: ", error);
             }
-        } else if (allDatas.animalData.Type === "heifer") {
+        } else if (allDatas.animalData.Type == "heifer") {
+            allDatas.heiferData.Id = animalId;
             const { error } = await supabase
-            .from("Heifers")
-            .insert(allDatas.heiferData)
+                .from("Heifers")
+                .insert(allDatas.heiferData);
             if (error) {
-                console.log(error);
+                console.log("Bir hata meydana geldi: ", error);
             }
-        } else if (allDatas.animalData.Type === "calf") {
+        } else if (allDatas.animalData.Type == "calf") {
+            allDatas.calfData.Id = animalId;
             const { error } = await supabase
-            .from("Calves")
-                .insert(allDatas.calfData)
-                if (error) {
-                    console.log("Bir hata oluştu: ", error);
-                }
-        }
-
-        const response = await supabase.from(`${String(willRemoveAnimal[0].Type).charAt(0).toUpperCase() + String(willRemoveAnimal[0].Type).slice(1)}s`).delete().eq("EarringNo", allDatas.animalData.EarringNo);
-        if (response.statusText === 204) {
-            console.log("Hayvan basari ile silindi!");
-        }
-        else {
-            console.log("Hayvan silme islemi sirasinda bir hata olustu: ", response.statusText);
+                .from("Calves")
+                .insert(allDatas.calfData);
         }
     }
 
     const { error } = await supabase
         .from("Animals")
         .update(allDatas.animalData)
-        .eq("EarringNo", allDatas.animalData.EarringNo);
+        .eq("Id", allDatas.animalData.Id);
     if (error) {
-        return false
-    } else {
-        return true
+        return false;
     }
-
-
+    else {
+        return true;
+    }
 }
 
 module.exports = updateAnimal;

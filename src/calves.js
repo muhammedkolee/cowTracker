@@ -27,6 +27,7 @@ const layout = `
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                         <tr class="bg-gray-800">
+                            <th class="px-4 py-3 text-center">Id</th>
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe Numarası</th>
                             <th class="px-4 py-3 text-center">Buzağı Adı</th>
@@ -98,23 +99,24 @@ function showDatas(datas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let calfId = tableRow.querySelector("#calfId");
 
         if (target.id === "infoIco") {
-            let datas = { earringNo: earringNo.textContent, type: "cow" };
+            let datas = { animalId: calfId.textContent, type: "cow" };
             if (window.electronAPI) window.electronAPI.openAnimalDetail(datas);
         }
 
         else if (target.id === "updateIco") {
-            datas = { earringNo: earringNo.textContent, type: "calf" };
-            if (window.electronAPI) window.electronAPI.openUpdateAnimal({earringNo: earringNo.textContent, type: "calf"});
+            datas = { animalId: calfId.textContent, type: "calf" };
+            if (window.electronAPI) window.electronAPI.openUpdateAnimal(datas);
         }
 
         else if (target.id === "deleteIco") {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
-                const datas = { EarringNo: earringNo.textContent, Type: "calf", pageName: "calves" }
-                if (window.electronAPI) window.electronAPI.removeAnimal(datas);
+                const datas = { animalId: calfId.textContent, Type: "calf", pageName: "calves" }
+                window.electronAPI.removeAnimal(datas);
             } else {
                 console.log("Veri silinmedi.");
             }
@@ -124,6 +126,7 @@ function showDatas(datas) {
     let count = 1;
     datas.forEach((calf) => {
         let tableRow = document.createElement("tr");
+        let calfId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -157,6 +160,7 @@ function showDatas(datas) {
 
         // Tailwind classes
         // tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
+        calfId.className = cellClasses;
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -203,6 +207,7 @@ function showDatas(datas) {
         // shutButton.appendChild(shutIco);
 
         calvesTableBody.appendChild(tableRow);
+        tableRow.appendChild(calfId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -217,6 +222,7 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
+        calfId.id = "calfId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -227,6 +233,7 @@ function showDatas(datas) {
         updateButton.id = "updateIco";
         // shutButton.id = "shutIco";
 
+        calfId.textContent = calf.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
         name.textContent = calf.Name;

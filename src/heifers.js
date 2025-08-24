@@ -27,6 +27,7 @@ const layout = `
                         <table class="min-w-full bg-white">
                             <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                                 <tr class="bg-gray-800">
+                                    <th class="px-4 py-3 text-center font-semibold">Id</th>
                                     <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                                     <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                                     <th class="px-4 py-3 text-center font-semibold">İnek Adı</th>
@@ -94,15 +95,16 @@ function showDatas(datas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let heiferId = tableRow.querySelector("#heiferId");
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { earringNo: earringNo.textContent, type: "heifer" };
+            let datas = { animalId: heiferId.textContent, type: "heifer" };
             window.electronAPI.openAnimalDetail(datas);
         }
 
         else if (target.id === "updateIco") {
-            datas = { earringNo: earringNo.textContent, type: "heifer" };
+            datas = { animalId: heiferId.textContent, type: "heifer" };
             window.electronAPI.openUpdateAnimal(datas);
         }
 
@@ -110,7 +112,7 @@ function showDatas(datas) {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
-                const datas = { EarringNo: earringNo.textContent, Type: "heifer", pageName: "heifers" };
+                const datas = { animalId: heiferId.textContent, Type: "heifer", pageName: "heifers" };
                 window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
@@ -122,6 +124,7 @@ function showDatas(datas) {
     let count = 1;
     datas.forEach((heifer) => {
         let tableRow = document.createElement("tr");
+        let heiferId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -130,6 +133,7 @@ function showDatas(datas) {
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
+        heiferId.className = cellClasses;
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -180,6 +184,7 @@ function showDatas(datas) {
         inseminationApplyButton.title = "Tohumlandı Olarak İşaretle";
 
         heiferTableBody.appendChild(tableRow);
+        tableRow.appendChild(heiferId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -189,6 +194,7 @@ function showDatas(datas) {
         nav.appendChild(navDiv);
 
         earringNo.id = "earringNo";
+        heiferId.id = "heiferId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -211,6 +217,7 @@ function showDatas(datas) {
 
         // console.log(heifer.lastBirthDate)
 
+        heiferId.textContent = heifer.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = heifer.EarringNo;
         name.textContent = heifer.Name;

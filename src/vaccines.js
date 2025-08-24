@@ -27,6 +27,7 @@ const layout = `
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                         <tr class="bg-gray-800">
+                            <th class="px-4 py-3 text-center">Id</th>
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe Numarası</th>
                             <th class="px-4 py-3 text-center">Aşı Adı</th>
@@ -81,6 +82,9 @@ function showDatas(datas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let vaccineId = tableRow.querySelector("#vaccineId");
+        let vaccineName = tableRow.querySelector("#vaccineName");
+        let vaccineDate = tableRow.querySelector("#vaccineDate");
 
         if (target.id === "updateIco") {
             datas = earringNo.textContent;
@@ -89,14 +93,10 @@ function showDatas(datas) {
 
         else if (target.id === "deleteIco") {
             const sure = window.confirm(
-                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+                earringNo.textContent + " küpe numaralı hayvanın " + vaccineDate.textContent + " tarihli " + vaccineName.textContent + " isimli aşısı silinecek" + "\nOnaylıyor musunuz?");
             if (sure) {
                 // Remove cow from the databases.
-                const vaccineDatas = {
-                    EarringNo: earringNo.textContent,
-                    
-                }
-                window.vaccineAPI.removeVaccine();
+                window.vaccineAPI.removeVaccine(vaccineId.textContent);
             } else {
                 // Anything.
                 console.log("Veri silinmedi.");
@@ -107,6 +107,7 @@ function showDatas(datas) {
     let count = 1;
     datas.forEach((vaccine) => {
         let tableRow = document.createElement("tr");
+        let vaccineId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let vaccineName = document.createElement("td");
@@ -122,6 +123,7 @@ function showDatas(datas) {
 
         // Tailwind classes
         tableRow.className = "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
+        vaccineId.className = "px-4 py-3 text-center";
         number.className = "px-4 py-3 text-center";
         earringNo.className = "px-4 py-3 text-center";
         vaccineName.className = "px-4 py-3 text-center";
@@ -152,6 +154,7 @@ function showDatas(datas) {
         updateButton.appendChild(updateIco);
 
         vaccineTableBody.appendChild(tableRow);
+        tableRow.appendChild(vaccineId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(vaccineName);
@@ -160,12 +163,16 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
+        vaccineId.id = "vaccineId";
+        vaccineName.id = "vaccineName";
+        vaccineDate.id = "vaccineDate";
 
         deleteIco.id = "deleteIco";
         updateIco.id = "updateIco";
         deleteButton.id = "deleteIco";
         updateButton.id = "updateIco";
 
+        vaccineId.textContent = vaccine.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = vaccine.EarringNo;
         vaccineName.textContent = vaccine.VaccineName;

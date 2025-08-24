@@ -27,6 +27,7 @@ const layout = `
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-800 text-white">
                         <tr class="sticky top-0 z-10 bg-gray-800">
+                            <th class="px-4 py-3 text-center font-semibold">Id</th>
                             <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                             <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                             <th class="px-4 py-3 text-center font-semibold">Hayvan Adı</th>
@@ -69,6 +70,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // After update database, refresh the table.
 window.electronAPI.refresh((datas) => {
+    console.log(datas);
     showDatas(datas);
 });
 
@@ -86,29 +88,30 @@ function showDatas(datas) {
     
     
     addAnimalButton.addEventListener("click", () => {
-                window.electronAPI.openAddAnimalMenu();
+        window.electronAPI.openAddAnimalMenu();
     });
     
     animalTableBody.addEventListener("click", function (event) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
+        let animalId = tableRow.querySelector("#animalId");
         let calfName = tableRow.querySelector("#calfName");
         let type = tableRow.querySelector("#type")
     
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek"){
-                var datas = { earringNo: earringNo.textContent, type: "cow" };
-                    }
+                var datas = { animalId: animalId.textContent, type: "cow" };
+            } 
             else if (type.textContent == "Düve"){
-                var datas = { earringNo: earringNo.textContent, type: "heifer" };
+                var datas = { animalId: animalId.textContent, type: "heifer" };
             }
             else if (type.textContent == "Buzağı"){
-                var datas = { earringNo: earringNo.textContent, type: "calf" };
+                var datas = { animalId: animalId.textContent, type: "calf" };
             }
             else if (type.textContent == "Dana"){
-                var datas = { earringNo: earringNo.textContent, type: "bull" };
+                var datas = { animalId: animalId.textContent, type: "bull" };
             }
             window.electronAPI.openAnimalDetail(datas);
         } 
@@ -116,16 +119,16 @@ function showDatas(datas) {
         else if (target.id === "updateIco") {
                     // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek"){
-                var datas = { earringNo: earringNo.textContent, type: "cow" };
+                var datas = { animalId: animalId.textContent, type: "cow" };
             }
             else if (type.textContent == "Düve"){
-                var datas = { earringNo: earringNo.textContent, type: "heifer" };
+                var datas = { animalId: animalId.textContent, type: "heifer" };
             }
             else if (type.textContent == "Buzağı"){
-                var datas = { earringNo: earringNo.textContent, type: "calf" };
+                var datas = { animalId: animalId.textContent, type: "calf" };
             }
             else if (type.textContent == "Dana"){
-                var datas = { earringNo: earringNo.textContent, type: "bull" };
+                var datas = { animalId: animalId.textContent, type: "bull" };
             }
             // console.log(datas)
                     window.electronAPI.openUpdateAnimal(datas);
@@ -136,7 +139,7 @@ function showDatas(datas) {
                 "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
             if (sure) {
                 // Remove cow from the databases.
-                const datas = {EarringNo: earringNo.textContent, pageName: "animals"}
+                const datas = {animalId: animalId.textContent, pageName: "animals"}
                 if (type.textContent === "İnek") {
                     datas.Type = "cow";
                 }
@@ -159,7 +162,9 @@ function showDatas(datas) {
 
     let count = 1;
     datas.forEach((animal) => {
+        // Create table row for each animal.
         let tableRow = document.createElement("tr");
+        let animalId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -170,6 +175,7 @@ function showDatas(datas) {
                 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
+        animalId.className = cellClasses;
         number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -178,6 +184,7 @@ function showDatas(datas) {
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
         
+        // Create buttons for each row.
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
         let deleteButton = document.createElement("button");
@@ -187,6 +194,7 @@ function showDatas(datas) {
         // let infoIco = document.createElement("i");
         // let updateIco = document.createElement("i");
         
+        // Button styles.
         nav.className = cellClasses;
         navDiv.className = "flex justify-center gap-1";
         deleteButton.className = "bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
@@ -215,6 +223,7 @@ function showDatas(datas) {
         // updateButton.appendChild(updateIco);
                 
         animalTableBody.appendChild(tableRow);
+        tableRow.appendChild(animalId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -225,6 +234,7 @@ function showDatas(datas) {
         tableRow.appendChild(nav);
         
         earringNo.id = "earringNo";
+        animalId.id = "animalId";
         type.id = "type";
         name.id = "calfName";
                 
@@ -235,12 +245,13 @@ function showDatas(datas) {
         infoButton.id = "infoIco";
         updateButton.id = "updateIco";
         
+        animalId.textContent = animal.Id;
         number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         name.textContent = animal.Name;
         birthDate.textContent = new Date(animal.BirthDate).toLocaleDateString("tr-TR");
         if (animal.Type === "cow"){
-    type.textContent = "İnek";
+            type.textContent = "İnek";
         }
         else if (animal.Type === "heifer"){
             type.textContent = "Düve";

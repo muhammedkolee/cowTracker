@@ -1,4 +1,5 @@
 const inputsTag = document.getElementById("inputsTag");
+const animalId = document.getElementById("animalId");
 const earringNo = document.getElementById("earringNo");
 const nameTag = document.getElementById("name");
 const birthDate = document.getElementById("birthDate");
@@ -74,17 +75,21 @@ updateButton.addEventListener("click", (e) => {
     const allDatas = {};
     allDatas.animalData = {};
 
+    console.log("earringNo.value: ", earringNo.value)
+
+    allDatas.animalData.Id = animalId.value;
     allDatas.animalData.EarringNo = earringNo.value;
     allDatas.animalData.Name = nameTag.value;
     allDatas.animalData.BirthDate = birthDate.value;
     allDatas.animalData.MotherEarringNo = motherEarringNo.value;
     allDatas.animalData.MotherName = motherName.value;
     allDatas.animalData.Type = animalType.value;
-    console.log("type: ", animalType.value);
+    // console.log("type: ", animalType.value);
     
     if (animalType.value === "cow") {
         allDatas.cowData = {};
 
+        allDatas.cowData.Id = animalId.value;
         allDatas.cowData.EarringNo = earringNo.value;
         allDatas.cowData.Name = nameTag.value;
         allDatas.cowData.InseminationDate = inseminationDate.value;
@@ -94,6 +99,7 @@ updateButton.addEventListener("click", (e) => {
     else if (animalType.value === "heifer") {
         allDatas.heiferData = {};
 
+        allDatas.heiferData.Id = animalId.value;
         allDatas.heiferData.EarringNo = earringNo.value;
         allDatas.heiferData.Name = nameTag.value;
         allDatas.heiferData.LastBirthDate = lastBirthDate.value;
@@ -101,6 +107,7 @@ updateButton.addEventListener("click", (e) => {
     else if (animalType.value === "calf"){
         allDatas.calfData = {};
 
+        allDatas.calfData.Id = animalId.value;
         allDatas.calfData.EarringNo = earringNo.value;
         allDatas.calfData.Name = nameTag.value;
         allDatas.calfData.Gender = gender.value === "true" ? true : false;
@@ -114,6 +121,7 @@ updateButton.addEventListener("click", (e) => {
 });
 
 function showDatas(allDatas) {
+    animalId.value = allDatas.animalData[0].Id;
     earringNo.value = allDatas.animalData[0].EarringNo;
     nameTag.value = allDatas.animalData[0].Name;
     birthDate.value = allDatas.animalData[0].BirthDate;

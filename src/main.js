@@ -12,17 +12,8 @@ const updateAnimal = require("../backend/updateAnimalF.js");
 const removeAnimal = require("../backend/removeAnimalF.js");
 const receiveVaccineDatas = require("../backend/receiveVaccineDatasF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
-
-
-// const { eventNames } = require("process");
-// const os = require("os");
-// const fs = require("fs");
-
-// Need to connect supabase.
-const supabaseUrl = "https://keixqunsvrtxhtjbxqlr.supabase.co";
-const supabaseKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlaXhxdW5zdnJ0eGh0amJ4cWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MjExMjQsImV4cCI6MjA2NzM5NzEyNH0.EU-7sz48RYWPR-Nn9hiuYlZvWVDNrMg2xvI3ha4Z0xk";
-const supabase = createClient(supabaseUrl, supabaseKey);
+const removeVaccine = require("../backend/removeVaccineF.js");
+const supabase = require("../backend/databaseConnection.js");
 
 // If app is ready, run this block.
 app.on("ready", async () => {
@@ -142,8 +133,10 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
 
     addAnimalMenu
         .loadFile(path.join(__dirname, "../views/addAnimal.html"))
-        .then(() => {
+        .then( async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
+            console.log("Veri iletildi.")
+            addAnimalMenu.webContents.send("sendMothersEarringNo", await getMotherEarringNos());
         });
 });
 
@@ -313,6 +306,9 @@ ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
 
 // Update Animal
 ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
+    console.log("allDatas: ", allDatas)
+    console.log("allDatas.animalData: ", allDatas.animalData)
+    console.log("allDatas.calfData: ", allDatas.calfData)
     if (updateAnimal(allDatas)) {
         event.sender.send("updateResult", true);
     }
@@ -341,6 +337,10 @@ ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
 ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
     receiveVaccineDatas(vaccineDatas);
 });
+
+ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
+    removeVaccine(vaccineId);    
+});
 // END OF THE FUNCTIONS
 
 // If all window(s) closed, shut down app.
@@ -354,12 +354,12 @@ async function getCowDatas(datas) {
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
 
     const { data: cowData, error: cowError } = await supabase
         .from("Cows")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     
         const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
@@ -389,11 +389,11 @@ async function getHeiferDatas(datas) {
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     const { data: heiferData, error: heiferError } = await supabase
         .from("Heifers")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
         .select("*")
@@ -419,7 +419,7 @@ async function getBullDatas(datas) {
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
@@ -435,11 +435,11 @@ async function getCalfDatas(datas) {
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     const { data: calfData, error: calfError } = await supabase
         .from("Calves")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("Id", datas.animalId);
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
@@ -528,7 +528,12 @@ async function getVaccinesDatas() {
     return data;
 }
 
-// Update database's datas.
-// async function updateDatabase() {
-//     updateDatabase();
-// }
+// Get Mom's Earring Nos
+async function getMotherEarringNos() {
+    const { data, error } = await supabase.from("Cows").select("EarringNo, Name");
+    if (error) {
+        console.log("Bir hata oluştu: ", error);
+    }
+    console.log(data);
+    return data;
+}

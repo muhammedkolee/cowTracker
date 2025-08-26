@@ -97,7 +97,7 @@ addButton.addEventListener("click", () => {
     const earringNo = document.getElementById("earringNo");
     const animalName = document.getElementById("animalName");
     const birthDate = document.getElementById("birthDate");
-    const motherEarringNo = document.getElementById("motherEarringNoSelect"); // ID değişti
+    const motherEarringNo = document.getElementById("motherEarringNoSelect");
     const motherName = document.getElementById("motherName");
     
     if (type.value === "cow") {
@@ -117,7 +117,9 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.cowDatas.Name = animalName.value;
         newAnimalDatas.cowDatas.InseminationDate = inseminationDateInput.value;
         newAnimalDatas.cowDatas.BullName = bullNameInput.value;
-        newAnimalDatas.cowDatas.CheckedDate = checkInput.value;
+        if (checkInput.value != "") {
+            newAnimalDatas.cowDatas.CheckedDate = checkInput.value;
+        }
     }
     else if (type.value === "heifer"){
         const lastBirthDate = document.getElementById("lastBirthDateInput");
@@ -150,10 +152,10 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.calfDatas.BirthDate = birthDate.value;
 
         if (genderInput.value === "girl"){
-            newAnimalDatas.calfDatas.Gender = true; // Dişi ise true
+            newAnimalDatas.calfDatas.Gender = true;
         }
         else {
-            newAnimalDatas.calfDatas.Gender = false; // Erkek ise false
+            newAnimalDatas.calfDatas.Gender = false;
         }
     }
     else if (type.value === "bull"){

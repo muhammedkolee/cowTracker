@@ -128,4 +128,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
             callback(datas);
         });
     },
+
+    gaveBirth: (datas) => {
+        ipcRenderer.send("ipcMain:gaveBirth", datas);
+    }
 });

@@ -165,9 +165,6 @@ function showDatas(allDatas) {
         animalInfoCard.innerHTML += `
             <div class="space-y-3 text-sm">
                 <div class="grid grid-cols-1 gap-3">
-                    <p><span class="font-bold text-gray-800">Id:</span> <span class="text-gray-950">${
-                        allDatas.animalData[0].Id
-                    }</span></p>
                     <p><span class="font-bold text-gray-800">İsim:</span> <span class="text-gray-950">${
                         allDatas.animalData[0].Name
                     }</span></p>
@@ -204,11 +201,14 @@ function showDatas(allDatas) {
                     }">${calculateLeftDay(
             allDatas.cowData[0].InseminationDate
         )} gün</span></p>
-                    <p><span class="font-bold text-gray-800">Kuruya Çıkış:</span> <span class="text-gray-950">${calculateKuruDate(
+                    <p><span class="font-bold text-gray-800">Kuruya Çıkış:</span> <span class="text-gray-950">${calculateDryDate(
                         allDatas.cowData[0].InseminationDate
                     )}</span></p>
                     <p><span class="font-bold text-gray-800">Boğa İsmi:</span> <span class="text-gray-950">${
                         allDatas.cowData[0].BullName
+                    }</span></p>
+                    <p><span class="font-bold text-gray-800">Gebelik Kontrol Tarihi:</span> <span class="text-gray-950">${
+                        new Date(allDatas.cowData[0].CheckedDate).toLocaleDateString("tr-TR") != "01.01.1970" ? new Date(allDatas.cowData[0].CheckedDate).toLocaleDateString("tr-TR") : "Yok"
                     }</span></p>
                 </div>
             </div>
@@ -506,7 +506,7 @@ function calculateWhenBirth(inseminationDate) {
     return date.toLocaleDateString("tr-TR");
 }
 
-function calculateKuruDate(inseminationDate) {
+function calculateDryDate(inseminationDate) {
     let date = parseTurkishDate(inseminationDate);
     date.setDate(date.getDate() + 220);
     return date.toLocaleDateString("tr-TR");
@@ -528,10 +528,13 @@ function calculatePassDay(inseminationDate) {
 }
 
 function calculatelastBirthDate(lastBirth) {
-    const lastBirthDate = lastBirth;
+    // const lastBirthDate = lastBirth;
 
-    console.log(getTodayDate);
-    return Math.ceil((getTodayDate() - lastBirthDate) / (1000 * 60 * 60 * 24));
+    // console.log("getTodayDate: ",getTodayDate());
+    // console.log("getTodayDate - lastBirth: ",getTodayDate() - lastBirth);
+    // console.log("getTodayDate - Date(lastBirth): ",getTodayDate() - Date(lastBirth));
+    // console.log("getTodayDate - new Date(lastBirth): ", (getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24));
+    return Math.ceil((getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24));
 }
 function calculateCalfDates(birthDate) {
     let lt2Date = new Date(birthDate);

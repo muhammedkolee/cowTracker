@@ -25,7 +25,8 @@ const addVaccineButton = document.getElementById("addVaccineButton");
 // Press Add Vaccine Button
 addVaccineButton.addEventListener("click", () => {
     addVaccine();
-})
+    window.close();
+});
 
 // Select tagını devre dışı bırakma ve temizleme fonksiyonu
 function disableAndClearSelect() {

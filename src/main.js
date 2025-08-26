@@ -14,6 +14,7 @@ const receiveVaccineDatas = require("../backend/receiveVaccineDatasF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
 const supabase = require("../backend/databaseConnection.js");
+const { error } = require("console");
 
 // If app is ready, run this block.
 app.on("ready", async () => {
@@ -66,7 +67,8 @@ app.on("ready", async () => {
         mainWindow.loadFile(path.join(__dirname, "../views/offlinePage.html"));
     });
 
-    // To open page which user want to open. pageName => file name without .html
+    // To open page which user want to open. pa
+    // ame => file name without .html
     ipcMain.on("ipcMain:openPage", (event, pageName) => {
         mainWindow
             .loadFile(path.join(__dirname, "../views/" + pageName + ".html"))
@@ -133,7 +135,7 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
 
     addAnimalMenu
         .loadFile(path.join(__dirname, "../views/addAnimal.html"))
-        .then( async () => {
+        .then(async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
             console.log("Veri iletildi.")
             addAnimalMenu.webContents.send("sendMothersEarringNo", await getMotherEarringNos());
@@ -282,8 +284,8 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
     addVaccineWindow
         .loadFile(path.join(__dirname, "../views/addVaccine.html"))
         .then(async () => {
-            const {data: animalsDatas, error: animalsError} = await supabase.from("Animals").select("EarringNo, Name");
-            if (animalsError){
+            const { data: animalsDatas, error: animalsError } = await supabase.from("Animals").select("EarringNo, Name");
+            if (animalsError) {
                 console.log(animalsError)
             }
             else {
@@ -297,7 +299,7 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
 // FUNCTIONS
 // Add Animal
 ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
-    if(addAnimal(datas)) {
+    if (addAnimal(datas)) {
         event.sender.send("addResult", true);
     } else {
         event.sender.send("addResult", false);
@@ -320,7 +322,7 @@ ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
 // Remove Animal
 ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
     removeAnimal(datas);
-    
+
     if (datas.pageName === "animals") {
         event.sender.send("refresh", await getAnimalsDatas());
     } else if (datas.pageName === "cows") {
@@ -339,7 +341,33 @@ ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
 });
 
 ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
-    removeVaccine(vaccineId);    
+    removeVaccine(vaccineId);
+});
+
+ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
+    const { data: cowData, error: cowError } = await supabase.from("Animals").select("*").eq("Id", datas.animalId);
+    if (cowError) {
+        console.log("Hata: ", cowError);
+    }
+    console.log(cowData);
+
+    const allDatas = {};
+    allDatas.animalData = cowData[0];
+    allDatas.animalData.Type = "heifer";
+    allDatas.heiferData = {
+        Id: allDatas.animalData.Id,
+        EarringNo: allDatas.animalData.EarringNo,
+        LastBirthDate: datas.date,
+        Name: allDatas.animalData.Name
+    };
+
+    if(updateAnimal(allDatas)) {
+        console.log("ISLEM BASARILIIIII!!!");
+    }
+    else {
+        console.log("bi hata");
+        return false;
+    }
 });
 // END OF THE FUNCTIONS
 
@@ -360,14 +388,14 @@ async function getCowDatas(datas) {
         .from("Cows")
         .select("*")
         .eq("Id", datas.animalId);
-    
-        const { data: calvesData, error: calvesError } = await supabase
+
+    const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
         .select("*")
         .eq("Type", "calf")
         .eq("MotherEarringNo", datas.earringNo);
-    
-        const { data: vaccinesData, error: vaccinesError } = await supabase
+
+    const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
         .eq("EarringNo", datas.earringNo);
@@ -530,10 +558,29 @@ async function getVaccinesDatas() {
 
 // Get Mom's Earring Nos
 async function getMotherEarringNos() {
-    const { data, error } = await supabase.from("Cows").select("EarringNo, Name");
+    const { data, error } = await supabase.from("Animals").select("EarringNo, Name").in("Type", ["cow", "heifer"]);
     if (error) {
         console.log("Bir hata oluştu: ", error);
     }
-    console.log(data);
     return data;
 }
+
+
+
+/*
++ 1-) Aşılar sayfasında toplu silme ve toplu ekleme özellikleri eklenecek.
++ 2-) animalDetail.js dosyasındaki tarih hesaplamaları kontrol edilecek.
++ 3-) animalDetail.js dosyasında boş olan tarihler için düzenleme gerekiyor.
++ 4-) vaccines.js dosyasındaki güncelle butonu silinecek.
++ 13-) vaccines.js dosyasında aşı eklendikten sonra window.close() yapılsın.
++ 9-) Bütün sayfalar en aşağı kaydırıldıktan sonra butonlar için yer bırakılacak (animals.js gibi)
+12-) cows.js dosyasında Doğurdu Olarak İşaretle butonu çalışmıyor.
+13-) Herhangi bir sayfadan ana menüye geçildiğinde veriler yenilenmiyor.
+
+1-) İnek, girilen tarihe göre düve statüsüne geçirilecek.
+2-) addAnimal.js sayfası açılacak ve girilen tarih otomatik olarak Doğum Tarihi value'sü olarak yazılacak.
+
+dialoga geç kanka 
+
+* Sayfalar için padding ayarlandı. *
+*/

@@ -14,6 +14,7 @@ async function addAnimal(datas) {
             .from("Cows")
             .insert(datas.cowDatas);
         if (cowsError) {
+            console.log(cowsError);
             return false
         }
     } else if (datas.animalDatas.Type === "heifer") {

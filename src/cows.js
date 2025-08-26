@@ -47,29 +47,43 @@ const layout = `
                 </div>
             </div>
             <div class="text-right mt-3">
-                <button
-                    class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors"
-                    id="btn-add-cow"
-                >
+                <button class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors" id="btn-add-cow">
                     Yeni İnek Ekle
                 </button>
-            </div>
-            <button
-                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-3 fixed bottom-5 right-2 z-50 shadow-lg transition-colors"
-                id="btn-menu"
-            >
-                Ana Menü
+                <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-3 fixed bottom-5 right-2 z-50 shadow-lg transition-colors" id="btn-menu">
+                    Ana Menü
                 </button>
+            </div>
+                <div id="dateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-80">
+        <div class="bg-white my-24 mx-auto p-5 rounded-lg w-80 shadow-lg">
+            <div class="mb-4 text-lg font-bold">
+                Tarih Seçimi
+            </div>
+            <div class="mb-5">
+                <p class="mb-3">Lütfen bir tarih seçiniz:</p>
+                <input type="date" id="dateInput" class="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="cancelBtn" class="py-2 px-4 border-none rounded cursor-pointer bg-gray-500 hover:bg-gray-600 text-white transition-colors">
+                    İptal
+                </button>
+                <button id="confirmBtn" class="py-2 px-4 border-none rounded cursor-pointer bg-blue-500 hover:bg-blue-600 text-white transition-colors">
+                    Tamam
+                </button>
+            </div>
+        </div>
+    </div>
         `;
 
 const cowsBody = document.getElementById("cowsBody");
-
+        
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     cowsBody.innerHTML = loadingTemplate;
     window.animalsAPI.receiveDatas((datas) => {
         showDatas(datas);
     });
+
 });
 
 // After update database, refresh the table.
@@ -97,7 +111,7 @@ function showDatas(datas) {
         window.electronAPI.openAddAnimalMenu(animalType);
     });
 
-    cowTableBody.addEventListener("click", function (event) {
+    cowTableBody.addEventListener("click", async function (event) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
@@ -113,8 +127,8 @@ function showDatas(datas) {
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " +
-                    earringNo.textContent +
-                    "\nOnaylıyor musunuz?"
+                earringNo.textContent +
+                "\nOnaylıyor musunuz?"
             );
             if (sure) {
                 // Remove cow from the databases.
@@ -129,17 +143,19 @@ function showDatas(datas) {
                 console.log("Veri silinmedi.");
             }
         } else if (target.id === "applyIco") {
-            const sure = window.confirm(
-                "Şu küpe numaralı hayvan doğurdu olarak işaretlenecek: " +
-                    earringNo.textContent +
-                    "\nOnaylıyor musunuz?"
-            );
-            if (sure) {
-                window.confirm("Güncellendi.");
-                // Update cow's datas.
-            } else {
-                window.confirm("Iptal edildi.");
-                // Anything.
+            try {
+                
+                const selectedDate = await openDateModal();
+                
+                window.electronAPI.gaveBirth({ animalId: cowId.textContent, date: selectedDate });
+
+                window.electronAPI.openAddAnimalMenu();
+                window.confirm("Lütfen doğuran inek için buzağı ekleme işlemini yapınız!");
+            } catch (error) {
+                console.log(error)
+                if (error === 'cancelled') {
+                    console.log("İşlem iptal edildi.")
+                }
             }
         }
     });
@@ -276,7 +292,9 @@ function showDatas(datas) {
         passDay.textContent = calculatePassDay(animal.InseminationDate);
         kuruDate.textContent = calculateKuruDate(animal.InseminationDate);
         bullName.textContent = animal.BullName;
-        isPregnant.textContent = new Date(animal.CheckedDate).toLocaleDateString("tr-TR");
+        if (new Date(animal.CheckedDate).toLocaleDateString("tr-TR") != "01.01.1970") {
+            isPregnant.textContent = new Date(animal.CheckedDate).toLocaleDateString("tr-TR");
+        }
 
         // Row color based on days left for birth
         if (
@@ -294,7 +312,7 @@ function showDatas(datas) {
             parseInt(calculateLeftDay(animal.InseminationDate)) <= 80 &&
             parseInt(calculateLeftDay(animal.InseminationDate)) > 30
         ) {
-            tableRow.className = 
+            tableRow.className =
                 "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         } else {
             tableRow.className =
@@ -352,4 +370,48 @@ function calculatePassDay(inseminationDate) {
 
     // console.log("calculatePassDay: ",Math.ceil((today - date) / (1000 * 60 * 60 * 24)));
     return Math.ceil((today - date) / (1000 * 60 * 60 * 24));
+}
+
+function openDateModal() {
+    const modal = document.getElementById('dateModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const dateInput = document.getElementById('dateInput');
+    const result = document.getElementById('result');
+
+    return new Promise((resolve, reject) => {
+        console.log("fonskiyona girildi.")
+        modal.classList.remove('hidden');
+        console.log("hidden silindi.");
+
+        // Bugünün tarihini varsayılan olarak ayarla
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+
+        // Tamam butonu
+        confirmBtn.onclick = () => {
+            const selectedDate = dateInput.value;
+            if (selectedDate) {
+                modal.classList.add('hidden');
+                resolve(selectedDate);
+            } else {
+                alert('Lütfen bir tarih seçiniz!');
+            }
+        };
+
+        // İptal butonu
+        cancelBtn.onclick = () => {
+            modal.classList.add('hidden');
+            reject('cancelled');
+        };
+
+        // Modal dışına tıklama ile kapatma
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                reject('cancelled');
+            }
+        };
+    });
 }

@@ -24,9 +24,7 @@ contextBridge.exposeInMainWorld("addAnimalAPI", {
     },
 
     receiveMothersEarringNo: (callback) => {
-        console.log("receiveMothersEarringNo: ")
         ipcRenderer.on("sendMothersEarringNo", (event, EarringNos) => {
-            console.log("receiveMothersEarringNo2: ")
             callback(EarringNos);
         })
     }
@@ -43,7 +41,6 @@ contextBridge.exposeInMainWorld("animalDetailAPI", {
 contextBridge.exposeInMainWorld("animalsAPI", {
     receiveDatas: (callback) => {
         ipcRenderer.on("sendDatas", (event, datas) => {
-            // console.log(datas);
             callback(datas);
         });
     },
@@ -104,13 +101,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     // ***
     openUpdateAnimal: (datas) => {
-        // console.log(datas)
         ipcRenderer.send("ipcMain:openUpdateAnimal", datas);
     },
 
     receiveUpdateDatas: (callback) => {
         ipcRenderer.on("sendUpdateDatas", (event, allDatas) => {
-            console.log(allDatas)
             callback(allDatas);
         });
     },
@@ -131,5 +126,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     gaveBirth: (datas) => {
         ipcRenderer.send("ipcMain:gaveBirth", datas);
-    }
+    },
 });

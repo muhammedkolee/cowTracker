@@ -149,8 +149,8 @@ function showDatas(datas) {
                 
                 window.electronAPI.gaveBirth({ animalId: cowId.textContent, date: selectedDate });
 
-                window.electronAPI.openAddAnimalMenu();
-                window.confirm("Lütfen doğuran inek için buzağı ekleme işlemini yapınız!");
+                window.confirm("İnek başarıyla düve statüsüne geçirildi ve doğum yaptı olarak kaydedildi!\nLütfen doğuran inek için buzağı ekleme işlemini yapınız!");
+                window.electronAPI.openAddAnimalMenu(selectedDate);
             } catch (error) {
                 console.log(error)
                 if (error === 'cancelled') {
@@ -162,8 +162,6 @@ function showDatas(datas) {
 
     let count = 1;
     datas.forEach((animal) => {
-        // console.log("datas",datas);
-        // console.log("animal",animal);
         let tableRow = document.createElement("tr");
         let cowId = document.createElement("td");
         let number = document.createElement("td");

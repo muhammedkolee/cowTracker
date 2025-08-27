@@ -10,7 +10,7 @@ async function receiveVaccineDatas(vaccineDatas) {
                 .insert({
                     VaccineName: vaccineDatas.VaccineName,
                     VaccineDate: vaccineDatas.VaccineDate,
-                    EarringNo: animal.EarringNo,
+                    AnimalId: animal.Id,
                 });
             if (error) {
                 console.log("Bir hata oluştu, fonksiyon durduruluyor.");
@@ -29,7 +29,7 @@ async function receiveVaccineDatas(vaccineDatas) {
                     .insert({
                         VaccineName: vaccineDatas.VaccineName,
                         VaccineDate: vaccineDatas.VaccineDate,
-                        EarringNo: cow.EarringNo,
+                        AnimalId: cow.Id,
                     });
             });
         }
@@ -43,7 +43,7 @@ async function receiveVaccineDatas(vaccineDatas) {
                     .insert({
                         VaccineName: vaccineDatas.VaccineName,
                         VaccineDate: vaccineDatas.VaccineDate,
-                        EarringNo: heifer.EarringNo,
+                        AnimalId: heifer.Id,
                     });
             });
         }
@@ -57,7 +57,7 @@ async function receiveVaccineDatas(vaccineDatas) {
                     .insert({
                         VaccineName: vaccineDatas.VaccineName,
                         VaccineDate: vaccineDatas.VaccineDate,
-                        EarringNo: calf.EarringNo,
+                        AnimalId: calf.Id,
                     });
             });
         }
@@ -72,11 +72,11 @@ async function receiveVaccineDatas(vaccineDatas) {
                     .insert({
                         VaccineName: vaccineDatas.VaccineName,
                         VaccineDate: vaccineDatas.VaccineDate,
-                        EarringNo: bull.EarringNo,
+                        AnimalId: bull.Id,
                     });
             });
         }
-    } else if (vaccineDatas.EarringNo) {
+    } else if (vaccineDatas.AnimalId) {
         const { error } = await supabase.from("Vaccines").insert(vaccineDatas);
         if (error) {
             console.log(error);

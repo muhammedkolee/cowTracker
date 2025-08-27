@@ -32,7 +32,8 @@ const layout = `
                             </th>
                             <th class="px-4 py-3 text-center">Id</th>
                             <th class="px-4 py-3 text-center">Sayı</th>
-                            <th class="px-4 py-3 text-center">Küpe Numarası</th>
+                            <th class="px-4 py-3 text-center">Küpe No.</th>
+                            <th class="px-4 py-3 text-center">İsim</th>
                             <th class="px-4 py-3 text-center">Aşı Adı</th>
                             <th class="px-4 py-3 text-center">Aşı Tarihi</th>
                             <th class="px-4 py-3 text-center">Kaç Gün Oldu</th>
@@ -234,6 +235,7 @@ function showDatas(datas) {
         let vaccineId = document.createElement("td");
         let number = document.createElement("td");
         let earringNo = document.createElement("td");
+        let name = document.createElement("td");
         let vaccineName = document.createElement("td");
         let vaccineDate = document.createElement("td");
         let days = document.createElement("td");
@@ -258,6 +260,7 @@ function showDatas(datas) {
         vaccineId.className = "px-4 py-3 text-center";
         number.className = "px-4 py-3 text-center";
         earringNo.className = "px-4 py-3 text-center";
+        name.className = "px-4 py-3 text-center";
         vaccineName.className = "px-4 py-3 text-center";
         vaccineDate.className = "px-4 py-3 text-center";
         days.className = "px-4 py-3 text-center";
@@ -290,6 +293,7 @@ function showDatas(datas) {
         tableRow.appendChild(vaccineId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
+        tableRow.appendChild(name);
         tableRow.appendChild(vaccineName);
         tableRow.appendChild(vaccineDate);
         tableRow.appendChild(days);
@@ -307,7 +311,8 @@ function showDatas(datas) {
 
         vaccineId.textContent = vaccine.Id;
         number.textContent = count.toString() + "-)";
-        earringNo.textContent = vaccine.EarringNo;
+        earringNo.textContent = vaccine.Animals.EarringNo;
+        name.textContent = vaccine.Animals.Name;
         vaccineName.textContent = vaccine.VaccineName;
         vaccineDate.textContent = new Date(vaccine.VaccineDate).toLocaleDateString("tr-TR");
         days.textContent = calculateDays(vaccine.VaccineDate).toString();

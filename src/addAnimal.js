@@ -11,6 +11,8 @@ let motherAnimalsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.addAnimalAPI.receiveAnimalType((animalType) => {
+        console.log(typeof (animalType))
+        console.log(animalType)
         if (animalType === "cow") {
             addCow();
             type.value = "cow";
@@ -23,7 +25,13 @@ window.addEventListener("DOMContentLoaded", () => {
         } else if (animalType === "bull") {
             addBull();
             type.value = "bull";
+        } else {
+            addCalf();
+            type.value = "calf";
+            console.log(document.getElementById("birthDate"));
+            document.getElementById("birthDate").value = animalType;
         }
+
     });
 
     window.addAnimalAPI.receiveMothersEarringNo((EarringNos) => {
@@ -38,9 +46,9 @@ window.addEventListener("DOMContentLoaded", () => {
 function setupMotherEarringSelection() {
     const motherEarringInput = document.getElementById("motherEarringNoSelect");
     const datalist = document.getElementById("motherEarringNumbers");
-    
+
     if (!motherEarringInput || !datalist) return;
-    
+
     // Datalist'i doldur
     datalist.innerHTML = '';
     motherAnimalsData.forEach(animal => {
@@ -49,7 +57,7 @@ function setupMotherEarringSelection() {
         option.textContent = `${animal.EarringNo} - ${animal.Name}`;
         datalist.appendChild(option);
     });
-    
+
     // Input değiştiğinde anne adını güncelle
     motherEarringInput.addEventListener('input', updateMotherName);
     motherEarringInput.addEventListener('change', updateMotherName);
@@ -58,12 +66,12 @@ function setupMotherEarringSelection() {
 function updateMotherName() {
     const selectedEarringNo = document.getElementById('motherEarringNoSelect').value;
     const motherNameInput = document.getElementById('motherName');
-    
+
     if (!motherNameInput) return;
-    
+
     // Seçilen küpe numarasına karşılık gelen hayvanı bul
     const selectedAnimal = motherAnimalsData.find(animal => animal.EarringNo === selectedEarringNo);
-    
+
     if (selectedAnimal) {
         motherNameInput.value = selectedAnimal.Name;
         motherNameInput.classList.remove('bg-gray-50');
@@ -78,7 +86,7 @@ function updateMotherName() {
 window.addAnimalAPI.addResult((result) => {
     if (result) {
         const confirmed = window.confirm("Hayvan başarıyla eklendi!");
-        if (confirmed){
+        if (confirmed) {
             window.close();
         }
         else {
@@ -99,12 +107,12 @@ addButton.addEventListener("click", () => {
     const birthDate = document.getElementById("birthDate");
     const motherEarringNo = document.getElementById("motherEarringNoSelect");
     const motherName = document.getElementById("motherName");
-    
+
     if (type.value === "cow") {
         const inseminationDateInput = document.getElementById("inseminationDateInput");
         const bullNameInput = document.getElementById("bullNameInput");
         const checkInput = document.getElementById("checkInput");
-        
+
         newAnimalDatas.cowDatas = {};
         newAnimalDatas.animalDatas.EarringNo = earringNo.value;
         newAnimalDatas.animalDatas.Name = animalName.value;
@@ -112,7 +120,7 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.animalDatas.MotherEarringNo = motherEarringNo.value;
         newAnimalDatas.animalDatas.MotherName = motherName.value;
         newAnimalDatas.animalDatas.Type = "cow";
-        
+
         newAnimalDatas.cowDatas.EarringNo = earringNo.value;
         newAnimalDatas.cowDatas.Name = animalName.value;
         newAnimalDatas.cowDatas.InseminationDate = inseminationDateInput.value;
@@ -121,7 +129,7 @@ addButton.addEventListener("click", () => {
             newAnimalDatas.cowDatas.CheckedDate = checkInput.value;
         }
     }
-    else if (type.value === "heifer"){
+    else if (type.value === "heifer") {
         const lastBirthDate = document.getElementById("lastBirthDateInput");
 
         newAnimalDatas.heiferDatas = {};
@@ -136,7 +144,7 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.heiferDatas.Name = animalName.value;
         newAnimalDatas.heiferDatas.LastBirthDate = lastBirthDate.value;
     }
-    else if (type.value === "calf"){
+    else if (type.value === "calf") {
         const genderInput = document.getElementById("genderInput");
 
         newAnimalDatas.calfDatas = {};
@@ -151,14 +159,14 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.calfDatas.Name = animalName.value;
         newAnimalDatas.calfDatas.BirthDate = birthDate.value;
 
-        if (genderInput.value === "girl"){
+        if (genderInput.value === "girl") {
             newAnimalDatas.calfDatas.Gender = true;
         }
         else {
             newAnimalDatas.calfDatas.Gender = false;
         }
     }
-    else if (type.value === "bull"){
+    else if (type.value === "bull") {
         newAnimalDatas.animalDatas.EarringNo = earringNo.value;
         newAnimalDatas.animalDatas.Name = animalName.value;
         newAnimalDatas.animalDatas.BirthDate = birthDate.value;
@@ -258,7 +266,7 @@ function addCow() {
 function addCalf() {
     deneme.innerHTML = template;
     setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
-    
+
     // Gender
     let genderDiv = document.createElement("div");
     let genderLabel = document.createElement("label");
@@ -295,7 +303,7 @@ function addCalf() {
 function addHeifer() {
     deneme.innerHTML = template;
     setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
-    
+
     // Last Birth Date
     let lastBirthDateDiv = document.createElement("div");
     let lastBirthDateLabel = document.createElement("label");

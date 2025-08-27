@@ -14,7 +14,7 @@ function fillAnimalSelect(animals) {
     
     animals.forEach((animal) => {
         const option = document.createElement("option");
-        option.value = animal.EarringNo;
+        option.value = animal.Id;
         option.textContent = `${animal.EarringNo} - ${animal.Name}`;
         select.appendChild(option);
     });
@@ -134,7 +134,7 @@ function addVaccine() {
     }
     else {
         vaccineDatas.VaccineName = document.getElementById("vaccineName").value;
-        vaccineDatas.EarringNo = select.value;
+        vaccineDatas.AnimalId = select.value;
         vaccineDatas.VaccineDate = document.getElementById("vaccineDate").value;
     }
     

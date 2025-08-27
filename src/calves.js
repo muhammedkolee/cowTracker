@@ -24,19 +24,19 @@ const layout = `
         <div class="container mx-auto mt-5 mb-4 px-4">
             <h2 class="mb-4 text-center text-2xl font-bold" id="titleCalf"></h2>
             <div class="">
-                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <table class="min-w-full bg-white shadow-md rounded-lg ">
                     <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                         <tr class="bg-gray-800">
                             <th class="px-4 py-3 text-center">Id</th>
                             <th class="px-4 py-3 text-center">Sayı</th>
-                            <th class="px-4 py-3 text-center">Küpe Numarası</th>
+                            <th class="px-4 py-3 text-center">Küpe No.</th>
                             <th class="px-4 py-3 text-center">Buzağı Adı</th>
                             <th class="px-4 py-3 text-center">Doğum Tarihi</th>
-                            <th class="px-4 py-3 text-center">Kaç Günlük *</th>
-                            <th class="px-4 py-3 text-center">2 LT Düşürme Tar. *</th>
-                            <th class="px-4 py-3 text-center">1 LT Düşürme Tar. *</th>
-                            <th class="px-4 py-3 text-center">Sütten Kesme Tar. *</th>
-                            <th class="px-4 py-3 text-center">Sütten Kesmeye Kaç Gün Kaldı *</th>
+                            <th class="px-4 py-3 text-center">Kaç Günlük</th>
+                            <th class="px-4 py-3 text-center">2 LT Düşürme Tar.</th>
+                            <th class="px-4 py-3 text-center">1 LT Düşürme Tar.</th>
+                            <th class="px-4 py-3 text-center">Sütten Kesme Tar.</th>
+                            <th class="px-4 py-3 text-center">Sütten Kesmeye Kalan Gün</th>
                             <th class="px-4 py-3 text-center">Anne Küpe No.</th>
                             <th class="px-4 py-3 text-center">Anne Adı</th>
                             <th class="px-4 py-3 text-center">İşlemler</th>
@@ -55,6 +55,16 @@ const layout = `
             <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-menu">
                 Ana Menü
             </button>
+        </div>
+        <div class="mt-4 flex items-center justify-end">
+            <div class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+                <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                </svg>
+                <p class="text-sm font-medium">
+                    Don't forget update the calf who doesn't have the earring number after the calf was ear-tagged.
+                </p>
+            </div>
         </div>
         `;
 
@@ -166,10 +176,10 @@ function showDatas(datas) {
         name.className = cellClasses;
         birthDate.className = cellClasses;
         days.className = cellClasses;
-        lt2.className = cellClasses;
-        lt1.className = cellClasses;
-        shutDate.className = cellClasses;
-        shutDay.className = cellClasses;
+        lt2.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        lt1.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        shutDate.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        shutDay.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
         nav.className = cellClasses;
@@ -242,22 +252,22 @@ function showDatas(datas) {
         let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calf.BirthDate);
         console.log(shutDateC);
         if (new Date(shutDateC) < getTodayDate()) {
-            days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
+            days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
             lt2.textContent = "Sütten Kesildi";
             lt1.textContent = "Sütten Kesildi";
             shutDate.textContent = "Sütten Kesildi";
             shutDay.textContent = "Sütten Kesildi";
-        } 
+        }
         else {
-            days.textContent = daysC + " (" + (daysC/30).toFixed(1) + " ay)";
+            days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
             lt2.textContent = lt2Date.toLocaleDateString("tr-TR");
             lt1.textContent = lt1Date.toLocaleDateString("tr-TR");
             shutDate.textContent = shutDateC.toLocaleDateString("tr-TR");
             shutDay.textContent = daysS;
         }
 
-        motherEarringNo.textContent = calf.MotherEarringNo;
-        motherName.textContent = calf.MotherName;
+        motherEarringNo.textContent = calf.Animals.MotherEarringNo;
+        motherName.textContent = calf.Animals.MotherName;
 
         // Gender-based background color
         if (calf.Gender) {

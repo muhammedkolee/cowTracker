@@ -2,7 +2,7 @@
 if (require("electron-squirrel-startup")) return;
 
 // Frameworks
-const { app, BrowserWindow, ipcMain, screen } = require("electron");
+const { app, BrowserWindow, ipcMain, screen, dialog } = require("electron");
 const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
 
@@ -68,7 +68,7 @@ app.on("ready", async () => {
     });
 
     // To open page which user want to open. pa
-    // ame => file name without .html
+    // Name => file name without .html
     ipcMain.on("ipcMain:openPage", (event, pageName) => {
         mainWindow
             .loadFile(path.join(__dirname, "../views/" + pageName + ".html"))
@@ -84,8 +84,8 @@ app.on("ready", async () => {
                     const datas = await getHeifersDatas();
                     mainWindow.webContents.send("sendDatas", datas);
                 } else if (pageName === "calves") {
-                    const datas = await getCalvesDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    allDatas = await getCalvesDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "bulls") {
                     const datas = await getBullsDatas();
                     mainWindow.webContents.send("sendDatas", datas);
@@ -101,9 +101,12 @@ app.on("ready", async () => {
         mainWindow
             .loadFile(path.join(__dirname, "../views/index.html"))
             .then(async () => {
+                const datas = {};
+                datas.animalsDatas = await getAnimalsDatas();
+                datas.updatedDatas = await updateDatabase();
                 mainWindow.webContents.send(
                     "sendDatas",
-                    await getAnimalsDatas()
+                    datas
                 );
             });
     });
@@ -284,7 +287,7 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
     addVaccineWindow
         .loadFile(path.join(__dirname, "../views/addVaccine.html"))
         .then(async () => {
-            const { data: animalsDatas, error: animalsError } = await supabase.from("Animals").select("EarringNo, Name");
+            const { data: animalsDatas, error: animalsError } = await supabase.from("Animals").select("EarringNo, Name, Id");
             if (animalsError) {
                 console.log(animalsError)
             }
@@ -399,8 +402,6 @@ async function getCowDatas(datas) {
         .from("Vaccines")
         .select("*")
         .eq("EarringNo", datas.earringNo);
-    // const { data: cowName, error: cowNameError } = await supabase.from("Animals").select("Name").eq("EarringNo", datas.earringNo);
-    // cowData.Name = await cowName;
 
     const allDatas = {
         animalData: animalData,
@@ -488,7 +489,7 @@ async function getCalfDatas(datas) {
 
 // Get datas of whole animals.
 async function getAnimalsDatas() {
-    const { data, error } = await supabase.from("Animals").select("*");
+    const { data, error } = await supabase.from("Animals").select("*").order("Type", {ascending: false});
     if (error) {
         // console.log("Bir hata meydana geldi!");
     } else {
@@ -499,7 +500,7 @@ async function getAnimalsDatas() {
 
 // Get datas of whole cows.
 async function getCowsDatas() {
-    const { data, error } = await supabase.from("Cows").select("*");
+    const { data, error } = await supabase.from("Cows").select("*").order("InseminationDate", {ascending: true});
     if (error) {
         // console.log('Hata: ',error);
     } else {
@@ -511,7 +512,7 @@ async function getCowsDatas() {
 
 // Get datas of whole heifers.
 async function getHeifersDatas() {
-    const { data, error } = await supabase.from("Heifers").select("*");
+    const { data, error } = await supabase.from("Heifers").select("*").order("LastBirthDate", {ascending: false});
     if (error) {
         // console.log("Bir hata meydana geldi!");
     } else {
@@ -522,13 +523,15 @@ async function getHeifersDatas() {
 
 // Get datas of whole calves.
 async function getCalvesDatas() {
-    const { data, error } = await supabase.from("Calves").select("*");
-    if (error) {
-        // console.log("Bir hata meydana geldi!");
+    const { data: calvesData, error: calvesError } = await supabase.from("Calves").select("Id, EarringNo, Gender, Name, BirthDate, Animals (MotherEarringNo, MotherName)").order("BirthDate", {ascending: false});
+
+    if (calvesError) {
+        console.log("Bir hata meydana geldi!");
+        console.log(calvesError);
     } else {
         // console.log("Gelen Veriler: ", data);
     }
-    return data;
+    return calvesData;
 }
 
 // Get datas of whole bulls.
@@ -536,7 +539,7 @@ async function getBullsDatas() {
     const { data, error } = await supabase
         .from("Animals")
         .select("*")
-        .eq("Type", "bull");
+        .eq("Type", "bull").order("BirthDate", {ascending: true});
     if (error) {
         // console.log("Bir hata meydana geldi!11", error);
     } else {
@@ -547,7 +550,7 @@ async function getBullsDatas() {
 
 // Get datas of vaccines.
 async function getVaccinesDatas() {
-    const { data, error } = await supabase.from("Vaccines").select("*");
+    const { data, error } = await supabase.from("Vaccines").select("Id, VaccineName, VaccineDate, Animals (Id, EarringNo, Name)").order("VaccineDate", {ascending: false});
     if (error) {
         // Hata
     } else {
@@ -568,19 +571,11 @@ async function getMotherEarringNos() {
 
 
 /*
-+ 1-) Aşılar sayfasında toplu silme ve toplu ekleme özellikleri eklenecek.
-+ 2-) animalDetail.js dosyasındaki tarih hesaplamaları kontrol edilecek.
-+ 3-) animalDetail.js dosyasında boş olan tarihler için düzenleme gerekiyor.
-+ 4-) vaccines.js dosyasındaki güncelle butonu silinecek.
-+ 13-) vaccines.js dosyasında aşı eklendikten sonra window.close() yapılsın.
-+ 9-) Bütün sayfalar en aşağı kaydırıldıktan sonra butonlar için yer bırakılacak (animals.js gibi)
-12-) cows.js dosyasında Doğurdu Olarak İşaretle butonu çalışmıyor.
-13-) Herhangi bir sayfadan ana menüye geçildiğinde veriler yenilenmiyor.
++ 1-) Hayvan verileri sıralı olarak gelsin.
+2-) Ana sayfanın sağ alt köşesine ayarlar butonu koyulabilir.
+3-) Her sayfanın sol üst köşesine Information butonu koyulabilir.
++ 4-) Aşıları hayvan küpe numarasına göre değil hayvan Id numarasına göre entegre et. (Buzağılar için)
++ 5-) calves.js dosyasında anne küpe numaraları ve isimleri gözükmüyor.
 
-1-) İnek, girilen tarihe göre düve statüsüne geçirilecek.
-2-) addAnimal.js sayfası açılacak ve girilen tarih otomatik olarak Doğum Tarihi value'sü olarak yazılacak.
-
-dialoga geç kanka 
-
-* Sayfalar için padding ayarlandı. *
+* Hayvan işlemleri için görsel arayüzler eklendi *
 */

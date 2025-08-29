@@ -1,94 +1,158 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CowTracker - Ana Sayfa</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CowTracker - Ana Sayfa</title>
 
-  <!-- Tailwind CSS -->
-  <link href="../styles/output.css" rel="stylesheet" />
-</head>
-<body class="bg-gray-100 min-h-screen">
+        <!-- Tailwind CSS -->
+        <link href="../styles/output.css" rel="stylesheet" />
+    </head>
+    <body class="bg-gray-100 min-h-screen">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Dashboard Cards -->
+            <div
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10"
+            >
+                <div class="bg-blue-600 text-white rounded-xl shadow p-4">
+                    <h5 class="text-lg font-semibold" id="cowNumber"></h5>
+                </div>
+                <div class="bg-green-600 text-white rounded-xl shadow p-4">
+                    <h5 class="text-lg font-semibold" id="calfNumber"></h5>
+                </div>
+                <div class="bg-yellow-500 text-white rounded-xl shadow p-4">
+                    <h5 class="text-lg font-semibold" id="heiferNumber"></h5>
+                </div>
+                <div class="bg-red-600 text-white rounded-xl shadow p-4">
+                    <h5 class="text-lg font-semibold" id="bullNumber"></h5>
+                </div>
+            </div>
 
-  <div class="container mx-auto px-4 py-6">
+            <!-- Menü Butonları -->
+            <div
+                id="allButtons"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10"
+            >
+                <button
+                    class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer"
+                    id="cows"
+                >
+                    İnekler
+                </button>
+                <button
+                    class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer"
+                    id="animals"
+                >
+                    Tüm Hayvanlar
+                </button>
+                <button
+                    class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer"
+                    id="calves"
+                >
+                    Buzağılar
+                </button>
+                <button
+                    class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer"
+                    id="heifers"
+                >
+                    Düveler
+                </button>
+                <button
+                    class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer"
+                    id="bulls"
+                >
+                    Danalar
+                </button>
+                <button
+                    class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer"
+                    id="vaccines"
+                >
+                    Aşılar
+                </button>
+            </div>
 
-    <!-- Dashboard Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-      <div class="bg-blue-600 text-white rounded-xl shadow p-4">
-        <h5 class="text-lg font-semibold" id="cowNumber"></h5>
-      </div>
-      <div class="bg-green-600 text-white rounded-xl shadow p-4">
-        <h5 class="text-lg font-semibold" id="calfNumber"></h5>
-      </div>
-      <div class="bg-yellow-500 text-white rounded-xl shadow p-4">
-        <h5 class="text-lg font-semibold" id="heiferNumber"></h5>
-      </div>
-      <div class="bg-red-600 text-white rounded-xl shadow p-4">
-        <h5 class="text-lg font-semibold" id="bullNumber"></h5>
-      </div>
-    </div>
+            <!-- Veri Kutuları -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+                <!-- Yaklaşan Düveler Kutusu -->
+                <div
+                    class="bg-white rounded-xl shadow-lg border border-gray-200"
+                >
+                    <div
+                        class="bg-purple-600 text-white px-4 py-3 rounded-t-xl"
+                    >
+                        <h3 class="text-lg font-semibold">Yaklaşan Düveler</h3>
+                    </div>
+                    <div
+                        class="p-4 h-64 overflow-y-auto"
+                        id="closestHeifersContainer"
+                    >
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                </div>
 
-    <!-- Menü Butonları -->
-    <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-      <button class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer" id="cows">İnekler</button>
-      <button class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer" id="animals">Tüm Hayvanlar</button>
-      <button class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer" id="calves">Buzağılar</button>
-      <button class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer" id="heifers">Düveler</button>
-      <button class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer" id="bulls">Danalar</button>
-      <button class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer" id="vaccines">Aşılar</button>
-    </div>
+                <!-- Yaklaşan İnekler Kutusu -->
+                <div
+                    class="bg-white rounded-xl shadow-lg border border-gray-200"
+                >
+                    <div class="bg-blue-600 text-white px-4 py-3 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Yaklaşan İnekler</h3>
+                    </div>
+                    <div
+                        class="p-4 h-64 overflow-y-auto"
+                        id="closestCowsContainer"
+                    >
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                </div>
 
-    <!-- Veri Kutuları -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-      
-      <!-- Yaklaşan Düveler Kutusu -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-        <div class="bg-purple-600 text-white px-4 py-3 rounded-t-xl">
-          <h3 class="text-lg font-semibold">Yaklaşan Düveler</h3>
+                <!-- Bilgi/Güncellemeler Kutusu -->
+                <div
+                    class="bg-white rounded-xl shadow-lg border border-gray-200"
+                >
+                    <div class="bg-green-600 text-white px-4 py-3 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Son Güncellemeler</h3>
+                    </div>
+                    <div class="p-4 h-64 overflow-y-auto" id="infoContainer">
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="p-4 h-64 overflow-y-auto" id="closestHeifersContainer">
-          <!-- Veriler JavaScript ile doldurulacak -->
+
+        <div class="fixed bottom-6 right-6 z-50">
+            <button
+                id="settingsBtn"
+                class="group bg-gray-700 hover:bg-gray-800 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-32 hover:rounded-full overflow-hidden cursor-pointer"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="flex-shrink-0 w-6 h-6 ml-3 transition-all duration-300 group-hover:ml-2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
+                    />
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                </svg>
+
+                <span
+                    id="settings"
+                    class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pl-5"
+                    >Ayarlar</span
+                >
+            </button>
         </div>
-      </div>
 
-      <!-- Yaklaşan İnekler Kutusu -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-        <div class="bg-blue-600 text-white px-4 py-3 rounded-t-xl">
-          <h3 class="text-lg font-semibold">Yaklaşan İnekler</h3>
-        </div>
-        <div class="p-4 h-64 overflow-y-auto" id="closestCowsContainer">
-          <!-- Veriler JavaScript ile doldurulacak -->
-        </div>
-      </div>
-
-      <!-- Bilgi/Güncellemeler Kutusu -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-        <div class="bg-green-600 text-white px-4 py-3 rounded-t-xl">
-          <h3 class="text-lg font-semibold">Son Güncellemeler</h3>
-        </div>
-        <div class="p-4 h-64 overflow-y-auto" id="infoContainer">
-          <!-- Veriler JavaScript ile doldurulacak -->
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-<div class="fixed bottom-6 right-6 z-50">
-  <button id="settingsBtn" class="group bg-gray-700 hover:bg-gray-800 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-32 hover:rounded-full overflow-hidden cursor-pointer">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="flex-shrink-0 w-6 h-6 ml-3 transition-all duration-300 group-hover:ml-2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-    </svg>
-    
-    <span class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pl-5">Ayarlar</span>
-    
-  </button>
-</div>
-
-  <script src="../src/index.js"></script>
-</body>
+        <script src="../src/index.js"></script>
+    </body>
 </html>

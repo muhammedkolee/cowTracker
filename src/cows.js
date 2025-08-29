@@ -85,14 +85,14 @@ const layout = `
         `;
 
 const cowsBody = document.getElementById("cowsBody");
-        
+
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     cowsBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((datas) => {
-        showDatas(datas);
+    window.animalsAPI.receiveDatas((allDatas) => {
+        // console.log(allDatas);
+        showDatas(allDatas);
     });
-
 });
 
 // After update database, refresh the table.
@@ -101,7 +101,7 @@ window.electronAPI.refresh((datas) => {
 });
 
 // Datas will be show the user.
-function showDatas(datas) {
+function showDatas(allDatas) {
     cowsBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
@@ -136,8 +136,8 @@ function showDatas(datas) {
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
                 "Şu küpe numaralı hayvan silinecek: " +
-                earringNo.textContent +
-                "\nOnaylıyor musunuz?"
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
             );
             if (sure) {
                 // Remove cow from the databases.
@@ -153,24 +153,28 @@ function showDatas(datas) {
             }
         } else if (target.id === "applyIco") {
             try {
-                
                 const selectedDate = await openDateModal();
-                
-                window.electronAPI.gaveBirth({ animalId: cowId.textContent, date: selectedDate });
 
-                window.confirm("İnek başarıyla düve statüsüne geçirildi ve doğum yaptı olarak kaydedildi!\nLütfen doğuran inek için buzağı ekleme işlemini yapınız!");
+                window.electronAPI.gaveBirth({
+                    animalId: cowId.textContent,
+                    date: selectedDate,
+                });
+
+                window.confirm(
+                    "İnek başarıyla düve statüsüne geçirildi ve doğum yaptı olarak kaydedildi!\nLütfen doğuran inek için buzağı ekleme işlemini yapınız!"
+                );
                 window.electronAPI.openAddAnimalMenu(selectedDate);
             } catch (error) {
-                console.log(error)
-                if (error === 'cancelled') {
-                    console.log("İşlem iptal edildi.")
+                console.log(error);
+                if (error === "cancelled") {
+                    console.log("İşlem iptal edildi.");
                 }
             }
         }
     });
 
     let count = 1;
-    datas.forEach((animal) => {
+    allDatas.animalDatas.forEach((animal) => {
         let tableRow = document.createElement("tr");
         let cowId = document.createElement("td");
         let number = document.createElement("td");
@@ -294,30 +298,34 @@ function showDatas(datas) {
         inseminationDate.textContent = new Date(
             animal.InseminationDate
         ).toLocaleDateString("tr-TR");
-        whenBirth.textContent = calculateWhenBirth(animal.InseminationDate);
-        leftDay.textContent = calculateLeftDay(animal.InseminationDate);
+        whenBirth.textContent = calculateWhenBirth({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});
+        leftDay.textContent = calculateLeftDay({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});    // ***
         passDay.textContent = calculatePassDay(animal.InseminationDate);
-        kuruDate.textContent = calculateKuruDate(animal.InseminationDate);
+        kuruDate.textContent = calculateDryDate({InseminationDate: animal.InseminationDate, dryOffDays: allDatas.settingsDatas.dryOffDays});  // ***
         bullName.textContent = animal.BullName;
-        if (new Date(animal.CheckedDate).toLocaleDateString("tr-TR") != "01.01.1970") {
-            isPregnant.textContent = new Date(animal.CheckedDate).toLocaleDateString("tr-TR");
+        if (
+            new Date(animal.CheckedDate).toLocaleDateString("tr-TR") !=
+            "01.01.1970"
+        ) {
+            isPregnant.textContent = new Date(
+                animal.CheckedDate
+            ).toLocaleDateString("tr-TR");
         }
 
         // Row color based on days left for birth
+        const intLeftDay = parseInt(calculateLeftDay(animal.InseminationDate)); 
         if (
-            parseInt(calculateLeftDay(animal.InseminationDate)) <= 30 &&
-            parseInt(calculateLeftDay(animal.InseminationDate)) > 0
+            intLeftDay <= 30 &&
+            intLeftDay > 0
         ) {
             tableRow.className =
                 "bg-green-200 hover:bg-green-300 transition-colors";
-        } else if (
-            parseInt(calculateLeftDay(animal.InseminationDate)) <= 0
-        ) {
+        } else if (intLeftDay <= 0) {
             tableRow.className =
                 "bg-red-200 hover:bg-red-300 transition-colors";
         } else if (
-            parseInt(calculateLeftDay(animal.InseminationDate)) <= 80 &&
-            parseInt(calculateLeftDay(animal.InseminationDate)) > 30
+            intLeftDay <= 80 &&
+            intLeftDay > 30
         ) {
             tableRow.className =
                 "bg-yellow-200 hover:bg-yellow-300 transition-colors";
@@ -346,26 +354,26 @@ function getTodayDate() {
 }
 
 // Calculate dates.
-function calculateWhenBirth(inseminationDate) {
-    let date = new Date(inseminationDate);
-    date.setDate(date.getDate() + 280);
+function calculateWhenBirth(datas) {
+    let date = new Date(datas.InseminationDate);
+    date.setDate(date.getDate() + parseInt(datas.gestationDays));
 
     // console.log("calculateWhenBirth: ",date.toLocaleDateString("tr-TR"));
     return date.toLocaleDateString("tr-TR");
 }
 
-function calculateKuruDate(inseminationDate) {
-    let date = new Date(inseminationDate);
-    date.setDate(date.getDate() + 220);
+function calculateDryDate(datas) {
+    let date = new Date(datas.InseminationDate);
+    date.setDate(date.getDate() + parseInt(datas.dryOffDays));
 
-    // console.log("calculateKuruDate: ", date.toLocaleDateString("tr-TR"));
+    // console.log("calculateDryDate: ", date.toLocaleDateString("tr-TR"));
     return date.toLocaleDateString("tr-TR");
 }
 
-function calculateLeftDay(inseminationDate) {
+function calculateLeftDay(datas) {
     let today = getTodayDate();
-    let date = new Date(inseminationDate);
-    date.setDate(date.getDate() + 280);
+    let date = new Date(datas.InseminationDate);
+    date.setDate(date.getDate() + parseInt(datas.gestationDays));
 
     // console.log("calculateLeftDay: ",Math.ceil((date - today) / (1000 * 60 * 60 * 24)));
     return Math.ceil((date - today) / (1000 * 60 * 60 * 24));
@@ -380,44 +388,44 @@ function calculatePassDay(inseminationDate) {
 }
 
 function openDateModal() {
-    const modal = document.getElementById('dateModal');
-    const openModalBtn = document.getElementById('openModalBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const dateInput = document.getElementById('dateInput');
-    const result = document.getElementById('result');
+    const modal = document.getElementById("dateModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const dateInput = document.getElementById("dateInput");
+    const result = document.getElementById("result");
 
     return new Promise((resolve, reject) => {
-        console.log("fonskiyona girildi.")
-        modal.classList.remove('hidden');
+        console.log("fonskiyona girildi.");
+        modal.classList.remove("hidden");
         console.log("hidden silindi.");
 
         // Bugünün tarihini varsayılan olarak ayarla
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split("T")[0];
         dateInput.value = today;
 
         // Tamam butonu
         confirmBtn.onclick = () => {
             const selectedDate = dateInput.value;
             if (selectedDate) {
-                modal.classList.add('hidden');
+                modal.classList.add("hidden");
                 resolve(selectedDate);
             } else {
-                alert('Lütfen bir tarih seçiniz!');
+                alert("Lütfen bir tarih seçiniz!");
             }
         };
 
         // İptal butonu
         cancelBtn.onclick = () => {
-            modal.classList.add('hidden');
-            reject('cancelled');
+            modal.classList.add("hidden");
+            reject("cancelled");
         };
 
         // Modal dışına tıklama ile kapatma
         modal.onclick = (e) => {
             if (e.target === modal) {
-                modal.classList.add('hidden');
-                reject('cancelled');
+                modal.classList.add("hidden");
+                reject("cancelled");
             }
         };
     });

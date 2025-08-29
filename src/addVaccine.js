@@ -1,17 +1,15 @@
-
 window.addEventListener("DOMContentLoaded", () => {
     console.log("Dom yüklendi!");
     window.vaccineAPI.receiveAnimalsDatas((animalsDatas) => {
-        console.log("veriler geldi: ", animalsDatas)
+        console.log("veriler geldi: ", animalsDatas);
         fillAnimalSelect(animalsDatas);
     });
 });
 
-
 // Fill up the select tag
 function fillAnimalSelect(animals) {
     const select = document.getElementById("animalEarringNo");
-    
+
     animals.forEach((animal) => {
         const option = document.createElement("option");
         option.value = animal.Id;
@@ -53,7 +51,7 @@ document.getElementById("allAnimals").addEventListener("change", function () {
         document.getElementById("heifers").checked = true;
         document.getElementById("bulls").checked = true;
         document.getElementById("calves").checked = true;
-        
+
         // Select tagını devre dışı bırak
         disableAndClearSelect();
     }
@@ -76,7 +74,7 @@ function checkAllSelected() {
         disableAndClearSelect();
     } else {
         document.getElementById("allAnimals").checked = false;
-        
+
         // Eğer hiçbir checkbox seçili değilse select'i etkinleştir
         if (!anySelected) {
             enableSelect();
@@ -95,7 +93,7 @@ checkboxes.forEach((checkbox) => {
         if (!this.checked) {
             document.getElementById("allAnimals").checked = false;
         }
-        
+
         // Checkbox durumlarını kontrol et ve select'i buna göre ayarla
         checkAllSelected();
     });
@@ -105,17 +103,17 @@ checkboxes.forEach((checkbox) => {
 document.getElementById("vaccineDate").valueAsDate = new Date();
 
 function addVaccine() {
-    const vaccineDatas = {}
+    const vaccineDatas = {};
     const select = document.getElementById("animalEarringNo");
     if (select.disabled) {
         if (document.getElementById("allAnimals").checked) {
             vaccineDatas.all = true;
-            vaccineDatas.VaccineName = document.getElementById("vaccineName").value;
-            vaccineDatas.VaccineDate = document.getElementById("vaccineDate").value;
-
-        }
-        else {
-            vaccineDatas.types = {}
+            vaccineDatas.VaccineName =
+                document.getElementById("vaccineName").value;
+            vaccineDatas.VaccineDate =
+                document.getElementById("vaccineDate").value;
+        } else {
+            vaccineDatas.types = {};
             if (document.getElementById("cows").checked) {
                 vaccineDatas.types.cows = true;
             }
@@ -128,16 +126,17 @@ function addVaccine() {
             if (document.getElementById("bulls").checked) {
                 vaccineDatas.types.bulls = true;
             }
-            vaccineDatas.VaccineName = document.getElementById("vaccineName").value;
-            vaccineDatas.VaccineDate = document.getElementById("vaccineDate").value;
+            vaccineDatas.VaccineName =
+                document.getElementById("vaccineName").value;
+            vaccineDatas.VaccineDate =
+                document.getElementById("vaccineDate").value;
         }
-    }
-    else {
+    } else {
         vaccineDatas.VaccineName = document.getElementById("vaccineName").value;
         vaccineDatas.AnimalId = select.value;
         vaccineDatas.VaccineDate = document.getElementById("vaccineDate").value;
     }
-    
+
     document.getElementById("animalEarringNo").value = "";
     document.getElementById("animalEarringNo").disabled = false;
     document.getElementById("vaccineName").value = "";
@@ -148,6 +147,6 @@ function addVaccine() {
     document.getElementById("calves").checked = false;
     document.getElementById("bulls").checked = false;
 
-    console.log(vaccineDatas)
+    console.log(vaccineDatas);
     window.vaccineAPI.sendVaccineDatas(vaccineDatas);
 }

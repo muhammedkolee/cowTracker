@@ -3,18 +3,27 @@
     <head>
         <meta charset="UTF-8" />
         <title>Hayvan Ekle</title>
-        <link rel="stylesheet" href="../styles/output.css">
+        <link rel="stylesheet" href="../styles/output.css" />
     </head>
     <body class="bg-gray-50 min-h-screen" id="addAnimalBody">
         <div class="container mx-auto px-4 py-8 max-w-2xl">
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">Yeni Hayvan Ekle</h3>
+                <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">
+                    Yeni Hayvan Ekle
+                </h3>
 
                 <form id="addAnimalForm" class="space-y-6">
                     <div id="addAnimalDiv">
                         <div class="space-y-2">
-                            <label for="type" class="block text-sm font-semibold text-gray-700">Türü</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="type">
+                            <label
+                                for="type"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Türü</label
+                            >
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200"
+                                id="type"
+                            >
                                 <option value="">Seçiniz</option>
                                 <option value="cow">İnek</option>
                                 <option value="heifer">Düve</option>
@@ -22,15 +31,16 @@
                                 <option value="bull">Dana</option>
                             </select>
                         </div>
-                        
-                        <div id="deneme" class="mt-6 space-y-6">
-                            
-                        </div>
+
+                        <div id="deneme" class="mt-6 space-y-6"></div>
                     </div>
                 </form>
-                
+
                 <div class="flex justify-center mt-8">
-                    <button id="addButton" class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-md hover:shadow-lg transform hover:scale-105 duration-200 ease-in-out transition-colors">
+                    <button
+                        id="addButton"
+                        class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-md hover:shadow-lg transform hover:scale-105 duration-200 ease-in-out transition-colors"
+                    >
                         Ekle
                     </button>
                 </div>

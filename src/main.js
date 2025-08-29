@@ -1,8 +1,14 @@
 // To add shortcut to desktop
 if (require("electron-squirrel-startup")) return;
 
+// For auto update.
+const { autoUpdater } = require("electron-updater");
+
+// For settings' datas.
+const Store = require("electron-store").default;
+
 // Frameworks
-const { app, BrowserWindow, ipcMain, screen, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, screen } = require("electron");
 const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
 
@@ -18,6 +24,10 @@ const { error } = require("console");
 
 // If app is ready, run this block.
 app.on("ready", async () => {
+
+    // autoUpdater.checkForUpdatesAndNotify();
+
+    
     // Get primary display to maximize window.
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
@@ -75,16 +85,20 @@ app.on("ready", async () => {
             .then(async () => {
                 // Get animal datas and send datas to preload.
                 if (pageName === "animals") {
-                    const datas = await getAnimalsDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    const allDatas = await getAnimalsDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "cows") {
-                    const datas = await getCowsDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    const allDatas = {};
+                    allDatas.animalDatas = await getCowsDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "heifers") {
                     const datas = await getHeifersDatas();
                     mainWindow.webContents.send("sendDatas", datas);
                 } else if (pageName === "calves") {
-                    allDatas = await getCalvesDatas();
+                    const allDatas = {};
+                    allDatas.animalDatas = await getCalvesDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "bulls") {
                     const datas = await getBullsDatas();
@@ -92,6 +106,9 @@ app.on("ready", async () => {
                 } else if (pageName === "vaccines") {
                     const datas = await getVaccinesDatas();
                     mainWindow.webContents.send("sendDatas", datas);
+                } else if (pageName === "settings") {
+                    const settingsDatas = getSettingsDatas();
+                    mainWindow.webContents.send("sendSettingsDatas", settingsDatas);
                 }
             });
     });
@@ -104,10 +121,7 @@ app.on("ready", async () => {
                 const datas = {};
                 datas.animalsDatas = await getAnimalsDatas();
                 datas.updatedDatas = await updateDatabase();
-                mainWindow.webContents.send(
-                    "sendDatas",
-                    datas
-                );
+                mainWindow.webContents.send("sendDatas", datas);
             });
     });
 });
@@ -140,8 +154,11 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
         .loadFile(path.join(__dirname, "../views/addAnimal.html"))
         .then(async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
-            console.log("Veri iletildi.")
-            addAnimalMenu.webContents.send("sendMothersEarringNo", await getMotherEarringNos());
+            console.log("Veri iletildi.");
+            addAnimalMenu.webContents.send(
+                "sendMothersEarringNo",
+                await getMotherEarringNos()
+            );
         });
 });
 
@@ -287,17 +304,20 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
     addVaccineWindow
         .loadFile(path.join(__dirname, "../views/addVaccine.html"))
         .then(async () => {
-            const { data: animalsDatas, error: animalsError } = await supabase.from("Animals").select("EarringNo, Name, Id");
+            const { data: animalsDatas, error: animalsError } = await supabase
+                .from("Animals")
+                .select("EarringNo, Name, Id");
             if (animalsError) {
-                console.log(animalsError)
-            }
-            else {
-                addVaccineWindow.webContents.send("sendAnimalsDatas", animalsDatas);
+                console.log(animalsError);
+            } else {
+                addVaccineWindow.webContents.send(
+                    "sendAnimalsDatas",
+                    animalsDatas
+                );
             }
         });
 });
 // END OF THE MENUS
-
 
 // FUNCTIONS
 // Add Animal
@@ -311,13 +331,12 @@ ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
 
 // Update Animal
 ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
-    console.log("allDatas: ", allDatas)
-    console.log("allDatas.animalData: ", allDatas.animalData)
-    console.log("allDatas.calfData: ", allDatas.calfData)
+    console.log("allDatas: ", allDatas);
+    console.log("allDatas.animalData: ", allDatas.animalData);
+    console.log("allDatas.calfData: ", allDatas.calfData);
     if (updateAnimal(allDatas)) {
         event.sender.send("updateResult", true);
-    }
-    else {
+    } else {
         event.sender.send("updateResult", false);
     }
 });
@@ -329,7 +348,10 @@ ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
     if (datas.pageName === "animals") {
         event.sender.send("refresh", await getAnimalsDatas());
     } else if (datas.pageName === "cows") {
-        event.sender.send("refresh", await getCowsDatas());
+        const allDatas = {};
+        allDatas.animalDatas = await getCowDatas();
+        allDatas.settingsDatas = getSettingsDatas();
+        event.sender.send("refresh", allDatas);
     } else if (datas.pageName === "heifers") {
         event.sender.send("refresh", await getHeifersDatas());
     } else if (datas.pageName === "calves") {
@@ -348,7 +370,10 @@ ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
 });
 
 ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
-    const { data: cowData, error: cowError } = await supabase.from("Animals").select("*").eq("Id", datas.animalId);
+    const { data: cowData, error: cowError } = await supabase
+        .from("Animals")
+        .select("*")
+        .eq("Id", datas.animalId);
     if (cowError) {
         console.log("Hata: ", cowError);
     }
@@ -361,16 +386,37 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
         Id: allDatas.animalData.Id,
         EarringNo: allDatas.animalData.EarringNo,
         LastBirthDate: datas.date,
-        Name: allDatas.animalData.Name
+        Name: allDatas.animalData.Name,
     };
 
-    if(updateAnimal(allDatas)) {
+    if (updateAnimal(allDatas)) {
         console.log("ISLEM BASARILIIIII!!!");
-    }
-    else {
+    } else {
         console.log("bi hata");
         return false;
     }
+});
+
+ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
+    const store = new Store({
+        defaults: {
+            showInformationButton: true,    // Information Button is visible or not.
+            gestationDays: 280,             // Insemination Date + gestationDays = Birth Date
+            dryOffDays: 220,                // Insemination Date + dryOffDays = DryDate
+            calfReduceToTwoLiterDays: 90,   // Calf Birth Date + this value
+            calfReduceToOneLiterDays: 90,   // Calf Birth Date + this value
+            calfWeaningDays: 100,           // Calf Birth Date + this value
+            calfToAdultDays: 365            // For Data Auto Update
+        }
+    });
+
+    store.set("showInformationButton", settinsDatas.showInformationButton);
+    store.set("gestationDays", settinsDatas.gestationDays);
+    store.set("dryOffDays", settinsDatas.dryOffDays);
+    store.set("calfReduceToOneLiterDays", settinsDatas.calfReduceToOneLiterDays);
+    store.set("calfReduceToTwoLiterDays", settinsDatas.calfReduceToTwoLiterDays);
+    store.set("calfWeaningDays", settinsDatas.calfWeaningDays);
+    store.set("calfToAdultDays", settinsDatas.calfToAdultDays);
 });
 // END OF THE FUNCTIONS
 
@@ -489,7 +535,10 @@ async function getCalfDatas(datas) {
 
 // Get datas of whole animals.
 async function getAnimalsDatas() {
-    const { data, error } = await supabase.from("Animals").select("*").order("Type", {ascending: false});
+    const { data, error } = await supabase
+        .from("Animals")
+        .select("*")
+        .order("Type", { ascending: false });
     if (error) {
         // console.log("Bir hata meydana geldi!");
     } else {
@@ -500,7 +549,10 @@ async function getAnimalsDatas() {
 
 // Get datas of whole cows.
 async function getCowsDatas() {
-    const { data, error } = await supabase.from("Cows").select("*").order("InseminationDate", {ascending: true});
+    const { data, error } = await supabase
+        .from("Cows")
+        .select("*")
+        .order("InseminationDate", { ascending: true });
     if (error) {
         // console.log('Hata: ',error);
     } else {
@@ -512,7 +564,10 @@ async function getCowsDatas() {
 
 // Get datas of whole heifers.
 async function getHeifersDatas() {
-    const { data, error } = await supabase.from("Heifers").select("*").order("LastBirthDate", {ascending: false});
+    const { data, error } = await supabase
+        .from("Heifers")
+        .select("*")
+        .order("LastBirthDate", { ascending: false });
     if (error) {
         // console.log("Bir hata meydana geldi!");
     } else {
@@ -523,7 +578,12 @@ async function getHeifersDatas() {
 
 // Get datas of whole calves.
 async function getCalvesDatas() {
-    const { data: calvesData, error: calvesError } = await supabase.from("Calves").select("Id, EarringNo, Gender, Name, BirthDate, Animals (MotherEarringNo, MotherName)").order("BirthDate", {ascending: false});
+    const { data: calvesData, error: calvesError } = await supabase
+        .from("Calves")
+        .select(
+            "Id, EarringNo, Gender, Name, BirthDate, Animals (MotherEarringNo, MotherName)"
+        )
+        .order("BirthDate", { ascending: false });
 
     if (calvesError) {
         console.log("Bir hata meydana geldi!");
@@ -539,7 +599,8 @@ async function getBullsDatas() {
     const { data, error } = await supabase
         .from("Animals")
         .select("*")
-        .eq("Type", "bull").order("BirthDate", {ascending: true});
+        .eq("Type", "bull")
+        .order("BirthDate", { ascending: true });
     if (error) {
         // console.log("Bir hata meydana geldi!11", error);
     } else {
@@ -550,7 +611,10 @@ async function getBullsDatas() {
 
 // Get datas of vaccines.
 async function getVaccinesDatas() {
-    const { data, error } = await supabase.from("Vaccines").select("Id, VaccineName, VaccineDate, Animals (Id, EarringNo, Name)").order("VaccineDate", {ascending: false});
+    const { data, error } = await supabase
+        .from("Vaccines")
+        .select("Id, VaccineName, VaccineDate, Animals (Id, EarringNo, Name)")
+        .order("VaccineDate", { ascending: false });
     if (error) {
         // Hata
     } else {
@@ -561,20 +625,43 @@ async function getVaccinesDatas() {
 
 // Get Mom's Earring Nos
 async function getMotherEarringNos() {
-    const { data, error } = await supabase.from("Animals").select("EarringNo, Name").in("Type", ["cow", "heifer"]);
+    const { data, error } = await supabase
+        .from("Animals")
+        .select("EarringNo, Name")
+        .in("Type", ["cow", "heifer"]);
     if (error) {
         console.log("Bir hata oluştu: ", error);
     }
     return data;
 }
 
+function getSettingsDatas() {
+    const store = new Store({
+        defaults: {
+            showInformationButton: true,    // Information Button is visible or not.
+            gestationDays: 280,             // Insemination Date + gestationDays = Birth Date
+            dryOffDays: 220,                // Insemination Date + dryOffDays = DryDate
+            calfReduceToTwoLiterDays: 90,   // Calf Birth Date + this value
+            calfReduceToOneLiterDays: 90,   // Calf Birth Date + this value
+            calfWeaningDays: 100,           // Calf Birth Date + this value
+            calfToAdultDays: 365            // For Data Auto Update
+        }
+    });
+    const settingsDatas = {
+        showInformationButton: store.get("showInformationButton"),
+        gestationDays: store.get("gestationDays"),
+        dryOffDays: store.get("dryOffDays"),
+        calfReduceToOneLiterDays: store.get("calfReduceToOneLiterDays"),
+        calfReduceToTwoLiterDays: store.get("calfReduceToTwoLiterDays"),
+        calfWeaningDays: store.get("calfWeaningDays"),
+        calfToAdultDays: store.get("calfToAdultDays")
+    };
 
-
+    return settingsDatas;
+}
 /*
-1-) Ayarlar sayfası yapılacak.
-1-) Information sayfası yapılacak.
-+ 2-) Ana sayfanın sağ alt köşesine ayarlar butonu koyulabilir.
-+ 3-) Her sayfanın sol üst köşesine Information butonu koyulabilir.
++ 1-) Ayarlar sayfası yapılacak.
+2-) Information sayfası yapılacak.
 
-* Yeni özellikler için butonlar eklendi. *
+* Ayarlar İçin Sayfa Ayarlandı. *
 */

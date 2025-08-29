@@ -70,7 +70,6 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("çalıştı");
     animalsBody.innerHTML = loadingTemplate;
     window.animalsAPI.receiveDatas((datas) => {
-        console.log("shwdatas")
         showDatas(datas);
     });
 });
@@ -93,7 +92,6 @@ function showDatas(datas) {
         window.electronAPI.openMenu();
     });
 
-
     addAnimalButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu();
     });
@@ -104,59 +102,52 @@ function showDatas(datas) {
         let earringNo = tableRow.querySelector("#earringNo");
         let animalId = tableRow.querySelector("#animalId");
         let calfName = tableRow.querySelector("#calfName");
-        let type = tableRow.querySelector("#type")
+        let type = tableRow.querySelector("#type");
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
                 var datas = { animalId: animalId.textContent, type: "cow" };
-            }
-            else if (type.textContent == "Düve") {
+            } else if (type.textContent == "Düve") {
                 var datas = { animalId: animalId.textContent, type: "heifer" };
-            }
-            else if (type.textContent == "Buzağı") {
+            } else if (type.textContent == "Buzağı") {
                 var datas = { animalId: animalId.textContent, type: "calf" };
-            }
-            else if (type.textContent == "Dana") {
+            } else if (type.textContent == "Dana") {
                 var datas = { animalId: animalId.textContent, type: "bull" };
             }
             window.electronAPI.openAnimalDetail(datas);
-        }
-
-        else if (target.id === "updateIco") {
+        } else if (target.id === "updateIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
                 var datas = { animalId: animalId.textContent, type: "cow" };
-            }
-            else if (type.textContent == "Düve") {
+            } else if (type.textContent == "Düve") {
                 var datas = { animalId: animalId.textContent, type: "heifer" };
-            }
-            else if (type.textContent == "Buzağı") {
+            } else if (type.textContent == "Buzağı") {
                 var datas = { animalId: animalId.textContent, type: "calf" };
-            }
-            else if (type.textContent == "Dana") {
+            } else if (type.textContent == "Dana") {
                 var datas = { animalId: animalId.textContent, type: "bull" };
             }
             // console.log(datas)
             window.electronAPI.openUpdateAnimal(datas);
-        }
-
-        else if (target.id === "deleteIco") {
+        } else if (target.id === "deleteIco") {
             const sure = window.confirm(
-                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+                "Şu küpe numaralı hayvan silinecek: " +
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
+            );
             if (sure) {
                 // Remove cow from the databases.
-                const datas = { animalId: animalId.textContent, pageName: "animals" }
+                const datas = {
+                    animalId: animalId.textContent,
+                    pageName: "animals",
+                };
                 if (type.textContent === "İnek") {
                     datas.Type = "cow";
-                }
-                else if (type.textContent === "Düve") {
+                } else if (type.textContent === "Düve") {
                     datas.Type = "heifer";
-                }
-                else if (type.textContent === "Buzağı") {
+                } else if (type.textContent === "Buzağı") {
                     datas.Type = "calf";
-                }
-                else if (type.textContent === "Dana") {
+                } else if (type.textContent === "Dana") {
                     datas.Type = "bull";
                 }
                 window.electronAPI.removeAnimal(datas);
@@ -204,9 +195,12 @@ function showDatas(datas) {
         // Button styles.
         nav.className = cellClasses;
         navDiv.className = "flex justify-center gap-1";
-        deleteButton.className = "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
-        infoButton.className = "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
-        updateButton.className = "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        deleteButton.className =
+            "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        infoButton.className =
+            "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        updateButton.className =
+            "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
         deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
         infoButton.innerHTML = `<svg id="infoIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="infoIco" stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>`;
         updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
@@ -256,17 +250,16 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         name.textContent = animal.Name;
-        birthDate.textContent = new Date(animal.BirthDate).toLocaleDateString("tr-TR");
+        birthDate.textContent = new Date(animal.BirthDate).toLocaleDateString(
+            "tr-TR"
+        );
         if (animal.Type === "cow") {
             type.textContent = "İnek";
-        }
-        else if (animal.Type === "heifer") {
+        } else if (animal.Type === "heifer") {
             type.textContent = "Düve";
-        }
-        else if (animal.Type === "bull") {
+        } else if (animal.Type === "bull") {
             type.textContent = "Dana";
-        }
-        else if (animal.Type === "calf") {
+        } else if (animal.Type === "calf") {
             type.textContent = "Buzağı";
         }
         motherEarringNo.textContent = animal.MotherEarringNo;
@@ -275,13 +268,17 @@ function showDatas(datas) {
         // Row color based on animal type
         tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
         if (animal.Type === "cow") {
-            tableRow.className = "bg-green-200 hover:bg-green-300 transition-colors";
+            tableRow.className =
+                "bg-green-200 hover:bg-green-300 transition-colors";
         } else if (animal.Type === "heifer") {
-            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors";
+            tableRow.className =
+                "bg-red-200 hover:bg-red-300 transition-colors";
         } else if (animal.Type === "calf") {
-            tableRow.className = "bg-yellow-200 hover:bg-yellow-300 transition-colors";
+            tableRow.className =
+                "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         }
         count += 1;
     });
-    titleAnimal.textContent = "Toplam " + (count - 1).toString() + " hayvan var!";
+    titleAnimal.textContent =
+        "Toplam " + (count - 1).toString() + " hayvan var!";
 }

@@ -107,12 +107,13 @@ function showDatas(datas) {
             // Seçim modunu aç
             isSelectionMode = true;
             selectButton.textContent = "Sil";
-            selectButton.className = "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
+            selectButton.className =
+                "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
             selectHeader.style.display = "table-cell";
-            
+
             // Tüm checkbox'ları göster
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-            checkboxes.forEach(checkbox => {
+            const checkboxes = document.querySelectorAll(".row-checkbox");
+            checkboxes.forEach((checkbox) => {
                 checkbox.style.display = "table-cell";
             });
         } else {
@@ -121,19 +122,20 @@ function showDatas(datas) {
                 alert("Silmek için en az bir aşı seçmelisiniz!");
                 return;
             }
-            
+
             const sure = window.confirm(
-                selectedVaccineIds.length + " adet aşı silinecek.\nOnaylıyor musunuz?"
+                selectedVaccineIds.length +
+                    " adet aşı silinecek.\nOnaylıyor musunuz?"
             );
-            
+
             if (sure) {
                 // Burada selectedVaccineIds listesi kullanılabilir
                 console.log("Silinecek aşı ID'leri:", selectedVaccineIds);
-                
+
                 // Silme işlemini buraya yazabilirsiniz
                 window.vaccineAPI.removeVaccine(selectedVaccineIds);
                 // Örnek: window.vaccineAPI.removeMultipleVaccines(selectedVaccineIds);
-                
+
                 // Seçim modunu kapat
                 resetSelectionMode();
             }
@@ -142,17 +144,19 @@ function showDatas(datas) {
 
     // Tümünü seç/seçme işlevselliği
     selectAllCheckbox.addEventListener("change", (e) => {
-        const checkboxes = document.querySelectorAll('.vaccine-checkbox');
-        checkboxes.forEach(checkbox => {
+        const checkboxes = document.querySelectorAll(".vaccine-checkbox");
+        checkboxes.forEach((checkbox) => {
             checkbox.checked = e.target.checked;
-            const vaccineId = checkbox.getAttribute('data-vaccine-id');
-            
+            const vaccineId = checkbox.getAttribute("data-vaccine-id");
+
             if (e.target.checked) {
                 if (!selectedVaccineIds.includes(vaccineId)) {
                     selectedVaccineIds.push(vaccineId);
                 }
             } else {
-                selectedVaccineIds = selectedVaccineIds.filter(id => id !== vaccineId);
+                selectedVaccineIds = selectedVaccineIds.filter(
+                    (id) => id !== vaccineId
+                );
             }
         });
         updateSelectButtonText();
@@ -162,19 +166,21 @@ function showDatas(datas) {
         isSelectionMode = false;
         selectedVaccineIds = [];
         selectButton.textContent = "Seç";
-        selectButton.className = "bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
+        selectButton.className =
+            "bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
         selectHeader.style.display = "none";
         selectAllCheckbox.checked = false;
-        
+
         // Tüm checkbox'ları gizle
-        const checkboxes = document.querySelectorAll('.row-checkbox');
-        checkboxes.forEach(checkbox => {
+        const checkboxes = document.querySelectorAll(".row-checkbox");
+        checkboxes.forEach((checkbox) => {
             checkbox.style.display = "none";
         });
-        
+
         // Tüm vaccine checkbox'ları temizle
-        const vaccineCheckboxes = document.querySelectorAll('.vaccine-checkbox');
-        vaccineCheckboxes.forEach(checkbox => {
+        const vaccineCheckboxes =
+            document.querySelectorAll(".vaccine-checkbox");
+        vaccineCheckboxes.forEach((checkbox) => {
             checkbox.checked = false;
         });
     }
@@ -202,7 +208,14 @@ function showDatas(datas) {
 
         if (target.id === "deleteIco") {
             const sure = window.confirm(
-                earringNo.textContent + " küpe numaralı hayvanın " + vaccineDate.textContent + " tarihli " + vaccineName.textContent + " isimli aşısı silinecek" + "\nOnaylıyor musunuz?");
+                earringNo.textContent +
+                    " küpe numaralı hayvanın " +
+                    vaccineDate.textContent +
+                    " tarihli " +
+                    vaccineName.textContent +
+                    " isimli aşısı silinecek" +
+                    "\nOnaylıyor musunuz?"
+            );
             if (sure) {
                 // Remove cow from the databases.
                 window.vaccineAPI.removeVaccine(vaccineId.textContent);
@@ -214,25 +227,32 @@ function showDatas(datas) {
     });
 
     // Checkbox değişim olayları
-    vaccineTableBody.addEventListener("change", function(event) {
-        if (event.target.classList.contains('vaccine-checkbox')) {
-            const vaccineId = event.target.getAttribute('data-vaccine-id');
-            
+    vaccineTableBody.addEventListener("change", function (event) {
+        if (event.target.classList.contains("vaccine-checkbox")) {
+            const vaccineId = event.target.getAttribute("data-vaccine-id");
+
             if (event.target.checked) {
                 if (!selectedVaccineIds.includes(vaccineId)) {
                     selectedVaccineIds.push(vaccineId);
                 }
             } else {
-                selectedVaccineIds = selectedVaccineIds.filter(id => id !== vaccineId);
+                selectedVaccineIds = selectedVaccineIds.filter(
+                    (id) => id !== vaccineId
+                );
                 selectAllCheckbox.checked = false;
             }
-            
+
             updateSelectButtonText();
-            
+
             // Tümü seçili mi kontrol et
-            const allCheckboxes = document.querySelectorAll('.vaccine-checkbox');
-            const checkedCheckboxes = document.querySelectorAll('.vaccine-checkbox:checked');
-            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+            const allCheckboxes =
+                document.querySelectorAll(".vaccine-checkbox");
+            const checkedCheckboxes = document.querySelectorAll(
+                ".vaccine-checkbox:checked"
+            );
+            selectAllCheckbox.checked =
+                allCheckboxes.length === checkedCheckboxes.length &&
+                allCheckboxes.length > 0;
         }
     });
 
@@ -261,11 +281,12 @@ function showDatas(datas) {
         selectCell.style.display = "none";
         selectCheckbox.type = "checkbox";
         selectCheckbox.className = "w-4 h-4 vaccine-checkbox";
-        selectCheckbox.setAttribute('data-vaccine-id', vaccine.Id);
+        selectCheckbox.setAttribute("data-vaccine-id", vaccine.Id);
         selectCell.appendChild(selectCheckbox);
 
         // Tailwind classes
-        tableRow.className = "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
+        tableRow.className =
+            "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
         vaccineId.className = "px-4 py-3 text-center";
         number.className = "px-4 py-3 text-center";
         earringNo.className = "px-4 py-3 text-center";
@@ -281,13 +302,11 @@ function showDatas(datas) {
 
         deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
         // updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
-        
 
         deleteButton.className =
             "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
         // updateButton.className =
         //     "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
-        
 
         nav.appendChild(navDiv);
 
@@ -323,12 +342,15 @@ function showDatas(datas) {
         earringNo.textContent = vaccine.Animals.EarringNo;
         name.textContent = vaccine.Animals.Name;
         vaccineName.textContent = vaccine.VaccineName;
-        vaccineDate.textContent = new Date(vaccine.VaccineDate).toLocaleDateString("tr-TR");
+        vaccineDate.textContent = new Date(
+            vaccine.VaccineDate
+        ).toLocaleDateString("tr-TR");
         days.textContent = calculateDays(vaccine.VaccineDate).toString();
 
         count += 1;
     });
-    titleVaccine.textContent = "Listede toplam " + (count - 1).toString() + " aşı var.";
+    titleVaccine.textContent =
+        "Listede toplam " + (count - 1).toString() + " aşı var.";
 }
 
 // Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).

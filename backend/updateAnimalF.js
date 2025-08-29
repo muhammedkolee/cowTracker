@@ -90,8 +90,7 @@ async function updateAnimal(allDatas) {
         .eq("Id", allDatas.animalData.Id);
     if (error) {
         return false;
-    }
-    else {
+    } else {
         return true;
     }
 }

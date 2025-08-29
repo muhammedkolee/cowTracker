@@ -1,130 +1,256 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hayvan Güncelle</title>
-    <link rel="stylesheet" href="../styles/output.css">
-</head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-5xl">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Hayvan Bilgilerini Güncelle</h2>
-      
-            <form id="updateForm">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="inputsTag">
-                  
-                    <!-- Hayvan Id Numarası -->
-                    <div class="space-y-2">
-                        <label for="animalId" class="block text-sm font-semibold text-red-700">Hayvan ID Numarası</label>
-                        <input type="text" class="w-full text-red-700 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-not-allowed transition duration-200 font-medium" id="animalId" disabled>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hayvan Güncelle</title>
+        <link rel="stylesheet" href="../styles/output.css" />
+    </head>
+    <body class="bg-gray-50 min-h-screen">
+        <div class="container mx-auto px-4 py-8 max-w-5xl">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+                    Hayvan Bilgilerini Güncelle
+                </h2>
+
+                <form id="updateForm">
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-6"
+                        id="inputsTag"
+                    >
+                        <!-- Hayvan Id Numarası -->
+                        <div class="space-y-2">
+                            <label
+                                for="animalId"
+                                class="block text-sm font-semibold text-red-700"
+                                >Hayvan ID Numarası</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full text-red-700 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-not-allowed transition duration-200 font-medium"
+                                id="animalId"
+                                disabled
+                            />
+                        </div>
+
+                        <!-- Küpe Numarası -->
+                        <div class="space-y-2">
+                            <label
+                                for="earringNo"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Küpe Numarası</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="earringNo"
+                            />
+                        </div>
+
+                        <!-- Hayvan Adı -->
+                        <div class="space-y-2">
+                            <label
+                                for="name"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Hayvan Adı</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="name"
+                            />
+                        </div>
+
+                        <!-- Doğum Tarihi -->
+                        <div class="space-y-2">
+                            <label
+                                for="birthDate"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Doğum Tarihi</label
+                            >
+                            <input
+                                type="date"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="birthDate"
+                            />
+                        </div>
+
+                        <!-- Türü -->
+                        <div class="space-y-2">
+                            <label
+                                for="animalType"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Türü</label
+                            >
+                            <select
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="animalType"
+                            >
+                                <option selected disabled>Tür Seçiniz</option>
+                                <option value="cow" class="font-medium">
+                                    İnek
+                                </option>
+                                <option value="heifer" class="font-medium">
+                                    Düve
+                                </option>
+                                <option value="bull" class="font-medium">
+                                    Dana
+                                </option>
+                                <option value="calf" class="font-medium">
+                                    Buzağı
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Cinsiyeti -->
+                        <div class="space-y-2">
+                            <label
+                                for="gender"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Cinsiyeti</label
+                            >
+                            <select
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="gender"
+                            >
+                                <option selected disabled>
+                                    Cinsiyet Seçiniz
+                                </option>
+                                <option value="true" class="font-medium">
+                                    Dişi
+                                </option>
+                                <option value="false" class="font-medium">
+                                    Erkek
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Anne Küpe No -->
+                        <div class="space-y-2">
+                            <label
+                                for="motherEarringNo"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Anne Küpe No</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="motherEarringNo"
+                            />
+                        </div>
+
+                        <!-- Anne Adı -->
+                        <div class="space-y-2">
+                            <label
+                                for="motherName"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Anne Adı</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="motherName"
+                            />
+                        </div>
+
+                        <!-- Son Doğurduğu Tarih -->
+                        <div class="space-y-2">
+                            <label
+                                for="lastBirthDate"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Son Doğurduğu Tarih</label
+                            >
+                            <input
+                                type="date"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="lastBirthDate"
+                            />
+                        </div>
+
+                        <!-- Tohumlama Tarihi -->
+                        <div class="space-y-2">
+                            <label
+                                for="inseminationDate"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Tohumlama Tarihi</label
+                            >
+                            <input
+                                type="date"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="inseminationDate"
+                            />
+                        </div>
+
+                        <!-- Dana İsmi -->
+                        <div class="space-y-2">
+                            <label
+                                for="bullName"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Dana Adı</label
+                            >
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="bullName"
+                            />
+                        </div>
+
+                        <!-- Gebelik Kontrol Tarihi -->
+                        <div class="space-y-2">
+                            <label
+                                for="checkDate"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Gebelik Kontrol Tarihi</label
+                            >
+                            <input
+                                type="date"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="checkDate"
+                            />
+                        </div>
                     </div>
 
-                    <!-- Küpe Numarası -->
-                    <div class="space-y-2">
-                        <label for="earringNo" class="block text-sm font-semibold text-gray-700">Küpe Numarası</label>
-                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="earringNo">
-                    </div>
-          
-                    <!-- Hayvan Adı -->
-                    <div class="space-y-2">
-                        <label for="name" class="block text-sm font-semibold text-gray-700">Hayvan Adı</label>
-                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="name">
-                    </div>
-          
-                    <!-- Doğum Tarihi -->
-                    <div class="space-y-2">
-                        <label for="birthDate" class="block text-sm font-semibold text-gray-700">Doğum Tarihi</label>
-                        <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="birthDate">
-                    </div>
-          
-                    <!-- Türü -->
-                    <div class="space-y-2">
-                        <label for="animalType" class="block text-sm font-semibold text-gray-700">Türü</label>
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="animalType">
-                            <option selected disabled>Tür Seçiniz</option>
-                            <option value="cow" class="font-medium">İnek</option>
-                            <option value="heifer" class="font-medium">Düve</option>
-                            <option value="bull" class="font-medium">Dana</option>
-                            <option value="calf" class="font-medium">Buzağı</option>
-                        </select>
-                    </div>
-
-                    <!-- Cinsiyeti -->
-                    <div class="space-y-2">
-                        <label for="gender" class="block text-sm font-semibold text-gray-700">Cinsiyeti</label>
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="gender">
-                            <option selected disabled>Cinsiyet Seçiniz</option>
-                            <option value="true" class="font-medium">Dişi</option>
-                            <option value="false" class="font-medium">Erkek</option>
-                        </select>
-                    </div>
-          
-                    <!-- Anne Küpe No -->
-                    <div class="space-y-2">
-                        <label for="motherEarringNo" class="block text-sm font-semibold text-gray-700">Anne Küpe No</label>
-                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="motherEarringNo">
-                    </div>
-          
-                    <!-- Anne Adı -->
-                    <div class="space-y-2">
-                        <label for="motherName" class="block text-sm font-semibold text-gray-700">Anne Adı</label>
-                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium" id="motherName">
-                    </div>
-
-                    <!-- Son Doğurduğu Tarih -->
-                    <div class="space-y-2">
-                        <label for="lastBirthDate" class="block text-sm font-semibold text-gray-700">Son Doğurduğu Tarih</label>
-                        <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50" id="lastBirthDate">
-                    </div>
-
-                    <!-- Tohumlama Tarihi -->
-                    <div class="space-y-2">
-                        <label for="inseminationDate" class="block text-sm font-semibold text-gray-700">Tohumlama Tarihi</label>
-                        <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50" id="inseminationDate">
-                    </div>
-
-                    <!-- Dana İsmi -->
-                    <div class="space-y-2">
-                        <label for="bullName" class="block text-sm font-semibold text-gray-700">Dana Adı</label>
-                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50" id="bullName">
-                    </div>
-
-                    <!-- Gebelik Kontrol Tarihi -->
-                    <div class="space-y-2">
-                        <label for="checkDate" class="block text-sm font-semibold text-gray-700">Gebelik Kontrol Tarihi</label>
-                        <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50" id="checkDate">
-                    </div>
-                </div>
-      
-                <!-- Kaydet Butonu -->
-                <div class="flex justify-end mt-8">
-                    <button type="submit" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-200 ease-in-out" id="updateButton">
-                        <!-- <span class="flex items-center space-x-2">
+                    <!-- Kaydet Butonu -->
+                    <div class="flex justify-end mt-8">
+                        <button
+                            type="submit"
+                            class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-200 ease-in-out"
+                            id="updateButton"
+                        >
+                            <!-- <span class="flex items-center space-x-2">
                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg> 
                             <span>Kaydet</span> 
                         </span> -->
-                        Kaydet
-                    </button>
-                </div>
-            </form>
-        </div>
+                            Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-        <!-- Warning Message -->
-        <div class="mt-4 flex items-center justify-end">
-            <div class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200">
-                <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                </svg>
-                <p class="text-sm font-medium">
-                    After update the animal type, other datas will be deleted!
-                </p>
+            <!-- Warning Message -->
+            <div class="mt-4 flex items-center justify-end">
+                <div
+                    class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200"
+                >
+                    <svg
+                        class="w-5 h-5 mr-2 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
+                        />
+                    </svg>
+                    <p class="text-sm font-medium">
+                        After update the animal type, other datas will be
+                        deleted!
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script src="../src/updateAnimal.js"></script>      
-</body>
+        <script src="../src/updateAnimal.js"></script>
+    </body>
 </html>

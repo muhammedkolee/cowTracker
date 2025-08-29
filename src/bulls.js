@@ -69,7 +69,7 @@ const bullsBody = document.getElementById("bullsBody");
 window.addEventListener("DOMContentLoaded", () => {
     bullsBody.innerHTML = loadingTemplate;
     window.animalsAPI.receiveDatas((datas) => {
-        console.log(datas)
+        console.log(datas);
         showDatas(datas);
     });
 });
@@ -91,7 +91,6 @@ function showDatas(datas) {
         window.electronAPI.openMenu();
     });
 
-
     addBullButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu("bull");
     });
@@ -106,18 +105,21 @@ function showDatas(datas) {
             // infoButtonClick(earringNo.textContent);
             let datas = { animalId: bullId.textContent, type: "cow" };
             window.electronAPI.openAnimalDetail(datas);
-        }
-
-        else if (target.id === "updateIco") {
+        } else if (target.id === "updateIco") {
             datas = { animalId: bullId.textContent, type: "bull" };
             window.electronAPI.openUpdateAnimal(datas);
-        }
-
-        else if (target.id === "deleteIco") {
+        } else if (target.id === "deleteIco") {
             const sure = window.confirm(
-                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+                "Şu küpe numaralı hayvan silinecek: " +
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
+            );
             if (sure) {
-                const datas = { animalId: bullId.textContent, Type: "bull", pageName: "bulls" }
+                const datas = {
+                    animalId: bullId.textContent,
+                    Type: "bull",
+                    pageName: "bulls",
+                };
                 window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
@@ -164,9 +166,12 @@ function showDatas(datas) {
 
         nav.className = cellClasses;
         navDiv.className = "flex justify-center gap-1";
-        deleteButton.className = "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
-        infoButton.className = "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
-        updateButton.className = "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        deleteButton.className =
+            "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        infoButton.className =
+            "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        updateButton.className =
+            "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
 
         // Lucide icons
         // deleteIco.setAttribute("data-lucide", "trash-2");
@@ -220,16 +225,23 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = bull.EarringNo;
         name.textContent = bull.Name;
-        birthDate.textContent = new Date(bull.BirthDate).toLocaleDateString("tr-TR");
+        birthDate.textContent = new Date(bull.BirthDate).toLocaleDateString(
+            "tr-TR"
+        );
         tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
-        age.textContent = String(calculateDays(bull.BirthDate)) + " (" + (calculateDays(bull.BirthDate)/30).toFixed(1) + " ay)";
+        age.textContent =
+            String(calculateDays(bull.BirthDate)) +
+            " (" +
+            (calculateDays(bull.BirthDate) / 30).toFixed(1) +
+            " ay)";
         motherEarringNo.textContent = bull.MotherEarringNo;
         motherName.textContent = bull.MotherName;
 
         count += 1;
     });
 
-    titleBull.textContent = "Listede toplam " + (count - 1).toString() + " dana var.";
+    titleBull.textContent =
+        "Listede toplam " + (count - 1).toString() + " dana var.";
 }
 
 // Get today's date as JavaScript date.

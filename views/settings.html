@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+    <link rel="stylesheet" href="../styles/output.css" />
+</head>
+<body class="bg-gray-50 p-6">
+  <div class="max-w-2xl mx-auto bg-white shadow rounded-2xl p-6 space-y-6">
+    <h1 class="text-2xl font-bold text-gray-800">Settings</h1>
+
+    <!-- Information Button Visibility -->
+    <div class="flex items-center justify-between">
+      <label for="showInformationButton" class="font-bold text-gray-700 font-medium">
+        Sayfa İçi Bilgi Butonunu Göster
+      </label>
+      <input type="checkbox" id="showInformationButton" class="h-5 w-5 text-blue-600" />
+    </div>
+
+    <!-- Gestation Days -->
+    <div>
+      <label for="gestationDays" class="block text-gray-700 font-medium mb-1">
+        İnekler İçin Doğurma Gün Sayısı
+      </label>
+      <input type="number" id="gestationDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+    </div>
+
+    <!-- Dry Off Days -->
+    <div>
+      <label for="dryOffDays" class="block text-gray-700 font-medium mb-1">
+        İnekler İçin Kuruya Çıkarmak İçin Geçen Gün Sayısı (Tohumlamadan İtibaren)
+      </label>
+      <input type="number" id="dryOffDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200"; />
+    </div>
+
+    <!-- Calf Milk Reduction (½ L) -->
+    <div>
+      <label for="calfReduceToOneLiterDays" class="block text-gray-700 font-medium mb-1">
+        Buzağı 1 Litreye Düşürme Gün Sayısı
+      </label>
+      <input type="number" id="calfReduceToOneLiterDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+    </div>
+
+    <!-- Calf Milk Reduction (1 L) -->
+    <div>
+      <label for="calfReduceToTwoLiterDays" class="block text-gray-700 font-medium mb-1">
+        Buzağı 2 Litreye Düşürme Gün Sayısı
+      </label>
+      <input type="number" id="calfReduceToTwoLiterDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+    </div>
+
+    <!-- Calf Weaning -->
+    <div>
+      <label for="calfWeaningDays" class="block text-gray-700 font-medium mb-1">
+        Buzağı Sütten Kesme Gün Sayısı
+      </label>
+      <input type="number" id="calfWeaningDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+    </div>
+
+    <!-- Calf to Adult Transition -->
+    <div>
+      <label for="calfToAdultDays" class="block text-gray-700 font-medium mb-1">
+        Buzağının Yetişkinlik Evresine Geçme Gün Sayısı (Erkek => Dana, Dişi => Düve)
+      </label>
+      <input type="number" id="calfToAdultDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+    </div>
+
+    <!-- Save Button -->
+    <div class="grid grid-cols-2">  
+        <div class="justify-self-start">
+            <button id="mainMenu" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 cursor-pointer transition duration-200">
+                Ana Menü
+            </button>
+        </div>
+
+        <div class="justify-self-end">
+            <button id="saveSettings" class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 cursor-pointer transition duration-200">
+                Kaydet
+            </button>
+        </div>
+    </div>
+  <script src="../src/settings.js"></script>
+</body>
+</html>

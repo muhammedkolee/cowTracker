@@ -82,21 +82,19 @@ const calvesBody = document.getElementById("calvesBody");
 window.addEventListener("DOMContentLoaded", () => {
     calvesBody.innerHTML = loadingTemplate;
     if (window.animalsAPI) {
-        window.animalsAPI.receiveDatas((datas) => {
-            console.log(datas);
-            showDatas(datas);
+        window.animalsAPI.receiveDatas((allDatas) => {
+            showDatas(allDatas);
         });
     }
 });
 
 // After update database, refresh the table.
-if (window.electronAPI) {
-    window.electronAPI.refresh((datas) => {
-        showDatas(datas);
-    });
-}
+window.electronAPI.refresh((datas) => {
+    showDatas(datas);
+});
 
-function showDatas(datas) {
+
+function showDatas(allDatas) {
     calvesBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
@@ -105,13 +103,13 @@ function showDatas(datas) {
     const addCalfButton = document.getElementById("btn-add-calf");
 
     menuButton.addEventListener("click", () => {
-        if (window.electronAPI) window.electronAPI.openMenu();
+        window.electronAPI.openMenu();
     });
 
     // To open add cow menu.
     addCalfButton.addEventListener("click", () => {
         let animalType = "calf";
-        if (window.electronAPI) window.electronAPI.openAddAnimalMenu(animalType);
+        window.electronAPI.openAddAnimalMenu(animalType);
     });
 
     calvesTableBody.addEventListener("click", function (event) {
@@ -122,19 +120,22 @@ function showDatas(datas) {
 
         if (target.id === "infoIco") {
             let datas = { animalId: calfId.textContent, type: "cow" };
-            if (window.electronAPI) window.electronAPI.openAnimalDetail(datas);
-        }
-
-        else if (target.id === "updateIco") {
+            window.electronAPI.openAnimalDetail(datas);
+        } else if (target.id === "updateIco") {
             datas = { animalId: calfId.textContent, type: "calf" };
-            if (window.electronAPI) window.electronAPI.openUpdateAnimal(datas);
-        }
-
-        else if (target.id === "deleteIco") {
+            window.electronAPI.openUpdateAnimal(datas);
+        } else if (target.id === "deleteIco") {
             const sure = window.confirm(
-                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+                "Şu küpe numaralı hayvan silinecek: " +
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
+            );
             if (sure) {
-                const datas = { animalId: calfId.textContent, Type: "calf", pageName: "calves" }
+                const datas = {
+                    animalId: calfId.textContent,
+                    Type: "calf",
+                    pageName: "calves",
+                };
                 window.electronAPI.removeAnimal(datas);
             } else {
                 console.log("Veri silinmedi.");
@@ -143,7 +144,7 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.forEach((calf) => {
+    allDatas.animalDatas.forEach((calf) => {
         let tableRow = document.createElement("tr");
         let calfId = document.createElement("td");
         let number = document.createElement("td");
@@ -176,7 +177,6 @@ function showDatas(datas) {
 
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
 
-
         // Tailwind classes
         // tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
         calfId.className = cellClasses;
@@ -185,18 +185,25 @@ function showDatas(datas) {
         name.className = cellClasses;
         birthDate.className = cellClasses;
         days.className = cellClasses;
-        lt2.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
-        lt1.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
-        shutDate.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
-        shutDay.className = "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        lt2.className =
+            "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        lt1.className =
+            "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        shutDate.className =
+            "px-4 py-3 text-center font-bold whitespace-normal break-words";
+        shutDay.className =
+            "px-4 py-3 text-center font-bold whitespace-normal break-words";
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
         nav.className = cellClasses;
 
         navDiv.className = "flex justify-center gap-1";
-        deleteButton.className = "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
-        infoButton.className = "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
-        updateButton.className = "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        deleteButton.className =
+            "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        infoButton.className =
+            "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
+        updateButton.className =
+            "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors";
         // shutButton.className = "px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition-colors duration-200";
 
         // deleteIco.className = "icon-trash";
@@ -256,9 +263,13 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
         name.textContent = calf.Name;
-        birthDate.textContent = new Date(calf.BirthDate).toLocaleDateString("tr-TR");
+        birthDate.textContent = new Date(calf.BirthDate).toLocaleDateString(
+            "tr-TR"
+        );
 
-        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(calf.BirthDate);
+        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(
+            {BirthDate: calf.BirthDate, calfReduceToOneLiterDays: allDatas.settingsDatas.calfReduceToOneLiterDays, calfReduceToTwoLiterDays: allDatas.settingsDatas.calfReduceToTwoLiterDays, calfWeaningDays: allDatas.settingsDatas.calfWeaningDays}
+        );
         console.log(shutDateC);
         if (new Date(shutDateC) < getTodayDate()) {
             days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
@@ -266,8 +277,7 @@ function showDatas(datas) {
             lt1.textContent = "Sütten Kesildi";
             shutDate.textContent = "Sütten Kesildi";
             shutDay.textContent = "Sütten Kesildi";
-        }
-        else {
+        } else {
             days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
             lt2.textContent = lt2Date.toLocaleDateString("tr-TR");
             lt1.textContent = lt1Date.toLocaleDateString("tr-TR");
@@ -280,14 +290,17 @@ function showDatas(datas) {
 
         // Gender-based background color
         if (calf.Gender) {
-            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors duration-150";
+            tableRow.className =
+                "bg-red-200 hover:bg-red-300 transition-colors duration-150";
         } else {
-            tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors duration-150";
+            tableRow.className =
+                "bg-blue-200 hover:bg-blue-300 transition-colors duration-150";
         }
 
         count += 1;
     });
-    titleCalf.textContent = "Listede toplam " + (count - 1).toString() + " adet buzağı var";
+    titleCalf.textContent =
+        "Listede toplam " + (count - 1).toString() + " adet buzağı var";
 }
 
 function getTodayDate() {
@@ -299,17 +312,17 @@ function getTodayDate() {
     return new Date(`${year}-${month}-${day}`);
 }
 
-function calculateDates(birthDate) {
-    let lt2Date = new Date(birthDate);
-    let lt1Date = new Date(birthDate);
-    let shutDate = new Date(birthDate);
-    let daysDate = new Date(birthDate);
-    let daysShut = new Date(birthDate);
+function calculateDates(allDatas) {
+    let lt2Date = new Date(allDatas.BirthDate);
+    let lt1Date = new Date(allDatas.BirthDate);
+    let shutDate = new Date(allDatas.BirthDate);
+    let daysDate = new Date(allDatas.BirthDate);
+    let daysShut = new Date(allDatas.BirthDate);
     let today = getTodayDate();
 
-    lt2Date.setDate(lt2Date.getDate() + 75);
-    lt1Date.setDate(lt1Date.getDate() + 85);
-    shutDate.setDate(shutDate.getDate() + 100);
+    lt2Date.setDate(lt2Date.getDate() + parseInt(allDatas.calfReduceToTwoLiterDays));
+    lt1Date.setDate(lt1Date.getDate() + parseInt(allDatas.calfReduceToOneLiterDays));
+    shutDate.setDate(shutDate.getDate() + parseInt(allDatas.calfWeaningDays));
     daysDate = Math.ceil((today - daysDate) / (1000 * 60 * 60 * 24));
     daysShut = Math.ceil((shutDate - today) / (1000 * 60 * 60 * 24));
 
@@ -318,6 +331,6 @@ function calculateDates(birthDate) {
         lt1Date: lt1Date,
         shutDateC: shutDate,
         daysC: daysDate,
-        daysS: daysShut
+        daysS: daysShut,
     };
-};
+}

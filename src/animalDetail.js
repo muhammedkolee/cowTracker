@@ -208,7 +208,13 @@ function showDatas(allDatas) {
                         allDatas.cowData[0].BullName
                     }</span></p>
                     <p><span class="font-bold text-gray-800">Gebelik Kontrol Tarihi:</span> <span class="text-gray-950">${
-                        new Date(allDatas.cowData[0].CheckedDate).toLocaleDateString("tr-TR") != "01.01.1970" ? new Date(allDatas.cowData[0].CheckedDate).toLocaleDateString("tr-TR") : "Yok"
+                        new Date(
+                            allDatas.cowData[0].CheckedDate
+                        ).toLocaleDateString("tr-TR") != "01.01.1970"
+                            ? new Date(
+                                  allDatas.cowData[0].CheckedDate
+                              ).toLocaleDateString("tr-TR")
+                            : "Yok"
                     }</span></p>
                 </div>
             </div>
@@ -534,7 +540,9 @@ function calculatelastBirthDate(lastBirth) {
     // console.log("getTodayDate - lastBirth: ",getTodayDate() - lastBirth);
     // console.log("getTodayDate - Date(lastBirth): ",getTodayDate() - Date(lastBirth));
     // console.log("getTodayDate - new Date(lastBirth): ", (getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24));
-    return Math.ceil((getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24));
+    return Math.ceil(
+        (getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24)
+    );
 }
 function calculateCalfDates(birthDate) {
     let lt2Date = new Date(birthDate);

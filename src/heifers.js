@@ -95,7 +95,6 @@ function showDatas(datas) {
         window.electronAPI.openMenu();
     });
 
-
     addHeiferButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu("heifer");
     });
@@ -110,18 +109,21 @@ function showDatas(datas) {
             // infoButtonClick(earringNo.textContent);
             let datas = { animalId: heiferId.textContent, type: "heifer" };
             window.electronAPI.openAnimalDetail(datas);
-        }
-
-        else if (target.id === "updateIco") {
+        } else if (target.id === "updateIco") {
             datas = { animalId: heiferId.textContent, type: "heifer" };
             window.electronAPI.openUpdateAnimal(datas);
-        }
-
-        else if (target.id === "deleteIco") {
+        } else if (target.id === "deleteIco") {
             const sure = window.confirm(
-                "Şu küpe numaralı hayvan silinecek: " + earringNo.textContent + "\nOnaylıyor musunuz?");
+                "Şu küpe numaralı hayvan silinecek: " +
+                    earringNo.textContent +
+                    "\nOnaylıyor musunuz?"
+            );
             if (sure) {
-                const datas = { animalId: heiferId.textContent, Type: "heifer", pageName: "heifers" };
+                const datas = {
+                    animalId: heiferId.textContent,
+                    Type: "heifer",
+                    pageName: "heifers",
+                };
                 window.electronAPI.removeAnimal(datas);
             } else {
                 // Anything.
@@ -166,10 +168,14 @@ function showDatas(datas) {
 
         nav.className = cellClasses;
         navDiv.className = "flex justify-center gap-1";
-        deleteButton.className = "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
-        infoButton.className = "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
-        updateButton.className = "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
-        inseminationApplyButton.className = "cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        deleteButton.className =
+            "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        infoButton.className =
+            "cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        updateButton.className =
+            "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+        inseminationApplyButton.className =
+            "cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
 
         // Lucide icons
         // deleteIco.setAttribute("data-lucide", "trash-2");
@@ -230,7 +236,9 @@ function showDatas(datas) {
         number.textContent = count.toString() + "-)";
         earringNo.textContent = heifer.EarringNo;
         name.textContent = heifer.Name;
-        lastBirth.textContent = new Date(heifer.LastBirthDate).toLocaleDateString("tr-TR");
+        lastBirth.textContent = new Date(
+            heifer.LastBirthDate
+        ).toLocaleDateString("tr-TR");
         tempDays.textContent = calculateDate(heifer.LastBirthDate);
 
         // Row color based on empty days
@@ -239,14 +247,17 @@ function showDatas(datas) {
             calculateDate(heifer.LastBirthDate) >= 40 &&
             calculateDate(heifer.LastBirthDate) < 60
         ) {
-            tableRow.className = "bg-yellow-200 hover:bg-yellow-300 transition-colors";
+            tableRow.className =
+                "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         } else if (calculateDate(heifer.LastBirthDate) >= 60) {
-            tableRow.className = "bg-red-200 hover:bg-red-300 transition-colors";
+            tableRow.className =
+                "bg-red-200 hover:bg-red-300 transition-colors";
         }
         count += 1;
     });
 
-    titleHeifer.textContent = "Listede toplam " + (count - 1).toString() + " adet düve var.";
+    titleHeifer.textContent =
+        "Listede toplam " + (count - 1).toString() + " adet düve var.";
 }
 
 // Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).

@@ -64,15 +64,11 @@ async function updateDatabase() {
     // Get datas of calves.
     const calvesDatas = await getCalvesDatas();
 
-
     calvesDatas.forEach(async (calf) => {
         let calfBirthDate = new Date(calf.BirthDate);
 
         if ((getTodayDate() - calfBirthDate) / (1000 * 60 * 60 * 24) >= 365) {
             console.log("Isleme baslaniyor...");
-            // const response = await supabase.from("Cows").delete().eq("EarringNo", datas.EarringNo);
-            // const { data: cowsData, error: cowsError } = await supabase.from("Cows").insert(datas.cowDatas);
-            // const { error } = await supabase.from("Calves").update(allDatas.calfData).eq("EarringNo", allDatas.animalData.EarringNo);
 
             // Delete the calf from the database.
             const responseDelete = await supabase
@@ -95,7 +91,7 @@ async function updateDatabase() {
                         .from("Animals")
                         .update({ Type: "heifer" })
                         .eq("EarringNo", calf.EarringNo);
-            } 
+            }
             // If calf is a boy, insert Bulls.
             else {
                 const { data: addBullData, error: addBullError } =
@@ -122,7 +118,7 @@ async function updateDatabase() {
     heifersDatas.forEach(async (heifer) => {
         if (
             (getTodayDate() - new Date(heifer.LastBirthDate)) /
-                (1000 * 60 * 60 * 24) >= 
+                (1000 * 60 * 60 * 24) >=
                 40 &&
             (getTodayDate() - new Date(heifer.LastBirthDate)) /
                 (1000 * 60 * 60 * 24) <=
@@ -160,22 +156,27 @@ async function updateDatabase() {
         }
     });
 
-
-
     const { data: infoDatas, error: infoError } = await supabase
         .from("Information")
         .select("*");
 
     infoDatas.forEach(async (info) => {
-        if ( (new Date() -  new Date(info.CreatedAt)) / (1000 * 60 * 60 * 24) > 5) {
-            const error = await supabase.from("Information").delete().eq("Info", info.Info); 
+        if (
+            (new Date() - new Date(info.CreatedAt)) / (1000 * 60 * 60 * 24) >
+            5
+        ) {
+            const error = await supabase
+                .from("Information")
+                .delete()
+                .eq("Info", info.Info);
         }
         console.log("new Date()", new Date());
         console.log("CreatedAt: ", info.CreatedAt);
         console.log("info.CreatedAt", new Date(info.CreatedAt));
-        console.log("Minus: ", (new Date() -  new Date(info.CreatedAt)) / (1000 * 60 * 60 * 24));
-    
-    
+        console.log(
+            "Minus: ",
+            (new Date() - new Date(info.CreatedAt)) / (1000 * 60 * 60 * 24)
+        );
     });
 
     return {

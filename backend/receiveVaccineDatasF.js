@@ -5,13 +5,11 @@ async function receiveVaccineDatas(vaccineDatas) {
         const { data, error } = await supabase.from("Animals").select("*");
 
         data.forEach(async (animal) => {
-            const { error } = await supabase
-                .from("Vaccines")
-                .insert({
-                    VaccineName: vaccineDatas.VaccineName,
-                    VaccineDate: vaccineDatas.VaccineDate,
-                    AnimalId: animal.Id,
-                });
+            const { error } = await supabase.from("Vaccines").insert({
+                VaccineName: vaccineDatas.VaccineName,
+                VaccineDate: vaccineDatas.VaccineDate,
+                AnimalId: animal.Id,
+            });
             if (error) {
                 console.log("Bir hata oluştu, fonksiyon durduruluyor.");
                 return;
@@ -24,13 +22,11 @@ async function receiveVaccineDatas(vaccineDatas) {
                 .from("Cows")
                 .select("*");
             cowData.forEach(async (cow) => {
-                const { error } = await supabase
-                    .from("Vaccines")
-                    .insert({
-                        VaccineName: vaccineDatas.VaccineName,
-                        VaccineDate: vaccineDatas.VaccineDate,
-                        AnimalId: cow.Id,
-                    });
+                const { error } = await supabase.from("Vaccines").insert({
+                    VaccineName: vaccineDatas.VaccineName,
+                    VaccineDate: vaccineDatas.VaccineDate,
+                    AnimalId: cow.Id,
+                });
             });
         }
         if (vaccineDatas.types.heifers) {
@@ -38,13 +34,11 @@ async function receiveVaccineDatas(vaccineDatas) {
                 .from("Heifers")
                 .select("*");
             heiferData.forEach(async (heifer) => {
-                const { error } = await supabase
-                    .from("Vaccines")
-                    .insert({
-                        VaccineName: vaccineDatas.VaccineName,
-                        VaccineDate: vaccineDatas.VaccineDate,
-                        AnimalId: heifer.Id,
-                    });
+                const { error } = await supabase.from("Vaccines").insert({
+                    VaccineName: vaccineDatas.VaccineName,
+                    VaccineDate: vaccineDatas.VaccineDate,
+                    AnimalId: heifer.Id,
+                });
             });
         }
         if (vaccineDatas.types.calves) {
@@ -52,13 +46,11 @@ async function receiveVaccineDatas(vaccineDatas) {
                 .from("Calves")
                 .select("*");
             calvesData.forEach(async (calf) => {
-                const { error } = await supabase
-                    .from("Vaccines")
-                    .insert({
-                        VaccineName: vaccineDatas.VaccineName,
-                        VaccineDate: vaccineDatas.VaccineDate,
-                        AnimalId: calf.Id,
-                    });
+                const { error } = await supabase.from("Vaccines").insert({
+                    VaccineName: vaccineDatas.VaccineName,
+                    VaccineDate: vaccineDatas.VaccineDate,
+                    AnimalId: calf.Id,
+                });
             });
         }
         if (vaccineDatas.types.bulls) {
@@ -67,13 +59,11 @@ async function receiveVaccineDatas(vaccineDatas) {
                 .select("*")
                 .eq("Type", "bull");
             bullsData.forEach(async (bull) => {
-                const { error } = await supabase
-                    .from("Vaccines")
-                    .insert({
-                        VaccineName: vaccineDatas.VaccineName,
-                        VaccineDate: vaccineDatas.VaccineDate,
-                        AnimalId: bull.Id,
-                    });
+                const { error } = await supabase.from("Vaccines").insert({
+                    VaccineName: vaccineDatas.VaccineName,
+                    VaccineDate: vaccineDatas.VaccineDate,
+                    AnimalId: bull.Id,
+                });
             });
         }
     } else if (vaccineDatas.AnimalId) {

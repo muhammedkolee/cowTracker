@@ -12,12 +12,19 @@ const heiferNumber = document.getElementById("heiferNumber");
 const bullNumber = document.getElementById("bullNumber");
 const infoContainer = document.getElementById("infoContainer");
 const closestCowsContainer = document.getElementById("closestCowsContainer");
-const closestHeifersContainer = document.getElementById("closestHeifersContainer");
+const closestHeifersContainer = document.getElementById(
+    "closestHeifersContainer"
+);
+const settings = document.getElementById("settings");
 
 buttons.addEventListener("click", function (e) {
     if (e.target.tagName === "BUTTON") {
         window.electronAPI.openPage(e.target.id);
     }
+});
+
+settings.addEventListener("click", function () {
+    window.electronAPI.openPage("settings");
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -27,8 +34,7 @@ window.addEventListener("DOMContentLoaded", () => {
             showDatas(datas.animalsDatas);
             fillDataBoxes(datas.updatedDatas);
         });
-    }
-    else {
+    } else {
         window.offline.openOfflinePage();
     }
 });
@@ -39,17 +45,14 @@ function showDatas(datas) {
     let calves = 0;
     let bulls = 0;
 
-    datas.forEach(animal => {
-        if (animal.Type === "cow"){
+    datas.forEach((animal) => {
+        if (animal.Type === "cow") {
             cows++;
-        }
-        else if (animal.Type === "heifer"){
+        } else if (animal.Type === "heifer") {
             heifers++;
-        }
-        else if (animal.Type === "calf"){
+        } else if (animal.Type === "calf") {
             calves++;
-        }
-        else if (animal.Type === "bull"){
+        } else if (animal.Type === "bull") {
             bulls++;
         }
     });
@@ -60,9 +63,12 @@ function showDatas(datas) {
 }
 
 function showLoading() {
-    infoContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Loading...</div>';
-    closestCowsContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Loading...</div>';
-    closestHeifersContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Loading...</div>';
+    infoContainer.innerHTML =
+        '<div class="text-gray-500 text-center py-8">Loading...</div>';
+    closestCowsContainer.innerHTML =
+        '<div class="text-gray-500 text-center py-8">Loading...</div>';
+    closestHeifersContainer.innerHTML =
+        '<div class="text-gray-500 text-center py-8">Loading...</div>';
     cowNumber.textContent = "Loading...";
     heiferNumber.textContent = "Loading...";
     calfNumber.textContent = "Loading...";
@@ -70,43 +76,65 @@ function showLoading() {
 }
 
 function fillDataBoxes(updatedDatas) {
-    const heifersContainer = document.getElementById('closestHeifersContainer');
-      if (updatedDatas.closestHeifers && updatedDatas.closestHeifers.length > 0) {
-        heifersContainer.innerHTML = updatedDatas.closestHeifers.map(heifer => `
+    const heifersContainer = document.getElementById("closestHeifersContainer");
+    if (updatedDatas.closestHeifers && updatedDatas.closestHeifers.length > 0) {
+        heifersContainer.innerHTML = updatedDatas.closestHeifers
+            .map(
+                (heifer) => `
           <div class="mb-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
             <div class="font-semibold text-gray-800">${heifer.Name}</div>
             <div class="text-sm text-gray-600">${heifer.EarringNo}</div>
             <div class="text-sm text-gray-600">${heifer.Date}</div>
           </div>
-        `).join('');
-      } else {
-        heifersContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Yaklaşan Düve Bulunmuyor!</div>';
-      }
+        `
+            )
+            .join("");
+    } else {
+        heifersContainer.innerHTML =
+            '<div class="text-gray-500 text-center py-8">Yaklaşan Düve Bulunmuyor!</div>';
+    }
 
-      // Yaklaşan İnekler
-      const cowsContainer = document.getElementById('closestCowsContainer');
-      if (updatedDatas.closestCows && updatedDatas.closestCows.length > 0) {
-        cowsContainer.innerHTML = updatedDatas.closestCows.map(cow => `
+    // Yaklaşan İnekler
+    const cowsContainer = document.getElementById("closestCowsContainer");
+    if (updatedDatas.closestCows && updatedDatas.closestCows.length > 0) {
+        cowsContainer.innerHTML = updatedDatas.closestCows
+            .map(
+                (cow) => `
           <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
             <div class="font-semibold text-gray-800">${cow.Name}</div>
             <div class="text-sm text-gray-600">${cow.EarringNo}</div>
             <div class="text-sm text-gray-600">${cow.Date}</div>
           </div>
-        `).join('');
-      } else {
-        cowsContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Yaklaşan İnek Bulunmuyor!</div>';
-      }
+        `
+            )
+            .join("");
+    } else {
+        cowsContainer.innerHTML =
+            '<div class="text-gray-500 text-center py-8">Yaklaşan İnek Bulunmuyor!</div>';
+    }
 
-      // Bilgi/Güncellemeler
-      const infoContainer = document.getElementById('infoContainer');
-      if (updatedDatas.info && updatedDatas.info.length > 0) {
-        infoContainer.innerHTML = updatedDatas.info.map(item => `
+    // Bilgi/Güncellemeler
+    const infoContainer = document.getElementById("infoContainer");
+    if (updatedDatas.info && updatedDatas.info.length > 0) {
+        infoContainer.innerHTML = updatedDatas.info
+            .map(
+                (item) => `
           <div class="mb-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
             <div class="text-sm text-gray-800 mb-2">${item.Info}</div>
-            <div class="text-xs text-gray-500">${new Date(item.CreatedAt).toLocaleDateString('tr-TR')} ${new Date(item.CreatedAt).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}</div>
+            <div class="text-xs text-gray-500">${new Date(
+                item.CreatedAt
+            ).toLocaleDateString("tr-TR")} ${new Date(
+                    item.CreatedAt
+                ).toLocaleTimeString("tr-TR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })}</div>
           </div>
-        `).join('');
-      } else {
-        infoContainer.innerHTML = '<div class="text-gray-500 text-center py-8">Güncelleme Yok!</div>';
-      }
+        `
+            )
+            .join("");
+    } else {
+        infoContainer.innerHTML =
+            '<div class="text-gray-500 text-center py-8">Güncelleme Yok!</div>';
+    }
 }

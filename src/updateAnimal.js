@@ -25,42 +25,37 @@ window.updateAPI.updateResult((updateResult) => {
         const confirmed = window.confirm("Hayvan Başarıyla Güncellendi!");
         if (confirmed) {
             window.close();
-        }
-        else (window.close());
-    }
-    else {
+        } else window.close();
+    } else {
         window.confirm("İşlem sırasında bir hata meydana geldi!");
     }
-})
+});
 
 animalType.addEventListener("change", () => {
     let type = animalType.value;
-    
+
     // Reset all fields to enabled state first
     resetFieldStates();
-    
-    if (type === "cow"){
+
+    if (type === "cow") {
         setFieldState(lastBirthDate, true);
         setFieldState(inseminationDate, false);
         setFieldState(bullName, false);
         setFieldState(checkDate, false);
         setFieldState(gender, true);
-    }
-    else if (type === "heifer"){
+    } else if (type === "heifer") {
         setFieldState(lastBirthDate, false);
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
         setFieldState(checkDate, true);
         setFieldState(gender, true);
-    }
-    else if (type === "calf"){
+    } else if (type === "calf") {
         setFieldState(lastBirthDate, true);
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
         setFieldState(checkDate, true);
         setFieldState(gender, false);
-    }
-    else if (type === "bull"){
+    } else if (type === "bull") {
         setFieldState(lastBirthDate, true);
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
@@ -71,11 +66,11 @@ animalType.addEventListener("change", () => {
 
 updateButton.addEventListener("click", (e) => {
     e.preventDefault(); // Prevent form submission
-    
+
     const allDatas = {};
     allDatas.animalData = {};
 
-    console.log("earringNo.value: ", earringNo.value)
+    console.log("earringNo.value: ", earringNo.value);
 
     allDatas.animalData.Id = animalId.value;
     allDatas.animalData.EarringNo = earringNo.value;
@@ -85,7 +80,7 @@ updateButton.addEventListener("click", (e) => {
     allDatas.animalData.MotherName = motherName.value;
     allDatas.animalData.Type = animalType.value;
     // console.log("type: ", animalType.value);
-    
+
     if (animalType.value === "cow") {
         allDatas.cowData = {};
 
@@ -95,16 +90,14 @@ updateButton.addEventListener("click", (e) => {
         allDatas.cowData.InseminationDate = inseminationDate.value;
         allDatas.cowData.BullName = bullName.value;
         allDatas.cowData.CheckedDate = checkDate.value;
-    }
-    else if (animalType.value === "heifer") {
+    } else if (animalType.value === "heifer") {
         allDatas.heiferData = {};
 
         allDatas.heiferData.Id = animalId.value;
         allDatas.heiferData.EarringNo = earringNo.value;
         allDatas.heiferData.Name = nameTag.value;
         allDatas.heiferData.LastBirthDate = lastBirthDate.value;
-    }
-    else if (animalType.value === "calf"){
+    } else if (animalType.value === "calf") {
         allDatas.calfData = {};
 
         allDatas.calfData.Id = animalId.value;
@@ -116,7 +109,7 @@ updateButton.addEventListener("click", (e) => {
 
     // Show loading state
     showLoadingState();
-    
+
     window.updateAPI.updateAnimalDatas(allDatas);
 });
 
@@ -132,31 +125,28 @@ function showDatas(allDatas) {
     // Reset all fields first
     resetFieldStates();
 
-    if (allDatas.animalData[0].Type == "cow"){
+    if (allDatas.animalData[0].Type == "cow") {
         setFieldState(lastBirthDate, true);
         inseminationDate.value = allDatas.cowData[0].InseminationDate;
         bullName.value = allDatas.cowData[0].BullName;
         checkDate.value = allDatas.cowData[0].CheckedDate;
         gender.value = "true";
         setFieldState(gender, true);
-    }
-    else if (allDatas.animalData[0].Type === "heifer"){
+    } else if (allDatas.animalData[0].Type === "heifer") {
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
         setFieldState(checkDate, true);
         lastBirthDate.value = allDatas.heiferData[0].LastBirthDate;
         gender.value = "true";
         setFieldState(gender, true);
-    }
-    else if(allDatas.animalData[0].Type === "calf"){
+    } else if (allDatas.animalData[0].Type === "calf") {
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
         setFieldState(checkDate, true);
         setFieldState(lastBirthDate, true);
         gender.value = allDatas.calfData[0].Gender ? "true" : "false";
         setFieldState(gender, false);
-    }
-    else if (allDatas.animalData[0].Type === "bull"){
+    } else if (allDatas.animalData[0].Type === "bull") {
         setFieldState(inseminationDate, true);
         setFieldState(bullName, true);
         setFieldState(checkDate, true);
@@ -170,18 +160,32 @@ function showDatas(allDatas) {
 function setFieldState(element, disabled) {
     element.disabled = disabled;
     if (disabled) {
-        element.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-50');
-        element.classList.remove('hover:border-primary');
+        element.classList.add(
+            "bg-gray-100",
+            "cursor-not-allowed",
+            "opacity-50"
+        );
+        element.classList.remove("hover:border-primary");
     } else {
-        element.classList.remove('bg-gray-100', 'cursor-not-allowed', 'opacity-50');
-        element.classList.add('hover:border-primary');
+        element.classList.remove(
+            "bg-gray-100",
+            "cursor-not-allowed",
+            "opacity-50"
+        );
+        element.classList.add("hover:border-primary");
     }
 }
 
 // Helper function to reset all field states
 function resetFieldStates() {
-    const fields = [lastBirthDate, inseminationDate, bullName, checkDate, gender];
-    fields.forEach(field => {
+    const fields = [
+        lastBirthDate,
+        inseminationDate,
+        bullName,
+        checkDate,
+        gender,
+    ];
+    fields.forEach((field) => {
         setFieldState(field, false);
     });
 }
@@ -198,7 +202,7 @@ function showLoadingState() {
             <span>Kaydediliyor...</span>
         </span>
     `;
-    updateButton.classList.add('opacity-75', 'cursor-not-allowed');
+    updateButton.classList.add("opacity-75", "cursor-not-allowed");
 }
 
 // Reset button state (call this when update is complete)
@@ -212,5 +216,5 @@ function resetButtonState() {
             <span>Kaydet</span>
         </span>
     `;
-    updateButton.classList.remove('opacity-75', 'cursor-not-allowed');
+    updateButton.classList.remove("opacity-75", "cursor-not-allowed");
 }

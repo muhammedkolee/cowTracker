@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("offline", {
     openOfflinePage: () => {
         ipcRenderer.send("ipcMain:openOfflinePage");
-    }
+    },
 });
 
 contextBridge.exposeInMainWorld("addAnimalAPI", {
@@ -26,8 +26,8 @@ contextBridge.exposeInMainWorld("addAnimalAPI", {
     receiveMothersEarringNo: (callback) => {
         ipcRenderer.on("sendMothersEarringNo", (event, EarringNos) => {
             callback(EarringNos);
-        })
-    }
+        });
+    },
 });
 
 contextBridge.exposeInMainWorld("animalDetailAPI", {
@@ -35,13 +35,13 @@ contextBridge.exposeInMainWorld("animalDetailAPI", {
         ipcRenderer.on("sendDetailDatas", (event, allDatas) => {
             callback(allDatas);
         });
-    }
+    },
 });
 
 contextBridge.exposeInMainWorld("animalsAPI", {
     receiveDatas: (callback) => {
-        ipcRenderer.on("sendDatas", (event, datas) => {
-            callback(datas);
+        ipcRenderer.on("sendDatas", (event, allDatas) => {
+            callback(allDatas);
         });
     },
 });
@@ -54,8 +54,8 @@ contextBridge.exposeInMainWorld("updateAPI", {
     updateResult: (callback) => {
         ipcRenderer.on("updateResult", (event, data) => {
             callback(data);
-        })
-    }   
+        });
+    },
 });
 
 contextBridge.exposeInMainWorld("vaccineAPI", {
@@ -75,6 +75,18 @@ contextBridge.exposeInMainWorld("vaccineAPI", {
 
     sendVaccineDatas: (vaccineDatas) => {
         ipcRenderer.send("ipcMain:receiveVaccineDatas", vaccineDatas);
+    },
+});
+
+contextBridge.exposeInMainWorld("settingsAPI", {
+    receiveSettingsDatas: (callback) => {
+        ipcRenderer.on("sendSettingsDatas", (event, settingsDatas) => {
+            callback(settingsDatas);
+        });
+    },
+
+    saveSettingsDatas: (settingsDatas) => {
+        ipcRenderer.send("ipcMain:saveSettingsDatas", settingsDatas);
     }
 });
 

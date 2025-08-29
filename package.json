@@ -1,65 +1,72 @@
 {
-  "name": "cowtracker",
-  "productName": "Cow Tracker",
-  "version": "1.1.0",
-  "main": "src/main.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-builder",
-    "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch"
-  },
-  "build": {
-    "appId": "com.muhammedkolee.cowtracker",
-    "productName": "Cow Tracker",
-    "copyright": "Copyright © Muhammed Kole",
-    "directories": {
-      "output": "dist"
+    "name": "cowtracker",
+    "productName": "Hayvan Yönetimi",
+    "version": "1.1.0",
+    "main": "src/main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder",
+        "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch"
     },
-    "files": [
-      "dist/**/*",
-      "src/**/*",
-      "icon.ico",
-      "styles/**/*",
-      "views/**/*"
+    "build": {
+        "appId": "com.muhammedkolee.cowtracker",
+        "publish": {
+            "provider": "github",
+            "owner": "muhammedkolee",
+            "repo": "cowTracker"
+        },
+        "productName": "Hayvan Yönetimi",
+        "copyright": "Copyright © Muhammed Kole",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "dist/**/*",
+            "src/**/*",
+            "icon.ico",
+            "styles/**/*",
+            "views/**/*"
+        ],
+        "extraResources": [],
+        "win": {
+            "target": [
+                "nsis",
+                "msi"
+            ],
+            "icon": "icon.ico"
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Cow Tracker",
+            "license": "license.md"
+        },
+        "msi": {
+            "shortcutName": "Cow Tracker"
+        }
+    },
+    "keywords": [
+        "cow",
+        "tracker",
+        "farm",
+        "animal management",
+        "desktop app"
     ],
-    "extraResources": [],
-    "win": {
-      "target": [
-        "nsis",
-        "msi"
-      ],
-      "icon": "icon.ico"
+    "author": "Muhammed Kole",
+    "license": "MIT",
+    "description": "A simple desktop app for cow tracking.",
+    "devDependencies": {
+        "electron": "^35.7.2",
+        "electron-builder": "^26.0.12",
+        "electron-rebuild": "^3.2.9"
     },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "Cow Tracker",
-      "license": "license.md"
-    },
-    "msi": {
-      "shortcutName": "Cow Tracker"
+    "dependencies": {
+        "@supabase/supabase-js": "^2.50.3",
+        "@tailwindcss/cli": "^4.1.12",
+        "electron-squirrel-startup": "^1.0.1",
+        "electron-store": "^10.1.0",
+        "electron-updater": "^6.6.2"
     }
-  },
-  "keywords": [
-    "cow",
-    "tracker",
-    "farm",
-    "animal management",
-    "desktop app"
-  ],
-  "author": "Muhammed Kole",
-  "license": "MIT",
-  "description": "A simple desktop app for cow tracking.",
-  "devDependencies": {
-    "electron": "^35.7.2",
-    "electron-builder": "^26.0.12",
-    "electron-rebuild": "^3.2.9"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.50.3",
-    "@tailwindcss/cli": "^4.1.12",
-    "electron-squirrel-startup": "^1.0.1"
-  }
 }

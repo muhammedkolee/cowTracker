@@ -11,8 +11,8 @@ let motherAnimalsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.addAnimalAPI.receiveAnimalType((animalType) => {
-        console.log(typeof (animalType))
-        console.log(animalType)
+        console.log(typeof animalType);
+        console.log(animalType);
         if (animalType === "cow") {
             addCow();
             type.value = "cow";
@@ -31,7 +31,6 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(document.getElementById("birthDate"));
             document.getElementById("birthDate").value = animalType;
         }
-
     });
 
     window.addAnimalAPI.receiveMothersEarringNo((EarringNos) => {
@@ -50,36 +49,40 @@ function setupMotherEarringSelection() {
     if (!motherEarringInput || !datalist) return;
 
     // Datalist'i doldur
-    datalist.innerHTML = '';
-    motherAnimalsData.forEach(animal => {
-        const option = document.createElement('option');
+    datalist.innerHTML = "";
+    motherAnimalsData.forEach((animal) => {
+        const option = document.createElement("option");
         option.value = animal.EarringNo;
         option.textContent = `${animal.EarringNo} - ${animal.Name}`;
         datalist.appendChild(option);
     });
 
     // Input değiştiğinde anne adını güncelle
-    motherEarringInput.addEventListener('input', updateMotherName);
-    motherEarringInput.addEventListener('change', updateMotherName);
+    motherEarringInput.addEventListener("input", updateMotherName);
+    motherEarringInput.addEventListener("change", updateMotherName);
 }
 
 function updateMotherName() {
-    const selectedEarringNo = document.getElementById('motherEarringNoSelect').value;
-    const motherNameInput = document.getElementById('motherName');
+    const selectedEarringNo = document.getElementById(
+        "motherEarringNoSelect"
+    ).value;
+    const motherNameInput = document.getElementById("motherName");
 
     if (!motherNameInput) return;
 
     // Seçilen küpe numarasına karşılık gelen hayvanı bul
-    const selectedAnimal = motherAnimalsData.find(animal => animal.EarringNo === selectedEarringNo);
+    const selectedAnimal = motherAnimalsData.find(
+        (animal) => animal.EarringNo === selectedEarringNo
+    );
 
     if (selectedAnimal) {
         motherNameInput.value = selectedAnimal.Name;
-        motherNameInput.classList.remove('bg-gray-50');
-        motherNameInput.classList.add('bg-white');
+        motherNameInput.classList.remove("bg-gray-50");
+        motherNameInput.classList.add("bg-white");
     } else {
-        motherNameInput.value = '';
-        motherNameInput.classList.remove('bg-white');
-        motherNameInput.classList.add('bg-gray-50');
+        motherNameInput.value = "";
+        motherNameInput.classList.remove("bg-white");
+        motherNameInput.classList.add("bg-gray-50");
     }
 }
 
@@ -88,13 +91,13 @@ window.addAnimalAPI.addResult((result) => {
         const confirmed = window.confirm("Hayvan başarıyla eklendi!");
         if (confirmed) {
             window.close();
-        }
-        else {
+        } else {
             window.close();
         }
-    }
-    else {
-        window.confirm("İşlem sırasında bir hata meydana geldi! Tekrar deneyiniz.");
+    } else {
+        window.confirm(
+            "İşlem sırasında bir hata meydana geldi! Tekrar deneyiniz."
+        );
     }
 });
 
@@ -109,7 +112,9 @@ addButton.addEventListener("click", () => {
     const motherName = document.getElementById("motherName");
 
     if (type.value === "cow") {
-        const inseminationDateInput = document.getElementById("inseminationDateInput");
+        const inseminationDateInput = document.getElementById(
+            "inseminationDateInput"
+        );
         const bullNameInput = document.getElementById("bullNameInput");
         const checkInput = document.getElementById("checkInput");
 
@@ -128,8 +133,7 @@ addButton.addEventListener("click", () => {
         if (checkInput.value != "") {
             newAnimalDatas.cowDatas.CheckedDate = checkInput.value;
         }
-    }
-    else if (type.value === "heifer") {
+    } else if (type.value === "heifer") {
         const lastBirthDate = document.getElementById("lastBirthDateInput");
 
         newAnimalDatas.heiferDatas = {};
@@ -143,8 +147,7 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.heiferDatas.EarringNo = earringNo.value;
         newAnimalDatas.heiferDatas.Name = animalName.value;
         newAnimalDatas.heiferDatas.LastBirthDate = lastBirthDate.value;
-    }
-    else if (type.value === "calf") {
+    } else if (type.value === "calf") {
         const genderInput = document.getElementById("genderInput");
 
         newAnimalDatas.calfDatas = {};
@@ -161,12 +164,10 @@ addButton.addEventListener("click", () => {
 
         if (genderInput.value === "girl") {
             newAnimalDatas.calfDatas.Gender = true;
-        }
-        else {
+        } else {
             newAnimalDatas.calfDatas.Gender = false;
         }
-    }
-    else if (type.value === "bull") {
+    } else if (type.value === "bull") {
         newAnimalDatas.animalDatas.EarringNo = earringNo.value;
         newAnimalDatas.animalDatas.Name = animalName.value;
         newAnimalDatas.animalDatas.BirthDate = birthDate.value;
@@ -213,11 +214,13 @@ function addCow() {
     inseminationDateDiv.className = "space-y-2 pb-2";
 
     inseminationDateLabel.htmlFor = "inseminationDateInput";
-    inseminationDateLabel.className = "block text-sm font-semibold text-gray-700";
+    inseminationDateLabel.className =
+        "block text-sm font-semibold text-gray-700";
     inseminationDateLabel.innerHTML = "Tohumlama Tarihi";
 
     inseminationDateInput.type = "date";
-    inseminationDateInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    inseminationDateInput.className =
+        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
     inseminationDateInput.required = true;
 
     deneme.appendChild(inseminationDateDiv);
@@ -237,7 +240,8 @@ function addCow() {
     bullNameLabel.innerHTML = "Dana Adı";
 
     bullNameInput.type = "text";
-    bullNameInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    bullNameInput.className =
+        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(bullNameDiv);
     bullNameDiv.appendChild(bullNameLabel);
@@ -256,7 +260,8 @@ function addCow() {
     checkLabel.innerHTML = "Gebelik Kontrol";
 
     checkInput.type = "date";
-    checkInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    checkInput.className =
+        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(checkDiv);
     checkDiv.appendChild(checkLabel);
@@ -289,7 +294,8 @@ function addCalf() {
     boy.value = "boy";
     boy.text = "Erkek";
 
-    genderInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    genderInput.className =
+        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
     genderInput.required = true;
 
     deneme.appendChild(genderDiv);
@@ -317,7 +323,8 @@ function addHeifer() {
     lastBirthDateLabel.innerHTML = "Son Doğurduğu Tarih";
 
     lastBirthDateInput.type = "date";
-    lastBirthDateInput.className = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    lastBirthDateInput.className =
+        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
 
     deneme.appendChild(lastBirthDateDiv);
     lastBirthDateDiv.appendChild(lastBirthDateLabel);

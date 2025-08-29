@@ -571,11 +571,10 @@ async function getMotherEarringNos() {
 
 
 /*
-+ 1-) Hayvan verileri sıralı olarak gelsin.
-2-) Ana sayfanın sağ alt köşesine ayarlar butonu koyulabilir.
-3-) Her sayfanın sol üst köşesine Information butonu koyulabilir.
-+ 4-) Aşıları hayvan küpe numarasına göre değil hayvan Id numarasına göre entegre et. (Buzağılar için)
-+ 5-) calves.js dosyasında anne küpe numaraları ve isimleri gözükmüyor.
+1-) Ayarlar sayfası yapılacak.
+1-) Information sayfası yapılacak.
++ 2-) Ana sayfanın sağ alt köşesine ayarlar butonu koyulabilir.
++ 3-) Her sayfanın sol üst köşesine Information butonu koyulabilir.
 
-* Hayvan işlemleri için görsel arayüzler eklendi *
+* Yeni özellikler için butonlar eklendi. *
 */

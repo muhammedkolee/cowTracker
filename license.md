@@ -1,18 +1,18 @@
 # Kullanım Lisansı ve Sözleşmesi
 
-Bu yazılım (“Uygulama”), Muhammed Köle tarafından geliştirilmiştir ve yalnızca aşağıdaki şartlar dahilinde kullanılabilir.
+Bu yazılım (“Uygulama”), Muhammed Köle ve Fatih Arslanol tarafından geliştirilmiştir ve yalnızca aşağıdaki şartlar dahilinde kullanılabilir.
 
 ## 1. Kullanım Hakkı
 
-Kullanıcı, bu yazılımı yalnızca kendi kişisel amacı doğrultusunda ve ücretsiz olarak kullanabilir. Uygulama hiçbir şekilde satılamaz, kiralanamaz, ticari olarak dağıtılamaz. Yazılımın kaynak kodu açık değildir; kullanıcı, ters mühendislik, kod çözme (decompile) veya benzeri işlemler yapamaz.
+Kullanıcı, bu yazılımı yalnızca kendi kişisel amacı doğrultusunda ve ücretsiz olarak kullanabilir. Uygulama hiçbir şekilde satılamaz, kiralanamaz, ticari olarak dağıtılamaz. Bu yazılım açık kaynaklıdır, isteyen kişiler istediği şekilde kodları indirebilir, değişiklik yapabilir ve kendine özgü şekilde değiştirebilir ve kendi istekleri doğrultusunda kullanabilir fakat değiştirilen uygulamanın halka açık şekilde herhangi bir siteden veya uygulama yayıncısından yayınlanması kesinlikle yasaktır.
 
 ## 2. Web Entegrasyonu Hakkında
 
-Uygulama şu anda yalnızca masaüstü üzerinde çalışmakta olup, gelecekte internet üzerinden çalışan servislerle entegre olabilir. Bu tür bir entegrasyon durumunda, kişisel verilerin sunuculara aktarılması ve işlenmesi söz konusu olabilir. Bu değişiklikler, kullanıcıya uygun yollarla (uygulama içi bilgilendirme, güncelleme notları vb.) duyurulacaktır.
+Uygulama şu anda yalnızca masaüstü üzerinde çalışmakta olup, gelecekte internet üzerinden çalışan servislerle entegre olabilir. Bu değişiklikler, kullanıcıya uygun yollarla (uygulama içi bilgilendirme, güncelleme notları vb.) duyurulacaktır.
 
 ## 3. Kişisel Verilerin Korunması
 
-Uygulama kapsamında toplanan tüm veriler, yalnızca uygulama içinde yerel olarak işlenmekte ve saklanmaktadır. Bu veriler; kullanıcıya, hayvanlara ve performans bilgilerine ilişkin olabilir. Veriler hiçbir şekilde üçüncü kişilerle paylaşılmaz, satılmaz veya dış sistemlere aktarılmaz.
+Uygulama kapsamında toplanan tüm veriler, yalnızca uygulama içinde yerel olarak işlenmekte ve saklanmaktadır. Bu veriler; kullanıcıya, hayvanlara ve performans bilgilerine ilişkin olabilir. Veriler veritabanı bulut sunucusu haricinde hiçbir üçüncü kişiyle paylaşılmaz, dağıtılmaz veya satılmaz.
 
 İleride yapılacak web entegrasyonu sürecinde, kullanıcıdan **açık rıza** alınmadan hiçbir veri çevrimiçi ortama aktarılmayacaktır.
 
@@ -34,4 +34,4 @@ Bu sözleşme Türkiye Cumhuriyeti yasalarına tabi olup, taraflar arasında do�
 
 ---
 
-© 2025 Muhammed Köle – Tüm hakları saklıdır.
+© 2025 Cow Tracker – Tüm hakları saklıdır.

@@ -4,10 +4,9 @@
   "version": "1.1.0",
   "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "build": "electron-builder",
-    "tw-colors": "tailwindcss colors"
+    "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch"
   },
   "build": {
     "appId": "com.muhammedkolee.cowtracker",
@@ -54,15 +53,13 @@
   "license": "MIT",
   "description": "A simple desktop app for cow tracking.",
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
     "electron": "^35.7.2",
     "electron-builder": "^26.0.12",
-    "electron-rebuild": "^3.2.9",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+    "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
+    "@tailwindcss/cli": "^4.1.12",
     "electron-squirrel-startup": "^1.0.1"
   }
 }

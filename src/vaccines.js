@@ -77,12 +77,12 @@ let selectedVaccineIds = [];
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     vaccinesBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((datas) => {
-        showDatas(datas);
+    window.animalsAPI.receiveDatas((allDatas) => {
+        showDatas(allDatas);
     });
 });
 
-function showDatas(datas) {
+function showDatas(allDatas) {
     vaccinesBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
@@ -92,6 +92,12 @@ function showDatas(datas) {
     const selectButton = document.getElementById("btn-select");
     const selectHeader = document.getElementById("selectHeader");
     const selectAllCheckbox = document.getElementById("selectAll");
+
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
@@ -257,7 +263,7 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.forEach((vaccine) => {
+    allDatas.vaccineDatas.forEach((vaccine) => {
         let tableRow = document.createElement("tr");
         let selectCell = document.createElement("td");
         let selectCheckbox = document.createElement("input");

@@ -68,9 +68,8 @@ const bullsBody = document.getElementById("bullsBody");
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     bullsBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((datas) => {
-        console.log(datas);
-        showDatas(datas);
+    window.animalsAPI.receiveDatas((allDatas) => {
+        showDatas(allDatas);
     });
 });
 
@@ -79,13 +78,19 @@ window.electronAPI.refresh((datas) => {
     showDatas(datas);
 });
 
-function showDatas(datas) {
+function showDatas(allDatas) {
     bullsBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
     const titleBull = document.getElementById("titleBull");
     const bullTableBody = document.getElementById("bullTableBody");
     const addBullButton = document.getElementById("btn-add-bull");
+
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
@@ -129,7 +134,7 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.forEach((bull) => {
+    allDatas.animalDatas.forEach((bull) => {
         let tableRow = document.createElement("tr");
         let bullId = document.createElement("td");
         let number = document.createElement("td");

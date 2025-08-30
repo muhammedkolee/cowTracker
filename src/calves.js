@@ -102,6 +102,12 @@ function showDatas(allDatas) {
     const calvesTableBody = document.getElementById("calvesTableBody");
     const addCalfButton = document.getElementById("btn-add-calf");
 
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
+
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
     });

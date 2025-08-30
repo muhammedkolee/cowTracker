@@ -72,9 +72,8 @@ const heifersBody = document.getElementById("heifersBody");
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     heifersBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((datas) => {
-        console.log(datas);
-        showDatas(datas);
+    window.animalsAPI.receiveDatas((allDatas) => {
+        showDatas(allDatas);
     });
 });
 
@@ -83,13 +82,19 @@ window.electronAPI.refresh((datas) => {
     showDatas(datas);
 });
 
-function showDatas(datas) {
+function showDatas(allDatas) {
     heifersBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
     const titleHeifer = document.getElementById("titleHeifer");
     const addHeiferButton = document.getElementById("btn-add-heifer");
     const heiferTableBody = document.getElementById("heiferTableBody");
+
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
@@ -133,7 +138,7 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.forEach((heifer) => {
+    allDatas.animalDatas.forEach((heifer) => {
         let tableRow = document.createElement("tr");
         let heiferId = document.createElement("td");
         let number = document.createElement("td");

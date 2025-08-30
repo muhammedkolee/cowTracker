@@ -69,24 +69,29 @@ const animalsBody = document.getElementById("animalsBody");
 window.addEventListener("DOMContentLoaded", () => {
     console.log("çalıştı");
     animalsBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((datas) => {
-        showDatas(datas);
+    window.animalsAPI.receiveDatas((allDatas) => {
+        showDatas(allDatas);
     });
 });
 
 // After update database, refresh the table.
 window.electronAPI.refresh((datas) => {
-    console.log(datas);
     showDatas(datas);
 });
 
-function showDatas(datas) {
+function showDatas(allDatas) {
     animalsBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
     const titleAnimal = document.getElementById("titleAnimal");
     const animalTableBody = document.getElementById("animalTableBody");
     const addAnimalButton = document.getElementById("btn-add-animal");
+
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();
@@ -159,7 +164,7 @@ function showDatas(datas) {
     });
 
     let count = 1;
-    datas.forEach((animal) => {
+    allDatas.animalDatas.forEach((animal) => {
         // Create table row for each animal.
         let tableRow = document.createElement("tr");
         let animalId = document.createElement("td");

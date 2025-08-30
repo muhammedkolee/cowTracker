@@ -109,6 +109,12 @@ function showDatas(allDatas) {
     const addCowButton = document.getElementById("btn-add-cow");
     const cowTableBody = document.getElementById("cowTableBody");
 
+    // If showInformationButton is false, Hidden the button.
+    const infoBtn = document.getElementById("infoBtn");
+    if (!allDatas.settingsDatas.showInformationButton) {
+        infoBtn.classList += " hidden";
+    }
+
     // To open main menu.
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();

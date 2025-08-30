@@ -25,7 +25,7 @@ const { error } = require("console");
 // If app is ready, run this block.
 app.on("ready", async () => {
 
-    // autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify();
 
     
     // Get primary display to maximize window.
@@ -85,7 +85,9 @@ app.on("ready", async () => {
             .then(async () => {
                 // Get animal datas and send datas to preload.
                 if (pageName === "animals") {
-                    const allDatas = await getAnimalsDatas();
+                    const allDatas = {}; 
+                    allDatas.animalDatas = await getAnimalsDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "cows") {
                     const allDatas = {};
@@ -93,19 +95,25 @@ app.on("ready", async () => {
                     allDatas.settingsDatas = getSettingsDatas();
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "heifers") {
-                    const datas = await getHeifersDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    const allDatas = {};
+                    allDatas.animalDatas = await getHeifersDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "calves") {
                     const allDatas = {};
                     allDatas.animalDatas = await getCalvesDatas();
                     allDatas.settingsDatas = getSettingsDatas();
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "bulls") {
-                    const datas = await getBullsDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    const allDatas = {};
+                    allDatas.animalDatas = await getBullsDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "vaccines") {
-                    const datas = await getVaccinesDatas();
-                    mainWindow.webContents.send("sendDatas", datas);
+                    const allDatas = {};
+                    allDatas.vaccineDatas = await getVaccinesDatas();
+                    allDatas.settingsDatas = getSettingsDatas();
+                    mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "settings") {
                     const settingsDatas = getSettingsDatas();
                     mainWindow.webContents.send("sendSettingsDatas", settingsDatas);
@@ -662,6 +670,8 @@ function getSettingsDatas() {
 /*
 + 1-) Ayarlar sayfası yapılacak.
 2-) Information sayfası yapılacak.
+3-) Bazı sayfalardaki Null yazısı silinecek.
+4-) İlerleyen süreçlerde Store ile çevrimdışı olarak da uygulama çalışabilir.
 
 * Ayarlar İçin Sayfa Ayarlandı. *
 */

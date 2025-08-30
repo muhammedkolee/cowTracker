@@ -1,7 +1,8 @@
 {
     "name": "cowtracker",
     "productName": "Hayvan Yönetimi",
-    "version": "1.1.1",
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "version": "1.1.2",
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
@@ -22,19 +23,14 @@
             "output": "dist"
         },
         "files": [
-            "dist/**/*",
             "src/**/*",
             "icon.ico",
             "styles/**/*",
             "views/**/*",
             "backend/**/*"
         ],
-        "extraResources": [],
         "win": {
-            "target": [
-                "nsis",
-                "msi"
-            ],
+            "target": "nsis",
             "icon": "icon.ico"
         },
         "nsis": {
@@ -43,10 +39,8 @@
             "createDesktopShortcut": true,
             "createStartMenuShortcut": true,
             "shortcutName": "Hayvan Yönetimi",
-            "license": "license.md"
-        },
-        "msi": {
-            "shortcutName": "Cow Tracker"
+            "license": "license.md",
+            "runAfterFinish": true
         }
     },
     "keywords": [

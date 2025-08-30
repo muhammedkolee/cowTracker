@@ -2,7 +2,7 @@
     "name": "cowtracker",
     "productName": "Hayvan Yönetimi",
     "artifactName": "${productName}-Setup-${version}.${ext}",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",

@@ -1,12 +1,13 @@
 {
     "name": "cowtracker",
     "productName": "Hayvan Yönetimi",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
         "build": "electron-builder",
-        "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch"
+        "watch:css": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch",
+        "postinstall": "electron-builder install-app-deps"
     },
     "build": {
         "appId": "com.muhammedkolee.cowtracker",
@@ -25,7 +26,8 @@
             "src/**/*",
             "icon.ico",
             "styles/**/*",
-            "views/**/*"
+            "views/**/*",
+            "backend/**/*"
         ],
         "extraResources": [],
         "win": {
@@ -55,16 +57,15 @@
         "desktop app"
     ],
     "author": "Muhammed Kole",
-    "license": "MIT",
     "description": "A simple desktop app for cow tracking.",
     "devDependencies": {
         "electron": "^35.7.2",
         "electron-builder": "^26.0.12",
-        "electron-rebuild": "^3.2.9"
+        "electron-rebuild": "^3.2.9",
+        "@tailwindcss/cli": "^4.1.12"
     },
     "dependencies": {
         "@supabase/supabase-js": "^2.50.3",
-        "@tailwindcss/cli": "^4.1.12",
         "electron-squirrel-startup": "^1.0.1",
         "electron-store": "^10.1.0",
         "electron-updater": "^6.6.2"

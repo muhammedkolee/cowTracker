@@ -27,7 +27,6 @@ app.on("ready", async () => {
 
     autoUpdater.checkForUpdatesAndNotify();
 
-    
     // Get primary display to maximize window.
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;

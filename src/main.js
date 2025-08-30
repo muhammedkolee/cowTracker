@@ -3,6 +3,10 @@ if (require("electron-squirrel-startup")) return;
 
 // For auto update.
 const { autoUpdater } = require("electron-updater");
+const log = require("electron-log");
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "info";
 
 // For settings' datas.
 const Store = require("electron-store").default;
@@ -20,7 +24,7 @@ const receiveVaccineDatas = require("../backend/receiveVaccineDatasF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
 const supabase = require("../backend/databaseConnection.js");
-const { error } = require("console");
+const { error, info } = require("console");
 
 // If app is ready, run this block.
 app.on("ready", async () => {
@@ -131,6 +135,27 @@ app.on("ready", async () => {
                 mainWindow.webContents.send("sendDatas", datas);
             });
     });
+});
+
+autoUpdater.on("checking-for-update", () => {
+    log.info("Checking for update");
+});
+
+autoUpdater.on("update-available", (info) => {
+    log.info("Update Available, Verison: ", info.version);
+});
+
+autoUpdater.on("update-not-available", () => {
+    log.info("Update Not Available");
+});
+
+autoUpdater.on("error", (err) => {
+    log.info("Error in Updater", err);
+});
+
+autoUpdater.on("update-downloaded", (info) => {
+    log.info("Update successfully downloaded.", );
+    autoUpdater.quitAndInstall();
 });
 
 // MENUS

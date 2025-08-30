@@ -1,6 +1,3 @@
-// // To add shortcut to desktop
-// if (require("electron-squirrel-startup")) return;
-
 // For auto update.
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");

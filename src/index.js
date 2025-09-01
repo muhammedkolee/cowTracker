@@ -5,6 +5,18 @@ const loadingTemplate = `
     </div>
 `;
 
+window.addEventListener("DOMContentLoaded", () => {
+    if (navigator.onLine) {
+        showLoading();
+        window.animalsAPI.receiveDatas((datas) => {
+            showDatas(datas.animalsDatas);
+            fillDataBoxes(datas.updatedDatas);
+        });
+    } else {
+        window.offline.openOfflinePage();
+    }
+});
+
 const buttons = document.getElementById("allButtons");
 const cowNumber = document.getElementById("cowNumber");
 const calfNumber = document.getElementById("calfNumber");
@@ -27,15 +39,12 @@ settings.addEventListener("click", function () {
     window.electronAPI.openPage("settings");
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-    if (navigator.onLine) {
-        showLoading();
-        window.animalsAPI.receiveDatas((datas) => {
-            showDatas(datas.animalsDatas);
-            fillDataBoxes(datas.updatedDatas);
-        });
-    } else {
-        window.offline.openOfflinePage();
+document.addEventListener("keydown", (event) => {
+    if (event.key === "F1") {
+        const helpBubbles = document.querySelectorAll('.help-bubble');
+        helpBubbles.forEach(bubble => {
+            bubble.classList.toggle('visible');
+        });        
     }
 });
 

@@ -58,12 +58,24 @@ const layout = `
         <div class="fixed bottom-5 right-3 flex gap-2">
             <button class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-add-vaccine">
                 Yeni Aşı Ekle
+                    <div class="help-bubble -top-[1px] -left-[90px] transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Yeni aşı ekleme sayfası</span>
+                        <div class="absolute top-1/2 left-full transform -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-l-4 border-l-gray-800"></div>
+                    </div>
             </button>
             <button class="cursor-pointer bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-select">
                 Seç
+                    <div class="help-bubble -top-10 left-[90px] transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplu Hayvan Seçimi</span>
+                        <div class="absolute top-full left-9/10 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
             </button>
-            <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-menu">
+            <button class="relative cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-menu">
                 Ana Menü
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Ana Menüye Döndürür</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
             </button>
         </div>
         `;
@@ -82,6 +94,15 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.addEventListener("keydown", (event) => {
+    if (event.key === "F1") {
+        const helpBubbles = document.querySelectorAll('.help-bubble');
+        helpBubbles.forEach(bubble => {
+            bubble.classList.toggle('visible');
+        });  
+    }
+});
+
 function showDatas(allDatas) {
     vaccinesBody.innerHTML = layout;
 
@@ -98,6 +119,13 @@ function showDatas(allDatas) {
     if (!allDatas.settingsDatas.showInformationButton) {
         infoBtn.classList += " hidden";
     }
+
+    infoBtn.addEventListener("click", () => {
+        const helpBubbles = document.querySelectorAll('.help-bubble');
+        helpBubbles.forEach(bubble => {
+            bubble.classList.toggle('visible');
+        });  
+    })
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();

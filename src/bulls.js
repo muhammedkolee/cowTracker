@@ -53,14 +53,22 @@ const layout = `
                         </table>
                     </div>
                 </div>
-                <div class="text-right mt-3">
-                    <button class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors" id="btn-add-bull">
-                        Yeni Dana Ekle
-                    </button>
-                    <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-3 fixed bottom-5 right-2 z-50 shadow-lg transition-colors" id="btn-menu">
-                        Ana Menü
-                    </button>
-                </div>
+        <div class="text-right mt-3">
+            <button class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors" id="btn-add-bull">
+                Yeni Hayvan Ekle
+                    <div class="help-bubble -top-[4px] -left-[90px] transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Yeni hayvan ekleme sayfası</span>
+                        <div class="absolute top-1/2 left-full transform -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-l-4 border-l-gray-800"></div>
+                    </div>
+            </button>
+            <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-3 fixed bottom-5 right-2 z-50 shadow-lg transition-colors" id="btn-menu">
+                Ana Menü
+                    <div class="help-bubble -top-10 left-1/3 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Ana Menüye döndürür</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
+            </button>
+        </div>
         `;
 
 const bullsBody = document.getElementById("bullsBody");
@@ -78,6 +86,16 @@ window.electronAPI.refresh((datas) => {
     showDatas(datas);
 });
 
+document.addEventListener("keydown", (event) => {
+    if (event.key === "F1") {
+        const helpBubbles = document.querySelectorAll('.help-bubble');
+        helpBubbles.forEach(bubble => {
+            bubble.classList.toggle('visible');
+        });        
+    }
+});
+
+
 function showDatas(allDatas) {
     bullsBody.innerHTML = layout;
 
@@ -91,6 +109,13 @@ function showDatas(allDatas) {
     if (!allDatas.settingsDatas.showInformationButton) {
         infoBtn.classList += " hidden";
     }
+    
+    infoBtn.addEventListener("click", () => {
+        const helpBubbles = document.querySelectorAll('.help-bubble');
+        helpBubbles.forEach(bubble => {
+            bubble.classList.toggle('visible');
+        });
+    });
 
     menuButton.addEventListener("click", () => {
         window.electronAPI.openMenu();

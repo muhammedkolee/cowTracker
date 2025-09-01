@@ -341,12 +341,12 @@ const template = `
     <div class="space-y-6">
         <div class="space-y-2">
             <label for="animalName" class="block text-sm font-semibold text-gray-700">Hayvan Adı</label>
-            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="animalName"/>
+            <input placeholder="Sarı Kız" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="animalName"/>
         </div>
 
         <div class="space-y-2">
             <label for="earringNo" class="block text-sm font-semibold text-gray-700">Küpe Numarası</label>
-            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
+            <input placeholder="TR181818" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
         </div>
 
         <div class="space-y-2">

@@ -5,120 +5,153 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>CowTracker - Ana Sayfa</title>
-
+        
         <!-- Tailwind CSS -->
         <link href="../styles/output.css" rel="stylesheet" />
+
+        <style>
+            .help-bubble {
+                transition: opacity 0.3s ease-in-out;
+                opacity: 0;
+                pointer-events: none;
+                position: absolute;
+                z-index: 50;
+                white-space: normal;
+            }
+            .help-bubble.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        </style>
     </head>
-    <body class="bg-gray-100 min-h-screen">
-        <div class="container mx-auto px-4 py-6">
+    <body class="bg-gray-100 min-h-screen relative">
+
+        <div class="container mx-auto px-4 py-6">   
             <!-- Dashboard Cards -->
-            <div
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10"
-            >
-                <div class="bg-blue-600 text-white rounded-xl shadow p-4">
-                    <h5 class="text-lg font-semibold" id="cowNumber"></h5>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <div class="bg-blue-600 text-white rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="cowNumber">İnek Sayısı</h5>
+                    <div class="help-bubble absolute top-full mt-2 left-0 bg-blue-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Çiftlikteki toplam dişi inek sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-4 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-blue-700"></div>
+                    </div>
                 </div>
-                <div class="bg-green-600 text-white rounded-xl shadow p-4">
-                    <h5 class="text-lg font-semibold" id="calfNumber"></h5>
+                <div class="bg-green-600 text-white rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="calfNumber">Buzağı Sayısı</h5>
+                    <div class="help-bubble absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-green-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam buzağı sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-green-700"></div>
+                    </div>
                 </div>
-                <div class="bg-yellow-500 text-white rounded-xl shadow p-4">
-                    <h5 class="text-lg font-semibold" id="heiferNumber"></h5>
+                <div class="bg-yellow-500 text-white rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="heiferNumber">Düve Sayısı</h5>
+                    <div class="help-bubble absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-yellow-600 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam dişi dana (düve) sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-yellow-600"></div>
+                    </div>
                 </div>
-                <div class="bg-red-600 text-white rounded-xl shadow p-4">
-                    <h5 class="text-lg font-semibold" id="bullNumber"></h5>
+                <div class="bg-red-600 text-white rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="bullNumber">Boğa Sayısı</h5>
+                    <div class="help-bubble absolute top-full mt-2 right-0 bg-red-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam erkek hayvan (boğa ve dana) sayısını gösterir.</span>
+                        <div class="absolute bottom-full right-4 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-red-700"></div>
+                    </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Menü Butonları -->
-            <div
-                id="allButtons"
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10"
-            >
-                <button
-                    class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer"
-                    id="cows"
-                >
+            <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <button id="cows" class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer relative">
                     İnekler
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Tüm ineklerin listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
                 </button>
-                <button
-                    class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer"
-                    id="animals"
-                >
+                <button id="animals" class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer relative">
                     Tüm Hayvanlar
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Bütün hayvanların listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
                 </button>
-                <button
-                    class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer"
-                    id="calves"
-                >
+                <button id="calves" class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer relative">
                     Buzağılar
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Tüm buzağıların listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
                 </button>
-                <button
-                    class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer"
-                    id="heifers"
-                >
+                <button id="heifers" class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer relative">
                     Düveler
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Tüm düvelerin listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
                 </button>
-                <button
-                    class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer"
-                    id="bulls"
-                >
+                <button id="bulls" class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer relative">
                     Danalar
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Tüm danaların listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
                 </button>
-                <button
-                    class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer"
-                    id="vaccines"
-                >
+                <button id="vaccines" class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer relative">
                     Aşılar
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Aşılanacak hayvanların listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
                 </button>
             </div>
 
             <!-- Veri Kutuları -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
                 <!-- Yaklaşan Düveler Kutusu -->
-                <div
-                    class="bg-white rounded-xl shadow-lg border border-gray-200"
-                >
-                    <div
-                        class="bg-purple-600 text-white px-4 py-3 rounded-t-xl"
-                    >
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
+                    <div class="bg-purple-600 text-white px-4 py-3 rounded-t-xl">
                         <h3 class="text-lg font-semibold">Yaklaşan Düveler</h3>
                     </div>
-                    <div
-                        class="p-4 h-64 overflow-y-auto"
-                        id="closestHeifersContainer"
-                    >
+                    <div class="p-4 h-64 overflow-y-auto" id="closestHeifersContainer">
                         <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Doğum yaklaştığı için ayrılan düvelerin listesi.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </div>
 
                 <!-- Yaklaşan İnekler Kutusu -->
-                <div
-                    class="bg-white rounded-xl shadow-lg border border-gray-200"
-                >
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
                     <div class="bg-blue-600 text-white px-4 py-3 rounded-t-xl">
                         <h3 class="text-lg font-semibold">Yaklaşan İnekler</h3>
                     </div>
-                    <div
-                        class="p-4 h-64 overflow-y-auto"
-                        id="closestCowsContainer"
-                    >
+                    <div class="p-4 h-64 overflow-y-auto" id="closestCowsContainer">
                         <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Doğum yapması beklenen ineklerin listesi.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </div>
 
                 <!-- Bilgi/Güncellemeler Kutusu -->
-                <div
-                    class="bg-white rounded-xl shadow-lg border border-gray-200"
-                >
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
                     <div class="bg-green-600 text-white px-4 py-3 rounded-t-xl">
                         <h3 class="text-lg font-semibold">Son Güncellemeler</h3>
                     </div>
                     <div class="p-4 h-64 overflow-y-auto" id="infoContainer">
                         <!-- Veriler JavaScript ile doldurulacak -->
                     </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Uygulamadaki en son gelişmeleri ve bildirimleri gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
                 </div>
             </div>
         </div>
+
         <!-- Hello World paragrafı sol alt köşede -->
         <p class="fixed bottom-6 left-6 text-gray-800 font-medium bg-white px-3 py-2 rounded-lg shadow-md">
             App Version: v1.1.4
@@ -149,14 +182,9 @@
                     />
                 </svg>
 
-                <span
-                    id="settings"
-                    class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pl-5"
-                    >Ayarlar</span
-                >
+                <span id="settings" class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pl-5">Ayarlar</span>
             </button>
         </div>
-
         <script src="../src/index.js"></script>
     </body>
 </html>

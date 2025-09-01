@@ -14,10 +14,6 @@ const calfReduceToTwoLiterDays = document.getElementById("calfReduceToTwoLiterDa
 const calfWeaningDays = document.getElementById("calfWeaningDays");
 const calfToAdultDays = document.getElementById("calfToAdultDays");
 
-mainMenu.addEventListener("click", () => {
-    window.electronAPI.openMenu();
-});
-
 saveSettings.addEventListener("click", () => {
     const settingsDatas = {
         showInformationButton: showInformationButton.checked,
@@ -30,9 +26,9 @@ saveSettings.addEventListener("click", () => {
     }
 
     window.settingsAPI.saveSettingsDatas(settingsDatas);
-    window.confirm("İşlem Başarıyla Tamamlandı!");
     window.electronAPI.openMenu();
 });
+
 function showDatas(settingsDatas) {
     showInformationButton.checked = settingsDatas.showInformationButton;
     gestationDays.value = settingsDatas.gestationDays;

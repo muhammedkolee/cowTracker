@@ -105,6 +105,7 @@ function showDatas(allDatas) {
     const infoBtn = document.getElementById("infoBtn");
     if (!allDatas.settingsDatas.showInformationButton) {
         infoBtn.classList += " hidden";
+        infoBtn.title = "Sayfa içi temel bilgileri gösterir";
     }
 
     infoBtn.addEventListener("click", () => {
@@ -199,6 +200,11 @@ function showDatas(allDatas) {
             "cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
         inseminationApplyButton.className =
             "cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded text-sm transition-colors flex items-center justify-center";
+
+        deleteButton.title = "Hayvanı Sil";
+        infoButton.title = "Hayvan Bilgileri";
+        updateButton.title = "Hayvanı Güncelle";
+        inseminationApplyButton.title = "Tohumlandı Olarak İşaretle";
 
         // Lucide icons
         // deleteIco.setAttribute("data-lucide", "trash-2");

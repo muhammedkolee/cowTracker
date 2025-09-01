@@ -22,6 +22,7 @@ const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
 const supabase = require("../backend/databaseConnection.js");
 const { error, info } = require("console");
+const { eventNames } = require("process");
 
 // If app is ready, run this block.
 app.on("ready", async () => {
@@ -72,6 +73,14 @@ app.on("ready", async () => {
         }
     });
     //Dev
+
+    // EasterEgg
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+       if (input.key === "m" && input.control && input.type === "keyDown") {
+            mainWindow.loadFile(path.join(__dirname, "../views/egg.html"))
+       } 
+    });
+    // EasterEgg
 
     ipcMain.on("ipcMain:openOfflinePage", () => {
         mainWindow.loadFile(path.join(__dirname, "../views/offlinePage.html"));
@@ -691,13 +700,13 @@ function getSettingsDatas() {
 /*
 + 1-) Ayarlar sayfası yapılacak.
 + 2-) Information sayfası yapılacak.
-3-) Bazı sayfalardaki Null yazısı silinecek.
++ 3-) Bazı sayfalardaki Null yazısı silinecek.
 / 5-) artifactName düzenlenecek.
 6-) Veriler lokalden görüntülenecek.
 + 7-) Ayarlar sayfasındaki buton sayısı 1'e düşürülecek ve Kaydet ve Çık olarak değiştirilecek.
-8-) Butonlara title ekle.
++ 8-) Butonlara title ekle.
 
 
 
-* Sayfalar İçin Bilgilendirme Kutucukları Ayarlandı *
+* Butonlara title eklendi *
 */

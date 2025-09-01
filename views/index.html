@@ -24,8 +24,7 @@
             }
         </style>
     </head>
-    <body class="bg-gray-100 min-h-screen relative">
-
+    <body class="bg-gray-100 min-h-screen relative" id="indexBody">
         <div class="container mx-auto px-4 py-6">   
             <!-- Dashboard Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
@@ -62,45 +61,45 @@
 
             <!-- Menü Butonları -->
             <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-                <button id="cows" class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer relative">
+                <button title="Tüm ineklerin listesini görüntüle" id="cows" class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer relative">
                     İnekler
                     <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
                         <span class="block">Tüm ineklerin listesini görüntüle.</span>
                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
                     </div>
                 </button>
-                <button id="animals" class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer relative">
+                <button title="Bütün hayvanların listesini görüntüle" id="animals" class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer relative">
                     Tüm Hayvanlar
                     <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
                         <span class="block">Bütün hayvanların listesini görüntüle.</span>
                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
                     </div>
                 </button>
-                <button id="calves" class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer relative">
+                <button title="Tüm buzağıların listesini görüntüle" id="calves" class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer relative">
                     Buzağılar
                     <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
                         <span class="block">Tüm buzağıların listesini görüntüle.</span>
                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
                     </div>
                 </button>
-                <button id="heifers" class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer relative">
+                <button title="Tüm düvelerin listesini görüntüle" id="heifers" class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer relative">
                     Düveler
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
                     <span class="block">Tüm düvelerin listesini görüntüle.</span>
                     <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </button>
-                <button id="bulls" class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer relative">
+                <button title="Tüm danaların listesini görüntüle" id="bulls" class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer relative">
                     Danalar
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
                     <span class="block">Tüm danaların listesini görüntüle.</span>
                     <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </button>
-                <button id="vaccines" class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer relative">
+                <button title="Yapılmış aşıların listesini görüntüle" id="vaccines" class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer relative">
                     Aşılar
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
-                    <span class="block">Aşılanacak hayvanların listesini görüntüle.</span>
+                    <span class="block">Yapılmış aşıların listesini görüntüle.</span>
                     <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </button>
@@ -117,7 +116,7 @@
                         <!-- Veriler JavaScript ile doldurulacak -->
                     </div>
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
-                        <span class="block">Doğum yaklaştığı için ayrılan düvelerin listesi.</span>
+                        <span class="block">Boş Gün Sayısı Çok Fazla Olan Düveler.</span>
                         <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </div>
@@ -131,7 +130,7 @@
                         <!-- Veriler JavaScript ile doldurulacak -->
                     </div>
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
-                        <span class="block">Doğum yapması beklenen ineklerin listesi.</span>
+                        <span class="block">Doğumu Yaklaşan İnekler.</span>
                         <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </div>
@@ -145,7 +144,7 @@
                         <!-- Veriler JavaScript ile doldurulacak -->
                     </div>
                     <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
-                        <span class="block">Uygulamadaki en son gelişmeleri ve bildirimleri gösterir.</span>
+                        <span class="block">Uygulamada otomatik olarak ayarlanan güncellemeleri gösterir.</span>
                         <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
                     </div>
                 </div>
@@ -154,14 +153,15 @@
 
         <!-- Hello World paragrafı sol alt köşede -->
         <p class="fixed bottom-6 left-6 text-gray-800 font-medium bg-white px-3 py-2 rounded-lg shadow-md">
-            App Version: v1.1.4
+            App Version: 1.1.5
         </p>
 
         <div class="fixed bottom-6 right-6 z-50">
             <button
                 id="settingsBtn"
                 class="group bg-gray-700 hover:bg-gray-800 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-32 hover:rounded-full overflow-hidden cursor-pointer"
-            >
+                title="Ayarlar sayfasına yönlendirir"
+                >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/output.css">
+</head>
+<body>
+    <img class="w-screen h-screen bg-black object-contain" src="photo.jpg" alt="Buzağı"></img>
+    <button id="quit" class="fixed curser-pointer bottom-5 right-5 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg">
+        Çıkış
+    </button>
+    <script>
+        document.getElementById("quit").addEventListener("click", () => {
+            window.electronAPI.openMenu();
+        });
+    </script>
+</body>
+</html>

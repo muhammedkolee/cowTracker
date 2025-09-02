@@ -4,6 +4,17 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+window.electronAPI.updateAvailable((event, version) => {
+    const result = window.confirm(`Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`);
+    if (result) {
+        window.electronAPI.updateResponse(true);
+        window.confirm("Bu işlem birkaç dakika kadar sürebilir. Uygulama güncellendikten sonra kapanacak ve güncelleme otomatik olarak yüklenecektir.\nLütfen uygulamayı kapatmayın!");
+    }
+    else {
+        window.electronAPI.updateResponse(false);
+    }
+});
+
 const mainMenu = document.getElementById("mainMenu");
 const saveSettings = document.getElementById("saveSettings");
 const showInformationButton = document.getElementById("showInformationButton");

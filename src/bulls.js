@@ -86,6 +86,17 @@ window.electronAPI.refresh((datas) => {
     showDatas(datas);
 });
 
+window.electronAPI.updateAvailable((event, version) => {
+    const result = window.confirm(`Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`);
+    if (result) {
+        window.electronAPI.updateResponse(true);
+        window.confirm("Bu işlem birkaç dakika kadar sürebilir. Uygulama güncellendikten sonra kapanacak ve güncelleme otomatik olarak yüklenecektir.\nLütfen uygulamayı kapatmayın!");
+    }
+    else {
+        window.electronAPI.updateResponse(false);
+    }
+});
+
 document.addEventListener("keydown", (event) => {
     if (event.key === "F1") {
         const helpBubbles = document.querySelectorAll('.help-bubble');

@@ -139,4 +139,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
     gaveBirth: (datas) => {
         ipcRenderer.send("ipcMain:gaveBirth", datas);
     },
+
+    updateAvailable: (callback) => {
+        ipcRenderer.on("update-available", (event, version) => {
+            callback(version);  
+        });
+    },
+
+    updateResponse: (response) => {
+        ipcRenderer.send("updateResponse", response);
+    }
 });

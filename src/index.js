@@ -17,6 +17,17 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+window.electronAPI.updateAvailable((event, version) => {
+    const result = window.confirm(`Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`);
+    if (result) {
+        window.electronAPI.updateResponse(true);
+        window.confirm("Bu işlem birkaç dakika kadar sürebilir. Uygulama güncellendikten sonra kapanacak ve güncelleme otomatik olarak yüklenecektir.\nLütfen uygulamayı kapatmayın!");
+    }
+    else {
+        window.electronAPI.updateResponse(false);
+    }
+});
+
 const buttons = document.getElementById("allButtons");
 const cowNumber = document.getElementById("cowNumber");
 const calfNumber = document.getElementById("calfNumber");

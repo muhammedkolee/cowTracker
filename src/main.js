@@ -2,6 +2,8 @@
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
 
+autoUpdater.autoDownload = false;
+
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = "info";
 
@@ -28,9 +30,6 @@ let mainWindow;
 
 // If app is ready, run this block.
 app.on("ready", async () => {
-    // Checking if update exist or not
-    autoUpdater.checkForUpdatesAndNotify();
-
     // Synchronize cloud datas with local datas.
     try {
         await setAllLocalDatas();
@@ -162,6 +161,16 @@ autoUpdater.on("checking-for-update", () => {
 
 autoUpdater.on("update-available", (info) => {
     log.info("Update Available, Verison: ", info.version);
+    mainWindow.webContents.send("update-available", info.version);
+});
+
+ipcMain.on("updateResponse", (event, response) => {
+    if (response) {
+        autoUpdater.downloadUpdate();
+    }
+    else {
+        log.info("User denied the update.");
+    }
 });
 
 autoUpdater.on("update-not-available", () => {
@@ -722,15 +731,8 @@ async function refreshDatas() {
     return allDatas;
 }
 /*
-+ 1-) Ayarlar sayfası yapılacak.
-+ 2-) Information sayfası yapılacak.
-+ 3-) Bazı sayfalardaki Null yazısı silinecek.
-/ 5-) artifactName düzenlenecek.
-+ 6-) Veriler lokalden görüntülenecek.
-+ 7-) Ayarlar sayfasındaki buton sayısı 1'e düşürülecek ve Kaydet ve Çık olarak değiştirilecek.
-+ 8-) Butonlara title ekle.
-
-
+1-) Yeni gelen güncellemeler için kullanıcı onayı alınacak.
+2-) Silinen hayvanlar için trash sayfası yapılacak.
 
 * Veriler lokalden görüntüleniyor. *
 */

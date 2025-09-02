@@ -41,7 +41,8 @@
             "createStartMenuShortcut": true,
             "shortcutName": "Hayvan Yönetimi",
             "license": "license.md",
-            "runAfterFinish": true
+            "runAfterFinish": true,
+            "differentialPackage": true
         }
     },
     "keywords": [

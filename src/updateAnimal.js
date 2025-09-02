@@ -70,8 +70,6 @@ updateButton.addEventListener("click", (e) => {
     const allDatas = {};
     allDatas.animalData = {};
 
-    console.log("earringNo.value: ", earringNo.value);
-
     allDatas.animalData.Id = animalId.value;
     allDatas.animalData.EarringNo = earringNo.value;
     allDatas.animalData.Name = nameTag.value;
@@ -79,7 +77,6 @@ updateButton.addEventListener("click", (e) => {
     allDatas.animalData.MotherEarringNo = motherEarringNo.value;
     allDatas.animalData.MotherName = motherName.value;
     allDatas.animalData.Type = animalType.value;
-    // console.log("type: ", animalType.value);
 
     if (animalType.value === "cow") {
         allDatas.cowData = {};
@@ -89,7 +86,12 @@ updateButton.addEventListener("click", (e) => {
         allDatas.cowData.Name = nameTag.value;
         allDatas.cowData.InseminationDate = inseminationDate.value;
         allDatas.cowData.BullName = bullName.value;
-        allDatas.cowData.CheckedDate = checkDate.value;
+        if (checkDate.value == "") {
+            allDatas.cowData.CheckedDate = "1970-01-01";
+        }
+        else {
+            allDatas.cowData.CheckedDate = checkDate.value;
+        }
     } else if (animalType.value === "heifer") {
         allDatas.heiferData = {};
 
@@ -129,7 +131,9 @@ function showDatas(allDatas) {
         setFieldState(lastBirthDate, true);
         inseminationDate.value = allDatas.cowData[0].InseminationDate;
         bullName.value = allDatas.cowData[0].BullName;
-        checkDate.value = allDatas.cowData[0].CheckedDate;
+        if (allDatas.cowData[0].CheckedDate != "1970-01-01") {
+            checkDate.value = allDatas.cowData[0].CheckedDate;
+        }
         gender.value = "true";
         setFieldState(gender, true);
     } else if (allDatas.animalData[0].Type === "heifer") {

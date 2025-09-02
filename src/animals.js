@@ -99,6 +99,7 @@ document.addEventListener("keydown", (event) => {
 function showDatas(allDatas) {
     animalsBody.innerHTML = layout;
     
+    
     const menuButton = document.getElementById("btn-menu");
     const titleAnimal = document.getElementById("titleAnimal");
     const animalTableBody = document.getElementById("animalTableBody");
@@ -123,7 +124,7 @@ function showDatas(allDatas) {
     });
 
     addAnimalButton.addEventListener("click", () => {
-        window.electronAPI.openAddAnimalMenu();
+        window.electronAPI.openAddAnimalMenu("none");
     });
 
     animalTableBody.addEventListener("click", function (event) {

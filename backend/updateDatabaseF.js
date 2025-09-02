@@ -68,8 +68,6 @@ async function updateDatabase() {
         let calfBirthDate = new Date(calf.BirthDate);
 
         if ((getTodayDate() - calfBirthDate) / (1000 * 60 * 60 * 24) >= 365) {
-            console.log("Isleme baslaniyor...");
-
             // Delete the calf from the database.
             const responseDelete = await supabase
                 .from("Calves")
@@ -170,13 +168,6 @@ async function updateDatabase() {
                 .delete()
                 .eq("Info", info.Info);
         }
-        console.log("new Date()", new Date());
-        console.log("CreatedAt: ", info.CreatedAt);
-        console.log("info.CreatedAt", new Date(info.CreatedAt));
-        console.log(
-            "Minus: ",
-            (new Date() - new Date(info.CreatedAt)) / (1000 * 60 * 60 * 24)
-        );
     });
 
     return {

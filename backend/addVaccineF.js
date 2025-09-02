@@ -1,6 +1,6 @@
 const supabase = require("./databaseConnection");
 
-async function receiveVaccineDatas(vaccineDatas) {
+async function addVaccine(vaccineDatas) {
     if (vaccineDatas.all) {
         const { data, error } = await supabase.from("Animals").select("*");
 
@@ -74,4 +74,4 @@ async function receiveVaccineDatas(vaccineDatas) {
     }
 }
 
-module.exports = receiveVaccineDatas;
+module.exports = addVaccine;

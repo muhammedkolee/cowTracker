@@ -6,7 +6,7 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = "info";
 
 // For settings' datas.
-const Store = require("electron-store").default;
+const store = require("../backend/store.js");
 
 // Frameworks
 const { app, BrowserWindow, ipcMain, screen } = require("electron");
@@ -17,29 +17,35 @@ const { createClient } = require("@supabase/supabase-js");
 const addAnimal = require("../backend/addAnimalF.js");
 const updateAnimal = require("../backend/updateAnimalF.js");
 const removeAnimal = require("../backend/removeAnimalF.js");
-const receiveVaccineDatas = require("../backend/receiveVaccineDatasF.js");
+const addVaccine = require("../backend/addVaccineF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
 const supabase = require("../backend/databaseConnection.js");
 const { error, info } = require("console");
 const { eventNames } = require("process");
 
+let mainWindow;
+
 // If app is ready, run this block.
 app.on("ready", async () => {
-
+    // Checking if update exist or not
     autoUpdater.checkForUpdatesAndNotify();
 
+    // Synchronize cloud datas with local datas.
+    try {
+        await setAllLocalDatas();
+        store.set("Vaccines", await getVaccinesDatas());
+        store.set("updatedDatas", await updateDatabase());
+    }
+    catch {
+
+    }
     // Get primary display to maximize window.
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
 
-    // DEV
-    // const updateDatas = await updateDatabase();
-    // console.log("updateDatas: ", updateDatas);
-    // DEV
-
     // Create Main Window
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width,
         height,
         webPreferences: {
@@ -50,7 +56,7 @@ app.on("ready", async () => {
         },
     });
 
-    // It make window maximize. (I don't recommend)
+    // It make window maximize.
     mainWindow.maximize();
 
     mainWindow.setMenu(null);
@@ -60,8 +66,8 @@ app.on("ready", async () => {
         .loadFile(path.join(__dirname, "../views/index.html"))
         .then(async () => {
             const datas = {};
-            datas.animalsDatas = await getAnimalsDatas();
-            datas.updatedDatas = await updateDatabase();
+            datas.animalsDatas = store.get("Animals");
+            datas.updatedDatas = store.get("updatedDatas");
             mainWindow.webContents.send("sendDatas", datas);
         });
 
@@ -86,46 +92,52 @@ app.on("ready", async () => {
         mainWindow.loadFile(path.join(__dirname, "../views/offlinePage.html"));
     });
 
-    // To open page which user want to open. pa
-    // Name => file name without .html
+    // To open page which user want to open.
+    // pageName => file name without .html
     ipcMain.on("ipcMain:openPage", (event, pageName) => {
         mainWindow
             .loadFile(path.join(__dirname, "../views/" + pageName + ".html"))
             .then(async () => {
+                console.log(path.basename(mainWindow.webContents.getURL()));    //pageName.html
                 // Get animal datas and send datas to preload.
                 if (pageName === "animals") {
                     const allDatas = {}; 
-                    allDatas.animalDatas = await getAnimalsDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.animalDatas = await getAnimalsDatas();
+                    allDatas.animalDatas = store.get("Animals");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "cows") {
                     const allDatas = {};
-                    allDatas.animalDatas = await getCowsDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.animalDatas = await getCowsDatas();
+                    allDatas.animalDatas = store.get("Cows");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "heifers") {
                     const allDatas = {};
-                    allDatas.animalDatas = await getHeifersDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.animalDatas = await getHeifersDatas();
+                    allDatas.animalDatas = store.get("Heifers");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "calves") {
                     const allDatas = {};
-                    allDatas.animalDatas = await getCalvesDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.animalDatas = await getCalvesDatas();
+                    allDatas.animalDatas = store.get("Calves");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "bulls") {
                     const allDatas = {};
-                    allDatas.animalDatas = await getBullsDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.animalDatas = await getBullsDatas();
+                    allDatas.animalDatas = store.get("Bulls");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "vaccines") {
                     const allDatas = {};
-                    allDatas.vaccineDatas = await getVaccinesDatas();
-                    allDatas.settingsDatas = getSettingsDatas();
+                    // allDatas.vaccineDatas = await getVaccinesDatas();
+                    allDatas.vaccineDatas = store.get("Vaccines");
+                    allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
                 } else if (pageName === "settings") {
-                    const settingsDatas = getSettingsDatas();
-                    mainWindow.webContents.send("sendSettingsDatas", settingsDatas);
+                    mainWindow.webContents.send("sendSettingsDatas", store.get("settings"));
                 }
             });
     });
@@ -136,13 +148,14 @@ app.on("ready", async () => {
             .loadFile(path.join(__dirname, "../views/index.html"))
             .then(async () => {
                 const datas = {};
-                datas.animalsDatas = await getAnimalsDatas();
-                datas.updatedDatas = await updateDatabase();
+                datas.animalsDatas = store.get("Animals");
+                datas.updatedDatas = store.get("updatedDatas");
                 mainWindow.webContents.send("sendDatas", datas);
             });
     });
 });
 
+// This block will be change.
 autoUpdater.on("checking-for-update", () => {
     log.info("Checking for update");
 });
@@ -163,6 +176,7 @@ autoUpdater.on("update-downloaded", (info) => {
     log.info("Update successfully downloaded.", );
     autoUpdater.quitAndInstall();
 });
+// This block will be change.
 
 // MENUS
 // Add Animal menu.
@@ -192,7 +206,6 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
         .loadFile(path.join(__dirname, "../views/addAnimal.html"))
         .then(async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
-            console.log("Veri iletildi.");
             addAnimalMenu.webContents.send(
                 "sendMothersEarringNo",
                 await getMotherEarringNos()
@@ -360,51 +373,51 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
 // FUNCTIONS
 // Add Animal
 ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
-    if (addAnimal(datas)) {
+    if (await addAnimal(datas)) {
         event.sender.send("addResult", true);
     } else {
         event.sender.send("addResult", false);
     }
+
+    mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 // Update Animal
-ipcMain.on("ipcMain:updateAnimalDatas", async (event, allDatas) => {
-    console.log("allDatas: ", allDatas);
-    console.log("allDatas.animalData: ", allDatas.animalData);
-    console.log("allDatas.calfData: ", allDatas.calfData);
-    if (updateAnimal(allDatas)) {
+ipcMain.on("ipcMain:updateAnimalDatas", async (event, updateDatas) => {
+    if (await updateAnimal(updateDatas)) {
         event.sender.send("updateResult", true);
     } else {
         event.sender.send("updateResult", false);
     }
+    console.log("Updatedetd");
+    mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 // Remove Animal
 ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
-    removeAnimal(datas);
-
-    if (datas.pageName === "animals") {
-        event.sender.send("refresh", await getAnimalsDatas());
-    } else if (datas.pageName === "cows") {
-        const allDatas = {};
-        allDatas.animalDatas = await getCowDatas();
-        allDatas.settingsDatas = getSettingsDatas();
-        event.sender.send("refresh", allDatas);
-    } else if (datas.pageName === "heifers") {
-        event.sender.send("refresh", await getHeifersDatas());
-    } else if (datas.pageName === "calves") {
-        event.sender.send("refresh", await getCalvesDatas());
-    } else if (datas.pageName === "bulls") {
-        event.sender.send("refresh", await getBullsDatas());
-    }
+    await removeAnimal(datas);
+    mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
-    receiveVaccineDatas(vaccineDatas);
+    await addVaccine(vaccineDatas);
+    store.set("Vaccines", await getVaccinesDatas());
+    const allDatas = {
+        settingsDatas: store.get("settings"),
+        vaccineDatas: store.get("Vaccines")
+    }
+    mainWindow.webContents.send("refresh", allDatas);
 });
 
 ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
-    removeVaccine(vaccineId);
+    await removeVaccine(vaccineId);
+    store.set("Vaccines", await getVaccinesDatas());
+    const allDatas = {
+        settingsDatas: store.get("settings"),
+        vaccineDatas: store.get("Vaccines")
+    }
+    mainWindow.webContents.send("refresh", allDatas);
+
 });
 
 ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
@@ -433,28 +446,17 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
         console.log("bi hata");
         return false;
     }
+    mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
-    const store = new Store({
-        defaults: {
-            showInformationButton: true,    // Information Button is visible or not.
-            gestationDays: 280,             // Insemination Date + gestationDays = Birth Date
-            dryOffDays: 220,                // Insemination Date + dryOffDays = DryDate
-            calfReduceToTwoLiterDays: 90,   // Calf Birth Date + this value
-            calfReduceToOneLiterDays: 90,   // Calf Birth Date + this value
-            calfWeaningDays: 100,           // Calf Birth Date + this value
-            calfToAdultDays: 365            // For Data Auto Update
-        }
-    });
-
-    store.set("showInformationButton", settinsDatas.showInformationButton);
-    store.set("gestationDays", settinsDatas.gestationDays);
-    store.set("dryOffDays", settinsDatas.dryOffDays);
-    store.set("calfReduceToOneLiterDays", settinsDatas.calfReduceToOneLiterDays);
-    store.set("calfReduceToTwoLiterDays", settinsDatas.calfReduceToTwoLiterDays);
-    store.set("calfWeaningDays", settinsDatas.calfWeaningDays);
-    store.set("calfToAdultDays", settinsDatas.calfToAdultDays);
+    store.set("settings.showInformationButton", settinsDatas.showInformationButton);
+    store.set("settings.gestationDays", settinsDatas.gestationDays);
+    store.set("settings.dryOffDays", settinsDatas.dryOffDays);
+    store.set("settings.calfReduceToOneLiterDays", settinsDatas.calfReduceToOneLiterDays);
+    store.set("settings.calfReduceToTwoLiterDays", settinsDatas.calfReduceToTwoLiterDays);
+    store.set("settings.calfWeaningDays", settinsDatas.calfWeaningDays);
+    store.set("settings.calfToAdultDays", settinsDatas.calfToAdultDays);
 });
 // END OF THE FUNCTIONS
 
@@ -674,39 +676,61 @@ async function getMotherEarringNos() {
 }
 
 function getSettingsDatas() {
-    const store = new Store({
-        defaults: {
-            showInformationButton: true,    // Information Button is visible or not.
-            gestationDays: 280,             // Insemination Date + gestationDays = Birth Date
-            dryOffDays: 220,                // Insemination Date + dryOffDays = DryDate
-            calfReduceToTwoLiterDays: 90,   // Calf Birth Date + this value
-            calfReduceToOneLiterDays: 90,   // Calf Birth Date + this value
-            calfWeaningDays: 100,           // Calf Birth Date + this value
-            calfToAdultDays: 365            // For Data Auto Update
-        }
-    });
     const settingsDatas = {
-        showInformationButton: store.get("showInformationButton"),
-        gestationDays: store.get("gestationDays"),
-        dryOffDays: store.get("dryOffDays"),
-        calfReduceToOneLiterDays: store.get("calfReduceToOneLiterDays"),
-        calfReduceToTwoLiterDays: store.get("calfReduceToTwoLiterDays"),
-        calfWeaningDays: store.get("calfWeaningDays"),
-        calfToAdultDays: store.get("calfToAdultDays")
+        showInformationButton: store.get("settings.showInformationButton"),
+        gestationDays: store.get("settings.gestationDays"),
+        dryOffDays: store.get("settings.dryOffDays"),
+        calfReduceToOneLiterDays: store.get("settings.calfReduceToOneLiterDays"),
+        calfReduceToTwoLiterDays: store.get("settings.calfReduceToTwoLiterDays"),
+        calfWeaningDays: store.get("settings.calfWeaningDays"),
+        calfToAdultDays: store.get("settings.calfToAdultDays")
     };
 
     return settingsDatas;
+}
+
+async function setAllLocalDatas() {
+    store.set("Animals", await getAnimalsDatas());
+    store.set("Cows", await getCowsDatas());
+    store.set("Heifers", await getHeifersDatas());
+    store.set("Calves", await getCalvesDatas());
+    store.set("Bulls", await getBullsDatas());
+}
+
+async function refreshDatas() {
+    await setAllLocalDatas();
+    const pageName = path.basename(mainWindow.webContents.getURL());
+    const allDatas = {
+        settingsDatas: store.get("settings"),
+    }
+    if (pageName === "cows.html") {
+        allDatas.animalDatas = store.get("Cows");
+    }
+    else if (pageName === "heifers.html") {
+        allDatas.animalDatas = store.get("Heifers");
+    }
+    else if (pageName === "calves.html") {
+        allDatas.animalDatas = store.get("Calves");
+    }
+    else if (pageName === "bulls.html") {
+        allDatas.animalDatas = store.get("Bulls");
+    }
+    else if (pageName === "animals.html") {
+        allDatas.animalDatas = store.get("Animals");
+    }
+
+    return allDatas;
 }
 /*
 + 1-) Ayarlar sayfası yapılacak.
 + 2-) Information sayfası yapılacak.
 + 3-) Bazı sayfalardaki Null yazısı silinecek.
 / 5-) artifactName düzenlenecek.
-6-) Veriler lokalden görüntülenecek.
++ 6-) Veriler lokalden görüntülenecek.
 + 7-) Ayarlar sayfasındaki buton sayısı 1'e düşürülecek ve Kaydet ve Çık olarak değiştirilecek.
 + 8-) Butonlara title ekle.
 
 
 
-* Butonlara title eklendi *
+* Veriler lokalden görüntüleniyor. *
 */

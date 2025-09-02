@@ -86,6 +86,10 @@ const vaccinesBody = document.getElementById("vaccinesBody");
 let isSelectionMode = false;
 let selectedVaccineIds = [];
 
+window.electronAPI.refresh((allDatas) => {
+    showDatas(allDatas);
+});
+
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     vaccinesBody.innerHTML = loadingTemplate;

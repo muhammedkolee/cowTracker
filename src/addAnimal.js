@@ -25,10 +25,10 @@ window.addEventListener("DOMContentLoaded", () => {
         } else if (animalType === "bull") {
             addBull();
             type.value = "bull";
-        } else {
+        } else if (animalType === "none") {} 
+        else {
             addCalf();
             type.value = "calf";
-            console.log(document.getElementById("birthDate"));
             document.getElementById("birthDate").value = animalType;
         }
     });
@@ -132,6 +132,9 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.cowDatas.BullName = bullNameInput.value;
         if (checkInput.value != "") {
             newAnimalDatas.cowDatas.CheckedDate = checkInput.value;
+        }
+        else {
+            newAnimalDatas.cowDatas.CheckedDate = "1970-01-01";
         }
     } else if (type.value === "heifer") {
         const lastBirthDate = document.getElementById("lastBirthDateInput");

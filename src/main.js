@@ -30,6 +30,8 @@ let mainWindow;
 
 // If app is ready, run this block.
 app.on("ready", async () => {
+    autoUpdater.checkForUpdates();
+    // autoUpdater.checkForUpdatesAndNotify();
     // Synchronize cloud datas with local datas.
     try {
         await setAllLocalDatas();

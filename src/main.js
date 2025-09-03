@@ -13,7 +13,7 @@ const store = require("../backend/store.js");
 // Frameworks
 const { app, BrowserWindow, ipcMain, screen } = require("electron");
 const path = require("path");
-const { createClient } = require("@supabase/supabase-js");
+const { createClient, AuthPKCEGrantCodeExchangeError } = require("@supabase/supabase-js");
 
 // Import files for backend.
 const addAnimal = require("../backend/addAnimalF.js");
@@ -27,11 +27,12 @@ const { error, info } = require("console");
 const { eventNames } = require("process");
 
 let mainWindow;
+let isUpdateAvailable = false;
 
 // If app is ready, run this block.
 app.on("ready", async () => {
-    autoUpdater.checkForUpdates();
     // autoUpdater.checkForUpdatesAndNotify();
+    
     // Synchronize cloud datas with local datas.
     try {
         await setAllLocalDatas();
@@ -61,18 +62,18 @@ app.on("ready", async () => {
     mainWindow.maximize();
 
     mainWindow.setMenu(null);
-
+    
     // Load index.html to Main Window.
     mainWindow
-        .loadFile(path.join(__dirname, "../views/index.html"))
-        .then(async () => {
-            const datas = {};
+    .loadFile(path.join(__dirname, "../views/index.html"))
+    .then(async () => {
+        const datas = {};
             datas.animalsDatas = store.get("Animals");
             datas.updatedDatas = store.get("updatedDatas");
             mainWindow.webContents.send("sendDatas", datas);
         });
-
-    //Dev
+        
+        //Dev
     //This block will be deleted after dev phase.
     mainWindow.webContents.on("before-input-event", (event, input) => {
         if (input.key === "F12" && input.type === "keyDown") {
@@ -81,6 +82,44 @@ app.on("ready", async () => {
     });
     //Dev
 
+    autoUpdater.checkForUpdates();
+
+    // This block will be change.
+    autoUpdater.on("checking-for-update", () => {
+        log.info("Checking for update");
+    });
+    
+    autoUpdater.on("update-available", (info) => {
+        log.info("Update Available, Version: ", info.version);
+        mainWindow.webContents.send("update-available", "info.version");
+    });
+    
+    
+    autoUpdater.on("update-not-available", () => {
+        log.info("Update Not Available");
+    });
+
+    autoUpdater.on("error", (err) => {
+        log.info("Error in Updater", err);
+    });
+    
+    autoUpdater.on("update-downloaded", (info) => {
+        log.info("Update successfully downloaded.", );
+        autoUpdater.quitAndInstall();
+    });
+
+    ipcMain.on("updateResponse", (event, response) => {
+        if (response) {
+            log.info("User accepted dowloading the update");
+            autoUpdater.downloadUpdate();
+        }
+        else {
+            log.info("User denied the update.");
+        }
+    });
+    
+    // This block will be change.
+    
     // EasterEgg
     mainWindow.webContents.on("before-input-event", (event, input) => {
        if (input.key === "m" && input.control && input.type === "keyDown") {
@@ -156,38 +195,10 @@ app.on("ready", async () => {
     });
 });
 
-// This block will be change.
-autoUpdater.on("checking-for-update", () => {
-    log.info("Checking for update");
-});
 
-autoUpdater.on("update-available", (info) => {
-    log.info("Update Available, Verison: ", info.version);
-    mainWindow.webContents.send("update-available", info.version);
-});
-
-ipcMain.on("updateResponse", (event, response) => {
-    if (response) {
-        autoUpdater.downloadUpdate();
-    }
-    else {
-        log.info("User denied the update.");
-    }
-});
-
-autoUpdater.on("update-not-available", () => {
-    log.info("Update Not Available");
-});
-
-autoUpdater.on("error", (err) => {
-    log.info("Error in Updater", err);
-});
-
-autoUpdater.on("update-downloaded", (info) => {
-    log.info("Update successfully downloaded.", );
-    autoUpdater.quitAndInstall();
-});
-// This block will be change.
+if(store.get("settings.showInformationButton")) {
+    isUpdateAvailable = true;
+}
 
 // MENUS
 // Add Animal menu.

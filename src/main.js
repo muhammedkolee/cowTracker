@@ -741,5 +741,5 @@ async function refreshDatas() {
 2-) Silinen hayvanlar için trash sayfası yapılacak.
 3-) Mouse'dan geri tuşuna basıldığında veya alt + sol ok tuşuna basıldığında openMenu() fonksyionu çalıştırılacak.
 
-* Veriler lokalden görüntüleniyor. *
+* Tabloları yazdırma butonu eklendi. *
 */

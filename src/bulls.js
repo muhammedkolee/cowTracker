@@ -22,15 +22,30 @@ const loadingTemplate = `
 
 const layout = `
                 <div class="container mx-auto mt-5 mb-4 px-4">
-                    <!-- Başlık ve Bilgi Butonu Sarmalayıcısı -->
+                    <!-- Başlık, Bilgi ve Excel Butonu Sarmalayıcısı -->
                     <div class="relative mb-4">
-                        <!-- Bilgi Butonu (Başlıkla hizalı) -->
-                        <button id="infoBtn" class="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 bg-gray-700 hover:bg-gray-800 text-white rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                        <!-- Excel Butonu - Sağ Üst Köşe -->
+                        <button 
+                            id="btn-excel-export"
+                            class="group bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-48 hover:rounded-full overflow-hidden cursor-pointer absolute top-0 right-0 z-50"
+                            title="Tabloyu Excel'e aktarır">
+                            <svg class="w-6 h-6 ml-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                <path d="M12.5,14.5L13.5,16H15L13,12.5L15,9H13.5L12.5,10.5L11.5,9H10L12,12.5L10,16H11.5L12.5,14.5Z"/>
+                            </svg>
+                            <span class="ml-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm font-semibold">Excel Tablosuna Çevir</span>
+                        </button>
+                    
+                        <!-- Bilgi Butonu (Excel butonuyla aynı hizada) -->
+                        <button 
+                            id="infoBtn" 
+                            class="cursor-pointer absolute left-0 top-0 bg-gray-700 hover:bg-gray-800 text-white rounded-full w-12 h-12 shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                                 <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                             </svg>
                         </button>
-                        <h2 class="mb-4 text-center text-2xl font-bold" id="titleBull"></h2>
+                        
+                        <h2 class="mb-4 text-center text-2xl font-bold flex items-center justify-center h-12" id="titleBull"></h2>
                     </div>
                     <div class="shadow-lg rounded-lg">
                         <table class="min-w-full bg-white">

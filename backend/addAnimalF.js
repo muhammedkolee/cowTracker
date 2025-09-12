@@ -8,13 +8,11 @@ async function addAnimal(datas) {
 
     if (datas.animalDatas.Type === "cow") {
         datas.cowDatas.Id = data[0].Id;
-        console.log("calisti");
 
         const { data: cowsData, error: cowsError } = await supabase
             .from("Cows")
             .insert(datas.cowDatas);
         if (cowsError) {
-            console.log(cowsError);
             return false;
         }
     } else if (datas.animalDatas.Type === "heifer") {

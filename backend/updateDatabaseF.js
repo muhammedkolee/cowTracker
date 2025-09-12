@@ -4,22 +4,12 @@ const supabase = require("./databaseConnection");
 // Get datas of whole animals.
 async function getAnimalsDatas() {
     const { data, error } = await supabase.from("Animals").select("*");
-    if (error) {
-        // console.log("Bir hata meydana geldi!");
-    } else {
-        // console.log("Gelen Veriler: ", data);
-    }
     return data;
 }
 
 // Get datas of whole cows.
 async function getCowsDatas() {
     const { data, error } = await supabase.from("Cows").select("*");
-    if (error) {
-        // console.log('Hata: ',error);
-    } else {
-        // console.log("Gelen Veriler: ",data);
-    }
 
     return data;
 }
@@ -27,22 +17,12 @@ async function getCowsDatas() {
 // Get datas of whole heifers.
 async function getHeifersDatas() {
     const { data, error } = await supabase.from("Heifers").select("*");
-    if (error) {
-        // console.log("Bir hata meydana geldi!");
-    } else {
-        // console.log("Gelen Veriler: ", data);
-    }
     return data;
 }
 
 // Get datas of whole calves.
 async function getCalvesDatas() {
     const { data, error } = await supabase.from("Calves").select("*");
-    if (error) {
-        // console.log("Bir hata meydana geldi!");
-    } else {
-        // console.log("Gelen Veriler: ", data);
-    }
     return data;
 }
 
@@ -52,11 +32,6 @@ async function getBullsDatas() {
         .from("Animals")
         .select("*")
         .eq("Type", "bull");
-    if (error) {
-        // console.log("Bir hata meydana geldi!11", error);
-    } else {
-        // console.log("Gelen Veriler: ", data);
-    }
     return data;
 }
 
@@ -105,7 +80,6 @@ async function updateDatabase() {
                         calf.EarringNo +
                         ` küpe numaralı buzağı "Düve" olarak kaydedildi!`,
                 });
-            console.log(infoError);
         }
     });
 
@@ -122,7 +96,6 @@ async function updateDatabase() {
                 (1000 * 60 * 60 * 24) <=
                 90
         ) {
-            console.log("adw");
             closestHeifers.push({
                 EarringNo: heifer.EarringNo,
                 Name: heifer.Name,

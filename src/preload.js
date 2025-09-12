@@ -140,6 +140,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.send("ipcMain:gaveBirth", datas);
     },
 
+    applyInsemination: (datas) => {
+        ipcRenderer.send("ipcMain:applyInsemination", datas);
+    },
+
     updateAvailable: (callback) => {
         ipcRenderer.on("update-available", (event, version) => {
             callback(version);  

@@ -1,7 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-    console.log("Dom yüklendi!");
     window.vaccineAPI.receiveAnimalsDatas((animalsDatas) => {
-        console.log("veriler geldi: ", animalsDatas);
         fillAnimalSelect(animalsDatas);
     });
 });
@@ -147,6 +145,5 @@ function addVaccine() {
     document.getElementById("calves").checked = false;
     document.getElementById("bulls").checked = false;
 
-    console.log(vaccineDatas);
     window.vaccineAPI.sendVaccineDatas(vaccineDatas);
 }

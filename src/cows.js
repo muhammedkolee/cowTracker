@@ -71,25 +71,26 @@ const layout = `
                     </div>
             </button>
         </div>
-                <div id="dateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-80">
-        <div class="bg-white my-24 mx-auto p-5 rounded-lg w-80 shadow-lg">
-            <div class="mb-4 text-lg font-bold">
-                Tarih Seçimi
-            </div>
-            <div class="mb-5">
-                <p class="mb-3">Lütfen bir tarih seçiniz:</p>
-                <input type="date" id="dateInput" class="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-            <div class="flex justify-end gap-2">
-                <button title="İşlemi iptal eder" id="cancelBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-gray-500 hover:bg-gray-600 text-white transition-colors">
-                    İptal
-                </button>
-                <button title="Hayvan Güncellenir" id="confirmBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-blue-500 hover:bg-blue-600 text-white transition-colors">
-                    Tamam
-                </button>
+        
+        <div id="dateModal" class="hidden fixed inset-0 bg-opacity-50 z-80">
+            <div class="bg-white my-24 mx-auto p-5 rounded-lg w-80 shadow-lg">
+                <div class="mb-4 text-lg font-bold">
+                    Tarih Seçimi
+                </div>
+                <div class="mb-5">
+                    <p class="mb-3">Lütfen bir tarih seçiniz:</p>
+                    <input type="date" id="dateInput" class="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button title="İşlemi iptal eder" id="cancelBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-gray-500 hover:bg-gray-600 text-white transition-colors">
+                        İptal
+                    </button>
+                    <button title="Hayvan Güncellenir" id="confirmBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-blue-500 hover:bg-blue-600 text-white transition-colors">
+                        Tamam
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
         `;
 
 const cowsBody = document.getElementById("cowsBody");
@@ -205,6 +206,9 @@ function showDatas(allDatas) {
                     "İnek başarıyla düve statüsüne geçirildi ve doğum yaptı olarak kaydedildi!\nLütfen doğuran inek için buzağı ekleme işlemini yapınız!"
                 );
                 window.electronAPI.openAddAnimalMenu(selectedDate);
+                window.electronAPI.refresh((datas) => {
+                    showDatas(datas);
+                });
             } catch (error) {
                 console.log(error);
                 if (error === "cancelled") {

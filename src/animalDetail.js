@@ -62,7 +62,6 @@ const animalDetailBody = document.getElementById("animalDetailBody");
 window.addEventListener("DOMContentLoaded", () => {
     animalDetailBody.innerHTML = loadingTemplate;
     window.animalDetailAPI.receiveDetailDatas((allDatas) => {
-        console.log(allDatas);
         showDatas(allDatas);
     });
 });
@@ -96,9 +95,6 @@ function showDatas(allDatas) {
             };
             window.electronAPI.removeAnimal(datas);
             window.close();
-        } else {
-            // Anything.
-            console.log("Veri silinmedi.");
         }
     });
 
@@ -242,7 +238,6 @@ function showDatas(allDatas) {
             `;
         });
     } else if (allDatas.animalData[0].Type === "heifer") {
-        console.log(allDatas);
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
 
@@ -355,7 +350,6 @@ function showDatas(allDatas) {
             `;
         });
     } else if (allDatas.animalData[0].Type === "calf") {
-        console.log("çalıştı");
         let earringNoTag = document.getElementById("earringNoTag");
         earringNoTag.textContent = allDatas.animalData[0].EarringNo;
 
@@ -534,12 +528,6 @@ function calculatePassDay(inseminationDate) {
 }
 
 function calculatelastBirthDate(lastBirth) {
-    // const lastBirthDate = lastBirth;
-
-    // console.log("getTodayDate: ",getTodayDate());
-    // console.log("getTodayDate - lastBirth: ",getTodayDate() - lastBirth);
-    // console.log("getTodayDate - Date(lastBirth): ",getTodayDate() - Date(lastBirth));
-    // console.log("getTodayDate - new Date(lastBirth): ", (getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24));
     return Math.ceil(
         (getTodayDate() - new Date(lastBirth)) / (1000 * 60 * 60 * 24)
     );

@@ -167,9 +167,6 @@ function showDatas(allDatas) {
             );
 
             if (sure) {
-                // Burada selectedVaccineIds listesi kullanılabilir
-                console.log("Silinecek aşı ID'leri:", selectedVaccineIds);
-
                 // Silme işlemini buraya yazabilirsiniz
                 window.vaccineAPI.removeVaccine(selectedVaccineIds);
                 // Örnek: window.vaccineAPI.removeMultipleVaccines(selectedVaccineIds);
@@ -257,9 +254,6 @@ function showDatas(allDatas) {
             if (sure) {
                 // Remove cow from the databases.
                 window.vaccineAPI.removeVaccine(vaccineId.textContent);
-            } else {
-                // Anything.
-                console.log("Veri silinmedi.");
             }
         }
     });

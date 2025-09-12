@@ -163,9 +163,6 @@ function showDatas(allDatas) {
                     pageName: "bulls",
                 };
                 window.electronAPI.removeAnimal(datas);
-            } else {
-                // Anything.
-                console.log("Veri silinmedi.");
             }
         }
     });

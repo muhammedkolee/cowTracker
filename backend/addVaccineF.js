@@ -11,7 +11,6 @@ async function addVaccine(vaccineDatas) {
                 AnimalId: animal.Id,
             });
             if (error) {
-                console.log("Bir hata oluştu, fonksiyon durduruluyor.");
                 return;
             }
         });
@@ -68,9 +67,6 @@ async function addVaccine(vaccineDatas) {
         }
     } else if (vaccineDatas.AnimalId) {
         const { error } = await supabase.from("Vaccines").insert(vaccineDatas);
-        if (error) {
-            console.log(error);
-        }
     }
 }
 

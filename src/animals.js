@@ -75,7 +75,6 @@ const animalsBody = document.getElementById("animalsBody");
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
-    console.log("çalıştı");
     animalsBody.innerHTML = loadingTemplate;
     window.animalsAPI.receiveDatas((allDatas) => {
         showDatas(allDatas);
@@ -169,7 +168,6 @@ function showDatas(allDatas) {
             } else if (type.textContent == "Dana") {
                 var datas = { animalId: animalId.textContent, type: "bull" };
             }
-            // console.log(datas)
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -193,9 +191,6 @@ function showDatas(allDatas) {
                     datas.Type = "bull";
                 }
                 window.electronAPI.removeAnimal(datas);
-            } else {
-                // Anything.
-                console.log("Veri silinmedi.");
             }
         }
     });

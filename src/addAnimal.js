@@ -11,8 +11,6 @@ let motherAnimalsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.addAnimalAPI.receiveAnimalType((animalType) => {
-        console.log(typeof animalType);
-        console.log(animalType);
         if (animalType === "cow") {
             addCow();
             type.value = "cow";
@@ -34,8 +32,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     window.addAnimalAPI.receiveMothersEarringNo((EarringNos) => {
-        // console.log("EarringNos: ", EarringNos)
-        // Verilerin Geleceği Kısım!!!
         motherAnimalsData = EarringNos;
         setupMotherEarringSelection();
     });

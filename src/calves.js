@@ -179,8 +179,6 @@ function showDatas(allDatas) {
                     pageName: "calves",
                 };
                 window.electronAPI.removeAnimal(datas);
-            } else {
-                console.log("Veri silinmedi.");
             }
         }
     });
@@ -316,7 +314,6 @@ function showDatas(allDatas) {
         let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(
             {BirthDate: calf.BirthDate, calfReduceToOneLiterDays: allDatas.settingsDatas.calfReduceToOneLiterDays, calfReduceToTwoLiterDays: allDatas.settingsDatas.calfReduceToTwoLiterDays, calfWeaningDays: allDatas.settingsDatas.calfWeaningDays}
         );
-        console.log(shutDateC);
         if (new Date(shutDateC) < getTodayDate()) {
             days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
             lt2.textContent = "Sütten Kesildi";

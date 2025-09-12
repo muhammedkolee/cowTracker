@@ -67,9 +67,10 @@ app.on("ready", async () => {
     mainWindow
     .loadFile(path.join(__dirname, "../views/index.html"))
     .then(async () => {
-        const datas = {};
+            const datas = {};
             datas.animalsDatas = store.get("Animals");
             datas.updatedDatas = store.get("updatedDatas");
+            datas.appVersion = app.getVersion();
             mainWindow.webContents.send("sendDatas", datas);
         });
         
@@ -135,11 +136,9 @@ app.on("ready", async () => {
     // To open page which user want to open.
     // pageName => file name without .html
     ipcMain.on("ipcMain:openPage", (event, pageName) => {
-        mainWindow
-            .loadFile(path.join(__dirname, "../views/" + pageName + ".html"))
-            .then(async () => {
-                console.log(path.basename(mainWindow.webContents.getURL()));    //pageName.html
-                // Get animal datas and send datas to preload.
+        mainWindow.loadFile(path.join(__dirname, "../views/" + pageName + ".html"));
+
+        mainWindow.webContents.once("did-finish-load", async () => {
                 if (pageName === "animals") {
                     const allDatas = {}; 
                     // allDatas.animalDatas = await getAnimalsDatas();
@@ -190,6 +189,7 @@ app.on("ready", async () => {
                 const datas = {};
                 datas.animalsDatas = store.get("Animals");
                 datas.updatedDatas = store.get("updatedDatas");
+                datas.appVersion = app.getVersion();
                 mainWindow.webContents.send("sendDatas", datas);
             });
     });
@@ -381,7 +381,7 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
                 .from("Animals")
                 .select("EarringNo, Name, Id");
             if (animalsError) {
-                console.log(animalsError);
+                log.info("main.js 384 | Aşı bilgileri çekilirken bir hata oluştu: ", animalsError);
             } else {
                 addVaccineWindow.webContents.send(
                     "sendAnimalsDatas",
@@ -411,7 +411,6 @@ ipcMain.on("ipcMain:updateAnimalDatas", async (event, updateDatas) => {
     } else {
         event.sender.send("updateResult", false);
     }
-    console.log("Updatedetd");
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
@@ -448,9 +447,8 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
         .select("*")
         .eq("Id", datas.animalId);
     if (cowError) {
-        console.log("Hata: ", cowError);
+        log.info("main.js 450 | İnek doğurdu olarak işaretlenirken bir hata oluştu: ", cowError);
     }
-    console.log(cowData);
 
     const allDatas = {};
     allDatas.animalData = cowData[0];
@@ -462,11 +460,35 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
         Name: allDatas.animalData.Name,
     };
 
+    if (!updateAnimal(allDatas)) {
+        log.info("main.js 464 | Hayvan Güncelleme sırasında bir hata oluştu");   
+    }
+    mainWindow.webContents.send("refresh", await refreshDatas());
+});
+
+ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
+    const { data: heiferData, error: heiferError } = await supabase.from("Animals").select("*").eq("Id", datas.animalId);
+    if (heiferError) {
+        log.info("main.js 472 | Düve tohumlama sırasında bir hata oluştu: ", heiferError);
+    }
+
+    const allDatas = {};
+    allDatas.animalData = heiferData[0];
+    allDatas.animalData.Type = "cow";
+    allDatas.cowData = {
+        Id: allDatas.animalData.Id,
+        EarringNo: allDatas.animalData.EarringNo,
+        Name: allDatas.animalData.Name,
+        InseminationDate: datas.date,
+        BullName: datas.bullName,
+        CheckedDate: "1970-01-01"
+    };
+
     if (updateAnimal(allDatas)) {
-        console.log("ISLEM BASARILIIIII!!!");
-    } else {
-        console.log("bi hata");
-        return false;
+        await setAllLocalDatas();
+    }
+    else {
+        log.info("main.js 491 | Bir hata oluştu:");
     }
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
@@ -583,7 +605,7 @@ async function getCalfDatas(datas) {
         .eq("EarringNo", datas.earringNo);
 
     if (animalError || vaccinesError) {
-        console.log(animalError, "\n", vaccinesError);
+        log.info("main.js 608 | Buzağı bilgileri çekilirken bir hata oluştu: ", animalError, "\n", calfError, "\n", vaccinesError);
     }
 
     const allDatas = {
@@ -602,9 +624,7 @@ async function getAnimalsDatas() {
         .select("*")
         .order("Type", { ascending: false });
     if (error) {
-        // console.log("Bir hata meydana geldi!");
-    } else {
-        // console.log("Gelen Veriler: ", data);
+        log.info("main.js 627 | Hayvan bilgileri çekilirken bir hata oluştu: ", error);
     }
     return data;
 }
@@ -616,11 +636,8 @@ async function getCowsDatas() {
         .select("*")
         .order("InseminationDate", { ascending: true });
     if (error) {
-        // console.log('Hata: ',error);
-    } else {
-        // console.log("Gelen Veriler: ",data);
+        log.info("main.js 639 | İnek bilgileri çekilirken bir hata oluştu: ", error);
     }
-
     return data;
 }
 
@@ -631,9 +648,7 @@ async function getHeifersDatas() {
         .select("*")
         .order("LastBirthDate", { ascending: false });
     if (error) {
-        // console.log("Bir hata meydana geldi!");
-    } else {
-        // console.log("Gelen Veriler: ", data);
+        log.info("main.js 651 | Düve bilgileri çekilirken bir hata oluştu: ", error);
     }
     return data;
 }
@@ -648,10 +663,7 @@ async function getCalvesDatas() {
         .order("BirthDate", { ascending: false });
 
     if (calvesError) {
-        console.log("Bir hata meydana geldi!");
-        console.log(calvesError);
-    } else {
-        // console.log("Gelen Veriler: ", data);
+        log.info("main.js 666 | Buzağı bilgileri çekilirken bir hata oluştu: ", error);
     }
     return calvesData;
 }
@@ -664,9 +676,7 @@ async function getBullsDatas() {
         .eq("Type", "bull")
         .order("BirthDate", { ascending: true });
     if (error) {
-        // console.log("Bir hata meydana geldi!11", error);
-    } else {
-        // console.log("Gelen Veriler: ", data);
+        log.info("main.js 679 | Dana bilgileri çekilirken bir hata oluştu: ", error);
     }
     return data;
 }
@@ -678,9 +688,7 @@ async function getVaccinesDatas() {
         .select("Id, VaccineName, VaccineDate, Animals (Id, EarringNo, Name)")
         .order("VaccineDate", { ascending: false });
     if (error) {
-        // Hata
-    } else {
-        // Veri
+        log.info("main.js 691 | Aşı bilgileri çekilirken bir hata oluştu: ", error);
     }
     return data;
 }
@@ -692,23 +700,9 @@ async function getMotherEarringNos() {
         .select("EarringNo, Name")
         .in("Type", ["cow", "heifer"]);
     if (error) {
-        console.log("Bir hata oluştu: ", error);
+        log.info("main.js 701 | İnek küpe numaraları çekilirken bir hata oluştu: ", error);
     }
     return data;
-}
-
-function getSettingsDatas() {
-    const settingsDatas = {
-        showInformationButton: store.get("settings.showInformationButton"),
-        gestationDays: store.get("settings.gestationDays"),
-        dryOffDays: store.get("settings.dryOffDays"),
-        calfReduceToOneLiterDays: store.get("settings.calfReduceToOneLiterDays"),
-        calfReduceToTwoLiterDays: store.get("settings.calfReduceToTwoLiterDays"),
-        calfWeaningDays: store.get("settings.calfWeaningDays"),
-        calfToAdultDays: store.get("settings.calfToAdultDays")
-    };
-
-    return settingsDatas;
 }
 
 async function setAllLocalDatas() {
@@ -744,8 +738,8 @@ async function refreshDatas() {
     return allDatas;
 }
 /*
-1-) Yeni gelen güncellemeler için kullanıcı onayı alınacak.
 2-) Silinen hayvanlar için trash sayfası yapılacak.
+3-) Mouse'dan geri tuşuna basıldığında veya alt + sol ok tuşuna basıldığında openMenu() fonksyionu çalıştırılacak.
 
 * Veriler lokalden görüntüleniyor. *
 */

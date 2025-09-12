@@ -9,6 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (navigator.onLine) {
         showLoading();
         window.animalsAPI.receiveDatas((datas) => {
+            document.getElementById("appVersionTag").textContent += datas.appVersion;
             showDatas(datas.animalsDatas);
             fillDataBoxes(datas.updatedDatas);
         });

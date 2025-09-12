@@ -67,6 +67,34 @@ const layout = `
                             </div>
                     </button>
                 </div>
+
+                <div id="dateModal" class="hidden fixed inset-0 bg-opacity-50 z-80">
+                    <div class="bg-white my-24 mx-auto p-5 rounded-lg w-80 shadow-lg">
+                        <div class="mb-2 text-lg font-bold">
+                            Tohumlama Tarihi
+                        </div>
+                        <div class="mb-5">
+                            <p class="mb-3">Lütfen tohumlanma tarihi seçin:</p>
+                            <input type="date" id="dateInput" class="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        </div>
+
+                        <div class="mb-2 text-lg font-bold">
+                            Dana İsmi
+                        </div>
+                        <div class="mb-5">
+                            <p class="mb-3">Lütfen dana ismini giriniz:</p>
+                            <input type="text" id="bullName" class="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button title="İşlemi iptal eder" id="cancelBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-gray-500 hover:bg-gray-600 text-white transition-colors">
+                                İptal
+                            </button>
+                            <button title="Hayvan Güncellenir" id="confirmBtn" class="cursor-pointer py-2 px-4 border-none rounded cursor-pointer bg-blue-500 hover:bg-blue-600 text-white transition-colors">
+                                Tamam
+                            </button>
+                        </div>
+                    </div>
+                </div>
         `;
 
 const heifersBody = document.getElementById("heifersBody");
@@ -134,7 +162,7 @@ function showDatas(allDatas) {
         window.electronAPI.openAddAnimalMenu("heifer");
     });
 
-    heiferTableBody.addEventListener("click", function (event) {
+    heiferTableBody.addEventListener("click", async function (event) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
@@ -164,6 +192,16 @@ function showDatas(allDatas) {
                 // Anything.
                 console.log("Veri silinmedi.");
             }
+        } else if (target.id === "inseminationApplyIco") {
+            const selectedDate = await openDateModal();
+
+            window.electronAPI.applyInsemination({
+                animalId: heiferId.textContent,
+                date: selectedDate,
+                bullName: document.getElementById("bullName").textContent
+            });
+
+            window.confirm("Düve başarıyla tohumlandı olarak kaydedildi.");
         }
     });
 
@@ -320,4 +358,48 @@ function getTodayDate() {
 function calculateDate(lastBirth) {
     const lastBirthDate = new Date(lastBirth);
     return Math.ceil((getTodayDate() - lastBirthDate) / (1000 * 60 * 60 * 24));
+}
+
+function openDateModal() {
+    const modal = document.getElementById("dateModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const dateInput = document.getElementById("dateInput");
+    const result = document.getElementById("result");
+
+    return new Promise((resolve, reject) => {
+        console.log("fonskiyona girildi.");
+        modal.classList.remove("hidden");
+        console.log("hidden silindi.");
+
+        // Bugünün tarihini varsayılan olarak ayarla
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.value = today;
+
+        // Tamam butonu
+        confirmBtn.onclick = () => {
+            const selectedDate = dateInput.value;
+            if (selectedDate) {
+                modal.classList.add("hidden");
+                resolve(selectedDate);
+            } else {
+                alert("Lütfen bir tarih seçiniz!");
+            }
+        };
+
+        // İptal butonu
+        cancelBtn.onclick = () => {
+            modal.classList.add("hidden");
+            reject("cancelled");
+        };
+
+        // Modal dışına tıklama ile kapatma
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.add("hidden");
+                reject("cancelled");
+            }
+        };
+    });
 }

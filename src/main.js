@@ -11,9 +11,9 @@ autoUpdater.logger.transports.file.level = "info";
 const store = require("../backend/store.js");
 
 // Frameworks
-const { app, BrowserWindow, ipcMain, screen } = require("electron");
+const { app, BrowserWindow, ipcMain, screen, dialog } = require("electron");
 const path = require("path");
-const { createClient, AuthPKCEGrantCodeExchangeError } = require("@supabase/supabase-js");
+const ExcelJS = require("exceljs");
 
 // Import files for backend.
 const addAnimal = require("../backend/addAnimalF.js");
@@ -27,7 +27,6 @@ const { error, info } = require("console");
 const { eventNames } = require("process");
 
 let mainWindow;
-let isUpdateAvailable = false;
 
 // If app is ready, run this block.
 app.on("ready", async () => {
@@ -182,7 +181,7 @@ app.on("ready", async () => {
     });
 
     // To open main menu.
-    ipcMain.on("ipcMain:openMenu", () => {
+    ipcMain.on("ipcMain:openMenu", () => {        
         mainWindow
             .loadFile(path.join(__dirname, "../views/index.html"))
             .then(async () => {
@@ -195,10 +194,6 @@ app.on("ready", async () => {
     });
 });
 
-
-if(store.get("settings.showInformationButton")) {
-    isUpdateAvailable = true;
-}
 
 // MENUS
 // Add Animal menu.
@@ -502,6 +497,186 @@ ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
     store.set("settings.calfWeaningDays", settinsDatas.calfWeaningDays);
     store.set("settings.calfToAdultDays", settinsDatas.calfToAdultDays);
 });
+
+ipcMain.handle("exportExcel", async (event, datas) => {
+    // let datas;
+    // let fileName;
+    // let headerMap;
+
+    // if (pageName === "animals") {
+    //     datas = await getAnimalsDatas();
+    //     fileName = `Tüm Hayvanlar - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
+    //     headerMap = {
+    //         EarringNo: "Küpe No.",
+    //         Name: "İsim",
+    //         BirthDate: "Doğum Tarihi",
+    //         MotherEarringNo: "Anne Küpe No.",
+    //         MotherName: "Anne İsmi"
+    //     }
+    // }
+    // else if (pageName === "cows") {
+    //     datas = await getCowsDatas();
+    //     fileName = `İnekler - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
+    //     headerMap = {
+    //         EarringNo: "Küpe No.",
+    //         Name: "İsim",
+    //         InseminationDate: "Tohumlama Tar.",
+    //         BullName: "Dana İsmi",
+    //         CheckedDate: "Gebelik Kontrol"
+    //     }
+    // }
+    // else if (pageName === "heifers") {
+    //     datas = await getHeifersDatas();
+    //     fileName = `Düveler - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;    
+    //     headerMap = {
+    //         EarringNo: "Küpe No.",
+    //         Name: "İsim",
+    //         LastBirthDate: "Son Doğurduğu Tar."
+    //     }
+    // }
+    // else if (pageName === "calves") {
+    //     datas = await getCalvesDatas();
+    //     fileName = `Buzağılar - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
+    //     headerMap = {
+    //         EarringNo: "Küpe No.",
+    //         Name: "İsim",
+    //         BirthDate: "Doğum Tarihi",
+    //         Gender: "Cinsiyet"            
+    //     }
+    // }
+    // else if (pageName === "bulls") {
+    //     datas = await getBullsDatas();
+    //     fileName = `Danalar - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
+    //     headerMap = {
+    //         EarringNo: "Küpe No.",
+    //         Name: "İsim",
+    //         BirthDate: "Doğum Tarihi",
+    //         MotherEarringNo: "Anne Küpe No.",
+    //         MotherName: "Anne İsmi"
+    //     }
+    // }
+    
+    let fileName = `${datas.fileName} - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
+
+    const {canceled, filePath } = await dialog.showSaveDialog({
+        title: "Excel Dosyasını Kaydet",
+        defaultPath: `${app.getPath("desktop")}/${fileName}`,
+        filters: { name: "Excel Files", extensions: ["xlsx"] },
+    });
+    
+    if (canceled || !filePath) {
+        return false
+    }
+
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(fileName);
+
+        // Başlıkları (headers) JSON objelerinin key'lerinden çıkar
+        const headers = Object.keys(datas.tableData[0] || {});
+        worksheet.columns = headers.map((key) => ({
+            header: key,
+            key: key,
+            width: Math.max(
+                key.length,
+                ...datas.tableData.map((row) => (row[key] ? row[key].toString().length : 0))
+            ) + 2,
+        }));
+
+        // Verileri ekle
+        datas.tableData.forEach((row) => {
+            worksheet.addRow(row);
+        });
+
+        // Stil: başlık satırını renklendir + border ekle
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "FF007ACC" },
+            };
+            cell.border = {
+                top: { style: "thin" },
+                left: { style: "thin" },
+                bottom: { style: "thin" },
+                right: { style: "thin" },
+            };
+        });
+
+        // Tüm hücrelere border ekle
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return; // header zaten yapıldı
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: "thin" },
+                    left: { style: "thin" },
+                    bottom: { style: "thin" },
+                    right: { style: "thin" },
+                };
+            });
+        });
+
+        await workbook.xlsx.writeFile(filePath);
+        return filePath;
+    } catch (err) {
+        console.error("Excel export error:", err);
+        return false;
+    }
+
+    // const workbook = new ExcelJS.Workbook();
+    // const worksheet = workbook.addWorksheet(fileName);
+
+    // worksheet.columns = Object.keys(datas[0])
+    // .filter((key) => key !== "Id")
+    // .filter((key) => key !== "Type")
+    // .map((key) => ({
+    //     header: headerMap[key] || key,
+    //     key: key,
+    //     width: Math.max(
+    //         ...datas.map((row) => (row[key] ? row[key].toString().length : 0)),
+    //         key.length
+    //     ) + 2,
+    // }));
+
+    // datas.forEach((row) => {
+    //     const newRow = {};
+    //     Object.keys(row).forEach((key) => {
+    //         if (row[key] && !isNaN(Date.parse(row[key]))) {
+    //             newRow[key] = formatDateTR(row[key]);
+    //         } else {
+    //             newRow[key] = row[key];
+    //         }
+    //     });
+    //     worksheet.addRow(newRow);
+    // });
+
+
+    // worksheet.eachRow((row, rowNumber) => {
+    //     row.eachCell((cell) => {
+    //         cell.border = {
+    //             top: { style: "thin" },
+    //             left: { style: "thin" },
+    //             bottom: { style: "thin" },
+    //             right: { style: "thin" },
+    //         };
+    //         if (rowNumber === 1) {
+    //             // Başlık satırı
+    //             cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+    //             cell.fill = {
+    //                 type: "pattern",
+    //                 pattern: "solid",
+    //                 fgColor: { argb: "FF007ACC" },
+    //             };
+    //         }
+    //     });
+    // });
+
+    // Dosyayı kaydet
+    // await workbook.xlsx.writeFile(filePath); 
+
+    // return filePath
+});
 // END OF THE FUNCTIONS
 
 // If all window(s) closed, shut down app.
@@ -737,9 +912,17 @@ async function refreshDatas() {
 
     return allDatas;
 }
+
+function formatDateTR(value) {
+    if (!value) return value;
+    const date = new Date(value);
+    if (isNaN(date)) return value;
+    return new Intl.DateTimeFormat("tr-TR").format(date); 
+}
+
 /*
 2-) Silinen hayvanlar için trash sayfası yapılacak.
 3-) Mouse'dan geri tuşuna basıldığında veya alt + sol ok tuşuna basıldığında openMenu() fonksyionu çalıştırılacak.
 
-* Tabloları yazdırma butonu eklendi. *
+* Tabloları Excel Dosyasına Çevirme Fonksiyonu Eklendi *
 */

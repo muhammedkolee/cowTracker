@@ -26,7 +26,7 @@ const layout = `
                     <div class="relative mb-4">
                         <!-- Excel Butonu - Sağ Üst Köşe -->
                         <button 
-                            id="btn-excel-export"
+                            id="excelBtn"
                             class="group bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-48 hover:rounded-full overflow-hidden cursor-pointer absolute top-0 right-0 z-50"
                             title="Tabloyu Excel'e aktarır">
                             <svg class="w-6 h-6 ml-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -154,6 +154,7 @@ function showDatas(allDatas) {
     const titleHeifer = document.getElementById("titleHeifer");
     const addHeiferButton = document.getElementById("btn-add-heifer");
     const heiferTableBody = document.getElementById("heiferTableBody");
+    const excelBtn = document.getElementById("excelBtn");
 
     // If showInformationButton is false, Hidden the button.
     const infoBtn = document.getElementById("infoBtn");
@@ -175,6 +176,18 @@ function showDatas(allDatas) {
 
     addHeiferButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu("heifer");
+    });
+
+    excelBtn.addEventListener("click", () => {
+        const tableData = getHeifersTableData();
+        const response = window.electronAPI.exportExcel({ tableData: tableData, fileName: "Düveler" });
+
+        if(response == false) {
+            window.confirm("İşlem sırasında bir hata meydana geldi, tekrar deneyiniz!");
+        }
+        else {
+            window.confirm("Dosya başarıyla ", response, " konumuna oluşturuldu!");
+        }
     });
 
     heiferTableBody.addEventListener("click", async function (event) {
@@ -416,5 +429,31 @@ function openDateModal() {
                 reject("cancelled");
             }
         };
+    });
+}
+
+function getHeifersTableData() {
+    const tableHead = document.querySelector("thead tr");
+    const tableBody = document.querySelector("#heiferTableBody");
+
+    // TH'leri al, ilk ve sonuncuyu çıkar (Id + İşlemler)
+    const headers = Array.from(tableHead.querySelectorAll("th"))
+        .slice(1, -1)
+        .map(th => th.innerText.trim());
+
+    // TR'leri dolaş
+    const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+    return rows.map((row) => {
+        const cells = Array.from(row.querySelectorAll("td"))
+            .slice(1, -1) // Id ve İşlemler kolonunu çıkar
+            .map(cell => cell.innerText.trim());
+
+        const obj = {};
+        headers.forEach((h, i) => {
+            obj[h] = cells[i] || "";
+        });
+
+        return obj;
     });
 }

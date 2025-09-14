@@ -152,5 +152,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     updateResponse: (response) => {
         ipcRenderer.send("updateResponse", response);
+    },
+
+    exportExcel: (pageName) => {
+        ipcRenderer.invoke("exportExcel", pageName);
     }
 });

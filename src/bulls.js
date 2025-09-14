@@ -26,7 +26,7 @@ const layout = `
                     <div class="relative mb-4">
                         <!-- Excel Butonu - Sağ Üst Köşe -->
                         <button 
-                            id="btn-excel-export"
+                            id="excelBtn"
                             class="group bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-48 hover:rounded-full overflow-hidden cursor-pointer absolute top-0 right-0 z-50"
                             title="Tabloyu Excel'e aktarır">
                             <svg class="w-6 h-6 ml-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -129,6 +129,7 @@ function showDatas(allDatas) {
     const titleBull = document.getElementById("titleBull");
     const bullTableBody = document.getElementById("bullTableBody");
     const addBullButton = document.getElementById("btn-add-bull");
+    const excelBtn = document.getElementById("excelBtn");
 
     // If showInformationButton is false, Hidden the button.
     const infoBtn = document.getElementById("infoBtn");
@@ -151,6 +152,18 @@ function showDatas(allDatas) {
     addBullButton.addEventListener("click", () => {
         window.electronAPI.openAddAnimalMenu("bull");
     });
+
+    excelBtn.addEventListener("click", () => {
+        const tableData = getBullsTableData();
+        const response = window.electronAPI.exportExcel({ tableData: tableData, fileName: "Danalar" });
+
+        if(response == false) {
+            window.confirm("İşlem sırasında bir hata meydana geldi, tekrar deneyiniz!");
+        }
+        else {
+            window.confirm("Dosya başarıyla ", response, " konumuna oluşturuldu!");
+        }
+    });   
 
     bullTableBody.addEventListener("click", function (event) {
         const target = event.target;
@@ -317,4 +330,30 @@ function calculateDays(ageDate) {
     const age = new Date(ageDate);
 
     return Math.ceil((today - age) / (1000 * 60 * 60 * 24));
+}
+
+function getBullsTableData() {
+    const tableHead = document.querySelector("thead tr");
+    const tableBody = document.querySelector("#bullTableBody");
+
+    // TH'leri al, ilk ve sonuncuyu çıkar (Id + İşlemler)
+    const headers = Array.from(tableHead.querySelectorAll("th"))
+        .slice(1, -1)
+        .map(th => th.innerText.trim());
+
+    // TR'leri dolaş
+    const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+    return rows.map((row) => {
+        const cells = Array.from(row.querySelectorAll("td"))
+            .slice(1, -1) // Id ve İşlemler kolonunu çıkar
+            .map(cell => cell.innerText.trim());
+
+        const obj = {};
+        headers.forEach((h, i) => {
+            obj[h] = cells[i] || "";
+        });
+
+        return obj;
+    });
 }

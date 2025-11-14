@@ -2,6 +2,7 @@ const inputsTag = document.getElementById("inputsTag");
 const animalId = document.getElementById("animalId");
 const earringNo = document.getElementById("earringNo");
 const nameTag = document.getElementById("name");
+const breed = document.getElementById("breed");
 const birthDate = document.getElementById("birthDate");
 const animalType = document.getElementById("animalType");
 const motherEarringNo = document.getElementById("motherEarringNo");
@@ -11,12 +12,26 @@ const inseminationDate = document.getElementById("inseminationDate");
 const bullName = document.getElementById("bullName");
 const checkDate = document.getElementById("checkDate");
 const gender = document.getElementById("gender");
+const notes = document.getElementById("notes");
 
 const updateButton = document.getElementById("updateButton");
+
+let motherAnimalsData = [];
+let bullsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.electronAPI.receiveUpdateDatas((allDatas) => {
         showDatas(allDatas);
+    });
+
+    window.addAnimalAPI.receiveMothersEarringNo((EarringNos) => {
+        motherAnimalsData = EarringNos;
+        setupMotherEarringSelection();
+    });
+
+    window.addAnimalAPI.receiveBullsName((Names) => {
+        bullsData = Names;
+        setupBullEarringSelection();
     });
 });
 
@@ -30,6 +45,65 @@ window.updateAPI.updateResult((updateResult) => {
         window.confirm("İşlem sırasında bir hata meydana geldi!");
     }
 });
+
+function setupMotherEarringSelection() {
+    const motherEarringInput = document.getElementById("motherEarringNo");
+    const datalist = document.getElementById("motherEarringNoDatalist");
+
+    if (!motherEarringInput || !datalist) return;
+
+    // Datalist'i doldur
+    datalist.innerHTML = "";
+    motherAnimalsData.forEach((animal) => {
+        const option = document.createElement("option");
+        option.value = animal.EarringNo;
+        option.textContent = `${animal.EarringNo} - ${animal.Name}`;
+        datalist.appendChild(option);
+    });
+
+    // Input değiştiğinde anne adını güncelle
+    motherEarringInput.addEventListener("input", updateMotherName);
+    motherEarringInput.addEventListener("change", updateMotherName);
+}
+
+function updateMotherName() {
+    const selectedEarringNo = document.getElementById("motherEarringNo").value;
+    const motherNameInput = document.getElementById("motherName");
+
+    if (!motherNameInput) return;
+
+    // Seçilen küpe numarasına karşılık gelen hayvanı bul
+    const selectedAnimal = motherAnimalsData.find(
+        (animal) => animal.EarringNo === selectedEarringNo
+    );
+
+    if (selectedAnimal) {
+        motherNameInput.value = selectedAnimal.Name;
+        motherNameInput.classList.remove("bg-gray-50");
+        motherNameInput.classList.add("bg-white");
+    } else {
+        motherNameInput.value = "";
+        motherNameInput.classList.remove("bg-white");
+        motherNameInput.classList.add("bg-gray-50");
+    }
+}
+
+function setupBullEarringSelection() {
+    const bullDatalist = document.getElementById("bullDatalist");
+    const bullNameInput = document.getElementById("bullName");
+
+    if(!bullNameInput || !bullDatalist) 
+    {
+        console.log("Hata");
+        return
+    }
+    bullDatalist.innerHTML = "";
+    bullsData.forEach((animal) => {
+        const option = document.createElement("option");
+        option.value = animal.Name;
+        bullDatalist.appendChild(option);
+    });
+}
 
 animalType.addEventListener("change", () => {
     let type = animalType.value;
@@ -65,7 +139,7 @@ animalType.addEventListener("change", () => {
 });
 
 updateButton.addEventListener("click", (e) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
 
     const allDatas = {};
     allDatas.animalData = {};
@@ -73,10 +147,12 @@ updateButton.addEventListener("click", (e) => {
     allDatas.animalData.Id = animalId.value;
     allDatas.animalData.EarringNo = earringNo.value;
     allDatas.animalData.Name = nameTag.value;
+    allDatas.animalData.Breed = breed.value;
     allDatas.animalData.BirthDate = birthDate.value;
     allDatas.animalData.MotherEarringNo = motherEarringNo.value;
     allDatas.animalData.MotherName = motherName.value;
     allDatas.animalData.Type = animalType.value;
+    allDatas.animalData.Note = notes.value;
 
     if (animalType.value === "cow") {
         allDatas.cowData = {};
@@ -88,8 +164,7 @@ updateButton.addEventListener("click", (e) => {
         allDatas.cowData.BullName = bullName.value;
         if (checkDate.value == "") {
             allDatas.cowData.CheckedDate = "1970-01-01";
-        }
-        else {
+        } else {
             allDatas.cowData.CheckedDate = checkDate.value;
         }
     } else if (animalType.value === "heifer") {
@@ -119,10 +194,17 @@ function showDatas(allDatas) {
     animalId.value = allDatas.animalData[0].Id;
     earringNo.value = allDatas.animalData[0].EarringNo;
     nameTag.value = allDatas.animalData[0].Name;
+    breed.value =
+        allDatas.animalData[0].Breed === "Simmental"
+            ? "Simental"
+            : allDatas.animalData[0].Breed === "Angus"
+            ? "Angus"
+            : allDatas.animalData[0].Breed;
     birthDate.value = allDatas.animalData[0].BirthDate;
     motherEarringNo.value = allDatas.animalData[0].MotherEarringNo;
     motherName.value = allDatas.animalData[0].MotherName;
     animalType.value = allDatas.animalData[0].Type;
+    notes.value = allDatas.animalData[0].Note;
 
     // Reset all fields first
     resetFieldStates();

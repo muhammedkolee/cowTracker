@@ -61,6 +61,25 @@
                             />
                         </div>
 
+                        <!-- Hayvan Cinsi -->
+                        <div class="space-y-2">
+                            <label
+                                for="breed"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Hayvan Cinsi</label
+                            >
+                            <input
+                                type="text"
+                                list="breeds"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
+                                id="breed"
+                            />
+                            <datalist>
+                                <option value="Simental"></option>
+                                <option value="Angus"></option>
+                            </datalist>
+                        </div>
+
                         <!-- Doğum Tarihi -->
                         <div class="space-y-2">
                             <label
@@ -134,9 +153,13 @@
                             >
                             <input
                                 type="text"
+                                list="motherEarringNoDatalist"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium"
                                 id="motherEarringNo"
                             />
+                            <datalist id="motherEarringNoDatalist">
+
+                            </datalist>
                         </div>
 
                         <!-- Anne Adı -->
@@ -190,9 +213,11 @@
                             >
                             <input
                                 type="text"
+                                list="bullDatalist"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
                                 id="bullName"
                             />
+                            <datalist id="bullDatalist"></datalist>
                         </div>
 
                         <!-- Gebelik Kontrol Tarihi -->
@@ -207,6 +232,17 @@
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
                                 id="checkDate"
                             />
+                        </div>
+
+                        <!-- Not Ekleme/Düzenleme -->
+                        <div class="space-y-2">
+                            <label
+                                for="notes"
+                                class="block text-sm font-semibold text-gray-700"
+                                >Not</label
+                            >
+                            <textarea  id="notes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 font-medium disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"></textarea>
+                            
                         </div>
                     </div>
 

@@ -8,6 +8,7 @@ const deneme = document.getElementById("deneme");
 
 // Anne hayvan verileri için global değişken
 let motherAnimalsData = [];
+let bullsData = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     window.addAnimalAPI.receiveAnimalType((animalType) => {
@@ -35,6 +36,10 @@ window.addEventListener("DOMContentLoaded", () => {
         motherAnimalsData = EarringNos;
         setupMotherEarringSelection();
     });
+
+    window.addAnimalAPI.receiveBullsName((Names) => {
+        bullsData = Names;
+    });
 });
 
 // Anne küpe numarası seçim sistemi
@@ -56,6 +61,23 @@ function setupMotherEarringSelection() {
     // Input değiştiğinde anne adını güncelle
     motherEarringInput.addEventListener("input", updateMotherName);
     motherEarringInput.addEventListener("change", updateMotherName);
+}
+
+function setupBullEarringSelection() {
+    const bullDatalist = document.getElementById("bullDatalist");
+    const bullNameInput = document.getElementById("bullNameInput");
+
+    if(!bullNameInput || !bullDatalist) 
+    {
+        console.log("Hata");
+        return
+    }
+    bullDatalist.innerHTML = "";
+    bullsData.forEach((animal) => {
+        const option = document.createElement("option");
+        option.value = animal.Name;
+        bullDatalist.appendChild(option);
+    });
 }
 
 function updateMotherName() {
@@ -113,6 +135,7 @@ addButton.addEventListener("click", () => {
         );
         const bullNameInput = document.getElementById("bullNameInput");
         const checkInput = document.getElementById("checkInput");
+        const breed = document.getElementById("breed");
 
         newAnimalDatas.cowDatas = {};
         newAnimalDatas.animalDatas.EarringNo = earringNo.value;
@@ -120,6 +143,7 @@ addButton.addEventListener("click", () => {
         newAnimalDatas.animalDatas.BirthDate = birthDate.value;
         newAnimalDatas.animalDatas.MotherEarringNo = motherEarringNo.value;
         newAnimalDatas.animalDatas.MotherName = motherName.value;
+        newAnimalDatas.animalDatas.Breed = breed.textContent;
         newAnimalDatas.animalDatas.Type = "cow";
 
         newAnimalDatas.cowDatas.EarringNo = earringNo.value;
@@ -203,74 +227,81 @@ type.addEventListener("change", () => {
 function addCow() {
     deneme.innerHTML = template;
     setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
-
+    
     // Insemination Date
     let inseminationDateDiv = document.createElement("div");
     let inseminationDateLabel = document.createElement("label");
     let inseminationDateInput = document.createElement("input");
     inseminationDateInput.id = "inseminationDateInput";
-
+    
     inseminationDateDiv.className = "space-y-2 pb-2";
-
+    
     inseminationDateLabel.htmlFor = "inseminationDateInput";
     inseminationDateLabel.className =
-        "block text-sm font-semibold text-gray-700";
+    "block text-sm font-semibold text-gray-700";
     inseminationDateLabel.innerHTML = "Tohumlama Tarihi";
-
+    
     inseminationDateInput.type = "date";
     inseminationDateInput.className =
-        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
     inseminationDateInput.required = true;
-
+    
     deneme.appendChild(inseminationDateDiv);
     inseminationDateDiv.appendChild(inseminationDateLabel);
     inseminationDateDiv.appendChild(inseminationDateInput);
-
+    
     // Bull Name
     let bullNameDiv = document.createElement("div");
     let bullNameLabel = document.createElement("label");
     let bullNameInput = document.createElement("input");
+    let bullDatalist = document.createElement("datalist");
     bullNameInput.id = "bullNameInput";
+    bullDatalist.id = "bullDatalist";
 
+    bullNameInput.setAttribute("list", "bullDatalist");
+    
     bullNameDiv.className = "space-y-2 mt-6";
-
+    
     bullNameLabel.htmlFor = "bullNameInput";
     bullNameLabel.className = "block text-sm font-semibold text-gray-700";
     bullNameLabel.innerHTML = "Dana Adı";
-
+    
     bullNameInput.type = "text";
     bullNameInput.className =
-        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
-
+    "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    
     deneme.appendChild(bullNameDiv);
     bullNameDiv.appendChild(bullNameLabel);
     bullNameDiv.appendChild(bullNameInput);
-
+    bullNameDiv.appendChild(bullDatalist);
+    
     // Check
     let checkDiv = document.createElement("div");
     let checkLabel = document.createElement("label");
     let checkInput = document.createElement("input");
     checkInput.id = "checkInput";
-
+    
     checkDiv.className = "space-y-2 mt-6";
-
+    
     checkLabel.htmlFor = "checkInput";
     checkLabel.className = "block text-sm font-semibold text-gray-700";
     checkLabel.innerHTML = "Gebelik Kontrol";
-
+    
     checkInput.type = "date";
     checkInput.className =
-        "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
-
+    "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200";
+    
     deneme.appendChild(checkDiv);
     checkDiv.appendChild(checkLabel);
     checkDiv.appendChild(checkInput);
+
+    setupBullEarringSelection();
 }
 
 function addCalf() {
     deneme.innerHTML = template;
     setupMotherEarringSelection(); // Template yüklendikten sonra setup'ı çağır
-
+    
     // Gender
     let genderDiv = document.createElement("div");
     let genderLabel = document.createElement("label");
@@ -346,6 +377,15 @@ const template = `
         <div class="space-y-2">
             <label for="earringNo" class="block text-sm font-semibold text-gray-700">Küpe Numarası</label>
             <input placeholder="TR181818" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
+        </div>
+
+        <div class="space-y-2">
+            <label for="breed" class="block text-sm font-semibold text-gray-700">Hayvan Cinsi</label>
+            <input list="breeds" placeholder="Simental" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="breed" required/>
+            <datalist id="breeds">
+                <option value="Simental"></option>
+                <option value="Angus"></option>
+            </datalist>
         </div>
 
         <div class="space-y-2">

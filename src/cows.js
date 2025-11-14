@@ -51,9 +51,9 @@ const layout = `
                         <thead class="bg-gray-800 text-white">
                             <tr class="sticky top-0 z-10 bg-gray-800">
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Id</th>
-                                <th class="px-2 py-3 text-center font-semibold text-sm">Sayı</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Küpe Numarası</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">İnek Adı</th>
+                                <th class="px-2 py-3 text-center font-semibold text-sm">İnek Cinsi</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Tohumlama Tarihi</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Doğuracağı Tarih *</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Doğuma Kalan Gün *</th>
@@ -61,6 +61,9 @@ const layout = `
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Kuruya Çıkartma Tarihi *</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Dana Adı</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">Gebelik Kontrol</th>
+                                <th class="px-2 py-3 text-center font-semibold text-sm">Son Doğurduğu Tarih</th>
+                                <th class="px-2 py-3 text-center font-semibold text-sm">Boş Gün</th>
+                                <th class="px-2 py-3 text-center font-semibold text-sm">Notlar</th>
                                 <th class="px-2 py-3 text-center font-semibold text-sm">İşlemler</th>
                             </tr>
                     </thead>
@@ -198,10 +201,10 @@ function showDatas(allDatas) {
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { animalId: cowId.textContent, type: "cow" };
+            let datas = { animalId: cowId.textContent, type: "cow", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: cowId.textContent, type: "cow" };
+            datas = { animalId: cowId.textContent, type: "cow", earringNo: earringNo.textContent };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -250,9 +253,10 @@ function showDatas(allDatas) {
     allDatas.animalDatas.forEach((animal) => {
         let tableRow = document.createElement("tr");
         let cowId = document.createElement("td");
-        let number = document.createElement("td");
+        // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
+        let breed = document.createElement("td");
         let inseminationDate = document.createElement("td");
         let whenBirth = document.createElement("td");
         let leftDay = document.createElement("td");
@@ -260,14 +264,18 @@ function showDatas(allDatas) {
         let kuruDate = document.createElement("td");
         let bullName = document.createElement("td");
         let isPregnant = document.createElement("td");
+        let lastBirthDate = document.createElement("td");
+        let emptyDay = document.createElement("td");
+        let notes = document.createElement("td");
 
         // Base styling for all cells
         const cellClasses =
-            "px-2 py-3 text-center font-bold text-sm whitespace-nowrap border-b border-gray-200";
+            "px-2 py-3 text-center font-bold whitespace-nowrap border-b border-gray-200";
         cowId.className = cellClasses;
-        number.className = cellClasses;
+        // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
+        breed.className = cellClasses;
         inseminationDate.className = cellClasses;
         whenBirth.className = cellClasses;
         leftDay.className = cellClasses;
@@ -275,6 +283,9 @@ function showDatas(allDatas) {
         kuruDate.className = cellClasses;
         bullName.className = cellClasses;
         isPregnant.className = cellClasses;
+        lastBirthDate.className = cellClasses;
+        emptyDay.className = cellClasses;
+        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
@@ -338,9 +349,10 @@ function showDatas(allDatas) {
 
         cowTableBody.appendChild(tableRow);
         tableRow.appendChild(cowId);
-        tableRow.appendChild(number);
+        // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
+        tableRow.appendChild(breed);
         tableRow.appendChild(inseminationDate);
         tableRow.appendChild(whenBirth);
         tableRow.appendChild(leftDay);
@@ -348,6 +360,9 @@ function showDatas(allDatas) {
         tableRow.appendChild(kuruDate);
         tableRow.appendChild(bullName);
         tableRow.appendChild(isPregnant);
+        tableRow.appendChild(lastBirthDate);
+        tableRow.appendChild(emptyDay);
+        tableRow.appendChild(notes);
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
@@ -363,19 +378,28 @@ function showDatas(allDatas) {
         applyButton.id = "applyIco";
 
         cowId.textContent = animal.Id;
-        number.textContent = count.toString() + "-)";
+        // number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         // console.log(animal)
         // console.log(animal.Name)
         name.textContent = animal.Name;
+        breed.textContent = animal.Animals.Breed;
+        lastBirthDate.textContent = (animal.LastBirthDate !== null ? new Date(animal.LastBirthDate).toLocaleDateString("tr-TR") : "-");
+        emptyDay.textContent = (animal.LastBirthDate !== null ? 
+            (Math.floor((new Date(animal.InseminationDate) - new Date(animal.LastBirthDate)) / (1000 * 60 * 60 * 24)))
+            : "-")
+
         inseminationDate.textContent = new Date(
             animal.InseminationDate
         ).toLocaleDateString("tr-TR");
+
         whenBirth.textContent = calculateWhenBirth({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});
         leftDay.textContent = calculateLeftDay({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});    // ***
         passDay.textContent = calculatePassDay(animal.InseminationDate);
         kuruDate.textContent = calculateDryDate({InseminationDate: animal.InseminationDate, dryOffDays: allDatas.settingsDatas.dryOffDays});  // ***
         bullName.textContent = animal.BullName;
+        notes.textContent = animal.Animals.Note;
+
         if (
             new Date(animal.CheckedDate).toLocaleDateString("tr-TR") !=
             "01.01.1970"

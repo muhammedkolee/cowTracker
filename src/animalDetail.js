@@ -132,7 +132,7 @@ function showDatas(allDatas) {
         calvesList.className = "space-y-3";
 
         if (allDatas.calvesData.length != 0) {
-            allDatas.calvesData[0].forEach((calf) => {
+            allDatas.calvesData.forEach((calf) => {
                 const element = document.createElement("div");
                 calvesList.appendChild(element);
 
@@ -271,7 +271,7 @@ function showDatas(allDatas) {
         calvesList.className = "space-y-3";
 
         if (allDatas.calvesData.length !== 0) {
-            allDatas.calvesData[0].forEach((calf) => {
+            allDatas.calvesData.forEach((calf) => {
                 const element = document.createElement("div");
                 calvesList.appendChild(element);
 

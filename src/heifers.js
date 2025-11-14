@@ -52,11 +52,12 @@ const layout = `
                             <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                                 <tr class="bg-gray-800">
                                     <th class="px-4 py-3 text-center font-semibold">Id</th>
-                                    <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                                     <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                                     <th class="px-4 py-3 text-center font-semibold">İnek Adı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">İnek Cinsi</th>
                                     <th class="px-4 py-3 text-center font-semibold">Son Doğurduğu Tarih</th>
                                     <th class="px-4 py-3 text-center font-semibold">Boş Gün *</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Notlar</th>
                                     <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
                                 </tr>
                             </thead>
@@ -198,10 +199,12 @@ function showDatas(allDatas) {
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { animalId: heiferId.textContent, type: "heifer" };
+            let datas = { animalId: heiferId.textContent, type: "heifer", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: heiferId.textContent, type: "heifer" };
+            datas = { animalId: heiferId.textContent, type: "heifer", earringNo: earringNo.textContent
+                
+             };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -237,20 +240,24 @@ function showDatas(allDatas) {
     allDatas.animalDatas.forEach((heifer) => {
         let tableRow = document.createElement("tr");
         let heiferId = document.createElement("td");
-        let number = document.createElement("td");
+        // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
+        let breed = document.createElement("td");
         let lastBirth = document.createElement("td");
         let tempDays = document.createElement("td");
+        let notes = document.createElement("td");
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
         heiferId.className = cellClasses;
-        number.className = cellClasses;
+        // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
+        breed.className = cellClasses;
         lastBirth.className = cellClasses;
         tempDays.className = cellClasses;
+        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
@@ -306,11 +313,13 @@ function showDatas(allDatas) {
 
         heiferTableBody.appendChild(tableRow);
         tableRow.appendChild(heiferId);
-        tableRow.appendChild(number);
+        // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
+        tableRow.appendChild(breed);
         tableRow.appendChild(lastBirth);
         tableRow.appendChild(tempDays);
+        tableRow.appendChild(notes);
         tableRow.appendChild(nav);
         nav.appendChild(navDiv);
 
@@ -339,13 +348,15 @@ function showDatas(allDatas) {
         // console.log(heifer.lastBirthDate)
 
         heiferId.textContent = heifer.Id;
-        number.textContent = count.toString() + "-)";
+        // number.textContent = count.toString() + "-)";
         earringNo.textContent = heifer.EarringNo;
         name.textContent = heifer.Name;
+        breed.textContent = heifer.Animals.Breed;
         lastBirth.textContent = new Date(
             heifer.LastBirthDate
         ).toLocaleDateString("tr-TR");
         tempDays.textContent = calculateDate(heifer.LastBirthDate);
+        notes.textContent = heifer.Animals.Note;
 
         // Row color based on empty days
         tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";

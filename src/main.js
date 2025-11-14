@@ -28,7 +28,7 @@ const { eventNames } = require("process");
 
 let mainWindow;
 
-// If app is ready, run this block.
+// If app is ready, this block will be run.
 app.on("ready", async () => {
     // autoUpdater.checkForUpdatesAndNotify();
     
@@ -73,7 +73,7 @@ app.on("ready", async () => {
             mainWindow.webContents.send("sendDatas", datas);
         });
         
-        //Dev
+    //Dev
     //This block will be deleted after dev phase.
     mainWindow.webContents.on("before-input-event", (event, input) => {
         if (input.key === "F12" && input.type === "keyDown") {
@@ -116,8 +116,7 @@ app.on("ready", async () => {
         else {
             log.info("User denied the update.");
         }
-    });
-    
+    }); 
     // This block will be change.
     
     // EasterEgg
@@ -227,6 +226,7 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
                 "sendMothersEarringNo",
                 await getMotherEarringNos()
             );
+            addAnimalMenu.webContents.send("sendBullsName", await getBullsName());
         });
 });
 
@@ -343,6 +343,14 @@ ipcMain.on("ipcMain:openUpdateAnimal", (event, datas) => {
                     allDatas
                 );
             }
+
+            updateAnimalWindow.webContents.send(
+                "sendMothersEarringNo",
+                await getMotherEarringNos()
+            );
+
+            updateAnimalWindow.webContents.send("sendBullsName", await getBullsName());
+
         });
 });
 
@@ -415,6 +423,7 @@ ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
+// Receive Vaccines' Datas
 ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
     await addVaccine(vaccineDatas);
     store.set("Vaccines", await getVaccinesDatas());
@@ -425,6 +434,7 @@ ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
     mainWindow.webContents.send("refresh", allDatas);
 });
 
+// Remove Vaccine from the database.
 ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
     await removeVaccine(vaccineId);
     store.set("Vaccines", await getVaccinesDatas());
@@ -436,6 +446,7 @@ ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
 
 });
 
+// If animal gave birth.
 ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
     const { data: cowData, error: cowError } = await supabase
         .from("Animals")
@@ -461,6 +472,7 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
+// If animal was inseminated.
 ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
     const { data: heiferData, error: heiferError } = await supabase.from("Animals").select("*").eq("Id", datas.animalId);
     if (heiferError) {
@@ -488,6 +500,7 @@ ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
+// Save setting's datas to local.
 ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
     store.set("settings.showInformationButton", settinsDatas.showInformationButton);
     store.set("settings.gestationDays", settinsDatas.gestationDays);
@@ -498,6 +511,7 @@ ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
     store.set("settings.calfToAdultDays", settinsDatas.calfToAdultDays);
 });
 
+// Export file as xlsx which user want to export.
 ipcMain.handle("exportExcel", async (event, datas) => {
     // let datas;
     // let fileName;
@@ -687,6 +701,7 @@ app.on("window-all-closed", () => {
 // Functions of JS
 // Get datas of one cow.
 async function getCowDatas(datas) {
+    console.log(datas)
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
@@ -706,7 +721,7 @@ async function getCowDatas(datas) {
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("AnimalId", datas.animalId);
 
     const allDatas = {
         animalData: animalData,
@@ -736,7 +751,7 @@ async function getHeiferDatas(datas) {
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("AnimalId", datas.animalId);
 
     const allDatas = {
         animalData: animalData,
@@ -806,21 +821,39 @@ async function getAnimalsDatas() {
 
 // Get datas of whole cows.
 async function getCowsDatas() {
-    const { data, error } = await supabase
+    const { data: cowsData, error } = await supabase
         .from("Cows")
-        .select("*")
+        .select("*, Animals (Breed, Note)")
         .order("InseminationDate", { ascending: true });
     if (error) {
         log.info("main.js 639 | İnek bilgileri çekilirken bir hata oluştu: ", error);
     }
-    return data;
+
+    for (let cow of cowsData){
+        const { data: calfData, error: calfError } = await supabase
+        .from("Animals")
+        .select("BirthDate")
+        .eq("MotherEarringNo", cow.EarringNo)
+        .order("BirthDate", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+        if (calfError) {
+            console.log("Bir sorun oluştu.", calfError);
+            cow.LastBirthDate = null;
+            // continue;
+        }
+        cow.LastBirthDate = calfData?.BirthDate || null;
+    }
+
+    return cowsData;
 }
 
 // Get datas of whole heifers.
 async function getHeifersDatas() {
     const { data, error } = await supabase
         .from("Heifers")
-        .select("*")
+        .select("*, Animals (Breed, Note)")
         .order("LastBirthDate", { ascending: false });
     if (error) {
         log.info("main.js 651 | Düve bilgileri çekilirken bir hata oluştu: ", error);
@@ -833,7 +866,7 @@ async function getCalvesDatas() {
     const { data: calvesData, error: calvesError } = await supabase
         .from("Calves")
         .select(
-            "Id, EarringNo, Gender, Name, BirthDate, Animals (MotherEarringNo, MotherName)"
+            "*, Animals (MotherEarringNo, MotherName, Breed, Note)"
         )
         .order("BirthDate", { ascending: false });
 
@@ -876,6 +909,18 @@ async function getMotherEarringNos() {
         .in("Type", ["cow", "heifer"]);
     if (error) {
         log.info("main.js 701 | İnek küpe numaraları çekilirken bir hata oluştu: ", error);
+    }
+    return data;
+}
+
+// Get Bulls' Names
+async function getBullsName() {
+    const { data, error } = await supabase
+        .from("Animals")
+        .select("Name")
+        .eq("Type", "bull");
+    if (error) {
+        log.info("main.js 891 | Dana isimleri çekilirken bir hata oluştu: ", error);
     }
     return data;
 }

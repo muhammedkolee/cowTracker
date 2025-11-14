@@ -52,13 +52,14 @@ const layout = `
                             <thead class="bg-gray-800 text-white">
                                 <tr class="sticky top-0 z-10 bg-gray-800">
                                     <th class="px-4 py-3 text-center font-semibold">Id</th>
-                                    <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                                     <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                                     <th class="px-4 py-3 text-center font-semibold">Dana Adı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Dana Cinsi</th>
                                     <th class="px-4 py-3 text-center font-semibold">Doğum Tarihi</th>
                                     <th class="px-4 py-3 text-center font-semibold">Kaç Günlük *</th>
                                     <th class="px-4 py-3 text-center font-semibold">Anne Küpe No</th>
                                     <th class="px-4 py-3 text-center font-semibold">Anne Adı</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Notlar</th>
                                     <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
                                 </tr>
                             </thead>
@@ -173,10 +174,10 @@ function showDatas(allDatas) {
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { animalId: bullId.textContent, type: "cow" };
+            let datas = { animalId: bullId.textContent, type: "cow", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: bullId.textContent, type: "bull" };
+            datas = { animalId: bullId.textContent, type: "bull", earringNo: earringNo.textContent };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -199,24 +200,28 @@ function showDatas(allDatas) {
     allDatas.animalDatas.forEach((bull) => {
         let tableRow = document.createElement("tr");
         let bullId = document.createElement("td");
-        let number = document.createElement("td");
+        // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
+        let breed = document.createElement("td");
         let birthDate = document.createElement("td");
         let age = document.createElement("td");
         let motherEarringNo = document.createElement("td");
         let motherName = document.createElement("td");
+        let notes = document.createElement("td");
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
         bullId.className = cellClasses;
-        number.className = cellClasses;
+        // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
+        breed.className = cellClasses;
         birthDate.className = cellClasses;
         age.className = cellClasses;
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
+        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
@@ -273,13 +278,15 @@ function showDatas(allDatas) {
 
         bullTableBody.appendChild(tableRow);
         tableRow.appendChild(bullId);
-        tableRow.appendChild(number);
+        // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
+        tableRow.appendChild(breed);
         tableRow.appendChild(birthDate);
         tableRow.appendChild(age);
         tableRow.appendChild(motherEarringNo);
         tableRow.appendChild(motherName);
+        tableRow.appendChild(notes);
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
@@ -293,9 +300,10 @@ function showDatas(allDatas) {
         updateButton.id = "updateIco";
 
         bullId.textContent = bull.Id;
-        number.textContent = count.toString() + "-)";
+        // number.textContent = count.toString() + "-)";
         earringNo.textContent = bull.EarringNo;
         name.textContent = bull.Name;
+        breed.textContent = (bull.Breed === "Simmental" ? "Simental" : bull.Breed);
         birthDate.textContent = new Date(bull.BirthDate).toLocaleDateString(
             "tr-TR"
         );
@@ -307,6 +315,7 @@ function showDatas(allDatas) {
             " ay)";
         motherEarringNo.textContent = bull.MotherEarringNo;
         motherName.textContent = bull.MotherName;
+        notes.textContent = bull.Note;
 
         count += 1;
     });

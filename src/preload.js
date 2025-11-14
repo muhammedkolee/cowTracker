@@ -28,6 +28,12 @@ contextBridge.exposeInMainWorld("addAnimalAPI", {
             callback(EarringNos);
         });
     },
+
+    receiveBullsName: (callback) => {
+        ipcRenderer.on("sendBullsName", (event, Names) => {
+            callback(Names);
+        });
+    },
 });
 
 contextBridge.exposeInMainWorld("animalDetailAPI", {

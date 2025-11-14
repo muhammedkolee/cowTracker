@@ -47,23 +47,26 @@ const layout = `
                 
                 <h2 class="mb-4 text-center text-2xl font-bold flex items-center justify-center h-12" id="titleCalf"></h2>
             </div>
-            <div class="">
-                <table class="min-w-full bg-white shadow-md rounded-lg ">
-                    <thead class="sticky top-0 z-10 bg-gray-800 text-white">
-                        <tr class="bg-gray-800">
-                            <th class="px-4 py-3 text-center">Id</th>
-                            <th class="px-4 py-3 text-center">Sayı</th>
-                            <th class="px-4 py-3 text-center">Küpe No.</th>
-                            <th class="px-4 py-3 text-center">Buzağı Adı</th>
-                            <th class="px-4 py-3 text-center">Doğum Tarihi</th>
-                            <th class="px-4 py-3 text-center">Kaç Günlük</th>
-                            <th class="px-4 py-3 text-center">2 LT Düşürme Tar.</th>
-                            <th class="px-4 py-3 text-center">1 LT Düşürme Tar.</th>
-                            <th class="px-4 py-3 text-center">Sütten Kesme Tar.</th>
-                            <th class="px-4 py-3 text-center">Sütten Kesmeye Kalan Gün</th>
-                            <th class="px-4 py-3 text-center">Anne Küpe No.</th>
-                            <th class="px-4 py-3 text-center">Anne Adı</th>
-                            <th class="px-4 py-3 text-center">İşlemler</th>
+            
+            <!-- Tablo Scroll Wrapper -->
+            <div class="shadow-lg rounded-lg">
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-800 text-white">
+                        <tr class="sticky top-0 z-10 bg-gray-800 text-white">
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Id</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Küpe No.</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Adı</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Cinsi</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Cinsiyeti</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Doğum Tarihi</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Kaç Günlük</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">1 LT Düşürme Tar.</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Sütten Kesme Tar.</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Sütten Kesmeye Kalan Gün</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Anne Küpe No.</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Anne Adı</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Notlar</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">İşlemler</th>
                         </tr>
                     </thead>
                     <tbody id="calvesTableBody" class="divide-y divide-gray-200">
@@ -71,7 +74,7 @@ const layout = `
                     </tbody>
                 </table>
             </div>
-        </div>
+            
         <div class="text-right mt-3">
             <button title="Yeni Hayvan Ekleme sayfasına yönlendirir" class="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2 mb-3 fixed bottom-5 right-32 z-50 shadow-lg transition-colors" id="btn-add-calf">
                 Yeni Hayvan Ekle
@@ -189,10 +192,10 @@ function showDatas(allDatas) {
         let calfId = tableRow.querySelector("#calfId");
 
         if (target.id === "infoIco") {
-            let datas = { animalId: calfId.textContent, type: "cow" };
+            let datas = { animalId: calfId.textContent, type: "cow", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: calfId.textContent, type: "calf" };
+            datas = { animalId: calfId.textContent, type: "calf", earringNo: earringNo.textContent };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -215,17 +218,19 @@ function showDatas(allDatas) {
     allDatas.animalDatas.forEach((calf) => {
         let tableRow = document.createElement("tr");
         let calfId = document.createElement("td");
-        let number = document.createElement("td");
+        // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
+        let breed = document.createElement("td");
+        let gender = document.createElement("td");
         let birthDate = document.createElement("td");
         let days = document.createElement("td");
-        let lt2 = document.createElement("td");
         let lt1 = document.createElement("td");
         let shutDate = document.createElement("td");
         let shutDay = document.createElement("td");
         let motherEarringNo = document.createElement("td");
         let motherName = document.createElement("td");
+        let notes = document.createElement("td");
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
@@ -252,13 +257,13 @@ function showDatas(allDatas) {
         // Tailwind classes
         // tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
         calfId.className = cellClasses;
-        number.className = cellClasses;
+        // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
+        breed.className = cellClasses;
+        gender.className = cellClasses;
         birthDate.className = cellClasses;
         days.className = cellClasses;
-        lt2.className =
-            "px-4 py-3 text-center font-bold whitespace-normal break-words";
         lt1.className =
             "px-4 py-3 text-center font-bold whitespace-normal break-words";
         shutDate.className =
@@ -267,6 +272,7 @@ function showDatas(allDatas) {
             "px-4 py-3 text-center font-bold whitespace-normal break-words";
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
+        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
         nav.className = cellClasses;
 
         navDiv.className = "flex justify-center gap-1";
@@ -306,17 +312,19 @@ function showDatas(allDatas) {
 
         calvesTableBody.appendChild(tableRow);
         tableRow.appendChild(calfId);
-        tableRow.appendChild(number);
+        // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
+        tableRow.appendChild(breed);
+        tableRow.appendChild(gender);
         tableRow.appendChild(birthDate);
         tableRow.appendChild(days);
-        tableRow.appendChild(lt2);
         tableRow.appendChild(lt1);
         tableRow.appendChild(shutDate);
         tableRow.appendChild(shutDay);
         tableRow.appendChild(motherEarringNo);
         tableRow.appendChild(motherName);
+        tableRow.appendChild(notes);
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
@@ -332,25 +340,26 @@ function showDatas(allDatas) {
         // shutButton.id = "shutIco";
 
         calfId.textContent = calf.Id;
-        number.textContent = count.toString() + "-)";
+        // number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
         name.textContent = calf.Name;
+        breed.textContent = calf.Animals.Breed;
+        notes.textContent = calf.Animals.Note;
+        console.log(calf.Animals.Note)
         birthDate.textContent = new Date(calf.BirthDate).toLocaleDateString(
             "tr-TR"
         );
 
-        let { lt2Date, lt1Date, shutDateC, daysC, daysS } = calculateDates(
-            {BirthDate: calf.BirthDate, calfReduceToOneLiterDays: allDatas.settingsDatas.calfReduceToOneLiterDays, calfReduceToTwoLiterDays: allDatas.settingsDatas.calfReduceToTwoLiterDays, calfWeaningDays: allDatas.settingsDatas.calfWeaningDays}
+        let { lt1Date, shutDateC, daysC, daysS } = calculateDates(
+            {BirthDate: calf.BirthDate, calfReduceToOneLiterDays: allDatas.settingsDatas.calfReduceToOneLiterDays, calfWeaningDays: allDatas.settingsDatas.calfWeaningDays}
         );
         if (new Date(shutDateC) < getTodayDate()) {
             days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
-            lt2.textContent = "Sütten Kesildi";
-            lt1.textContent = "Sütten Kesildi";
-            shutDate.textContent = "Sütten Kesildi";
-            shutDay.textContent = "Sütten Kesildi";
+            lt1.textContent = "-";
+            shutDate.textContent = "-";
+            shutDay.textContent = "-";
         } else {
             days.textContent = daysC + " (" + (daysC / 30).toFixed(1) + " ay)";
-            lt2.textContent = lt2Date.toLocaleDateString("tr-TR");
             lt1.textContent = lt1Date.toLocaleDateString("tr-TR");
             shutDate.textContent = shutDateC.toLocaleDateString("tr-TR");
             shutDay.textContent = daysS;
@@ -363,9 +372,11 @@ function showDatas(allDatas) {
         if (calf.Gender) {
             tableRow.className =
                 "bg-red-200 hover:bg-red-300 transition-colors duration-150";
+            gender.textContent = "Dişi";
         } else {
             tableRow.className =
                 "bg-blue-200 hover:bg-blue-300 transition-colors duration-150";
+            gender.textContent = "Erkek";
         }
 
         count += 1;
@@ -384,21 +395,18 @@ function getTodayDate() {
 }
 
 function calculateDates(allDatas) {
-    let lt2Date = new Date(allDatas.BirthDate);
     let lt1Date = new Date(allDatas.BirthDate);
     let shutDate = new Date(allDatas.BirthDate);
     let daysDate = new Date(allDatas.BirthDate);
     let daysShut = new Date(allDatas.BirthDate);
     let today = getTodayDate();
 
-    lt2Date.setDate(lt2Date.getDate() + parseInt(allDatas.calfReduceToTwoLiterDays));
     lt1Date.setDate(lt1Date.getDate() + parseInt(allDatas.calfReduceToOneLiterDays));
     shutDate.setDate(shutDate.getDate() + parseInt(allDatas.calfWeaningDays));
     daysDate = Math.ceil((today - daysDate) / (1000 * 60 * 60 * 24));
     daysShut = Math.ceil((shutDate - today) / (1000 * 60 * 60 * 24));
 
     return {
-        lt2Date: lt2Date,
         lt1Date: lt1Date,
         shutDateC: shutDate,
         daysC: daysDate,

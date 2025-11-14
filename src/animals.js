@@ -48,17 +48,18 @@ const layout = `
                 <h2 class="mb-4 text-center text-2xl font-bold flex items-center justify-center h-12" id="titleAnimal"></h2>
             </div>
             <div class="shadow-lg rounded-lg">
-                <table class="min-w-full bg-white">
+                <table class="min-w-full bg-white rounded*lg">
                     <thead class="bg-gray-800 text-white">
                         <tr class="sticky top-0 z-10 bg-gray-800">
                             <th class="px-4 py-3 text-center font-semibold">Id</th>
-                            <th class="px-4 py-3 text-center font-semibold">Sayı</th>
                             <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
                             <th class="px-4 py-3 text-center font-semibold">Hayvan Adı</th>
                             <th class="px-4 py-3 text-center font-semibold">Doğum Tarihi</th>
+                            <th class="px-4 py-3 text-center font-semibold">Cinsi</th>
                             <th class="px-4 py-3 text-center font-semibold">Türü</th>
                             <th class="px-4 py-3 text-center font-semibold">Anne Küpe No</th>
                             <th class="px-4 py-3 text-center font-semibold">Anne Adı</th>
+                            <th class="px-4 py-3 text-center font-semibold">Not</th>
                             <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
                         </tr>
                     </thead>
@@ -84,6 +85,32 @@ const layout = `
                     </div>
             </button>
         </div>
+    <!-- Modal (Popup) -->
+    <div id="noteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-800">Not İçeriği</h3>
+                <button onclick="closeNoteModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <p id="noteContent" class="text-gray-700 text-base leading-relaxed whitespace-pre-wrap"></p>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-gray-200 flex justify-end">
+                <button onclick="closeNoteModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded font-medium transition-colors">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
 `;
 
 const animalsBody = document.getElementById("animalsBody");
@@ -92,6 +119,7 @@ const animalsBody = document.getElementById("animalsBody");
 window.addEventListener("DOMContentLoaded", () => {
     animalsBody.innerHTML = loadingTemplate;
     window.animalsAPI.receiveDatas((allDatas) => {
+        console.log(allDatas);
         showDatas(allDatas);
     });
 });
@@ -176,25 +204,25 @@ function showDatas(allDatas) {
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
-                var datas = { animalId: animalId.textContent, type: "cow" };
+                var datas = { animalId: animalId.textContent, type: "cow", earringNo: earringNo.textContent };
             } else if (type.textContent == "Düve") {
-                var datas = { animalId: animalId.textContent, type: "heifer" };
+                var datas = { animalId: animalId.textContent, type: "heifer", earringNo: earringNo.textContent};
             } else if (type.textContent == "Buzağı") {
-                var datas = { animalId: animalId.textContent, type: "calf" };
+                var datas = { animalId: animalId.textContent, type: "calf", earringNo: earringNo.textContent };
             } else if (type.textContent == "Dana") {
-                var datas = { animalId: animalId.textContent, type: "bull" };
+                var datas = { animalId: animalId.textContent, type: "bull", earringNo: earringNo.textContent };
             }
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
-                var datas = { animalId: animalId.textContent, type: "cow" };
+                var datas = { animalId: animalId.textContent, type: "cow", earringNo: earringNo.textContent };
             } else if (type.textContent == "Düve") {
-                var datas = { animalId: animalId.textContent, type: "heifer" };
+                var datas = { animalId: animalId.textContent, type: "heifer", earringNo: earringNo.textContent };
             } else if (type.textContent == "Buzağı") {
-                var datas = { animalId: animalId.textContent, type: "calf" };
+                var datas = { animalId: animalId.textContent, type: "calf", earringNo: earringNo.textContent };
             } else if (type.textContent == "Dana") {
-                var datas = { animalId: animalId.textContent, type: "bull" };
+                var datas = { animalId: animalId.textContent, type: "bull", earringNo: earringNo.textContent };
             }
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
@@ -228,24 +256,29 @@ function showDatas(allDatas) {
         // Create table row for each animal.
         let tableRow = document.createElement("tr");
         let animalId = document.createElement("td");
-        let number = document.createElement("td");
+        // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
         let birthDate = document.createElement("td");
+        let breed = document.createElement("td");
         let type = document.createElement("td");
         let motherEarringNo = document.createElement("td");
         let motherName = document.createElement("td");
+        let notes = document.createElement("td");
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
         animalId.className = cellClasses;
-        number.className = cellClasses;
+        // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
         birthDate.className = cellClasses;
+        breed.className = cellClasses;
         type.className = cellClasses;
         motherEarringNo.className = cellClasses;
         motherName.className = cellClasses;
+        // notes.className = "max-h-20 overflow-y-auto font-bold px-4";
+        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
 
         // Create buttons for each row.
         let nav = document.createElement("td");
@@ -294,19 +327,23 @@ function showDatas(allDatas) {
 
         animalTableBody.appendChild(tableRow);
         tableRow.appendChild(animalId);
-        tableRow.appendChild(number);
+        // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
         tableRow.appendChild(birthDate);
+        tableRow.appendChild(breed);
         tableRow.appendChild(type);
         tableRow.appendChild(motherEarringNo);
         tableRow.appendChild(motherName);
+        tableRow.appendChild(notes);
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
         animalId.id = "animalId";
+        breed.id = "breed";
         type.id = "type";
         name.id = "calfName";
+        notes.id = "notes";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -316,12 +353,20 @@ function showDatas(allDatas) {
         updateButton.id = "updateIco";
 
         animalId.textContent = animal.Id;
-        number.textContent = count.toString() + "-)";
+        // number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         name.textContent = animal.Name;
         birthDate.textContent = new Date(animal.BirthDate).toLocaleDateString(
             "tr-TR"
         );
+        if (animal.Breed === "Simmental") {
+            breed.textContent = "Simental";
+        } else if (animal.Breed === "Angus") {
+            breed.textContent = "Angus";
+        } else {
+            breed.textContent = animal.Breed;
+        }    
+
         if (animal.Type === "cow") {
             type.textContent = "İnek";
         } else if (animal.Type === "heifer") {
@@ -331,8 +376,11 @@ function showDatas(allDatas) {
         } else if (animal.Type === "calf") {
             type.textContent = "Buzağı";
         }
+
         motherEarringNo.textContent = animal.MotherEarringNo;
         motherName.textContent = animal.MotherName;
+
+        notes.textContent = animal.Note;
 
         // Row color based on animal type
         tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";

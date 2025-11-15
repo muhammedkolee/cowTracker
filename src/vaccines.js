@@ -32,21 +32,14 @@ const layout = `
                 </button>
                 <h2 class="mb-4 text-center text-2xl font-bold" id="titleVaccine"></h2>
             </div>
-            <div>
+            <div class="overflow-x-auto">
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="sticky top-0 z-10 bg-gray-800 text-white">
-                        <tr class="bg-gray-800">
-                            <th class="px-4 py-3 text-center" id="selectHeader" style="display: none;">
-                                <input type="checkbox" id="selectAll" class="w-4 h-4">
-                            </th>
-                            <th class="px-4 py-3 text-center">Id</th>
+                        <tr class="bg-gray-800" id="tableHead">
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe No.</th>
                             <th class="px-4 py-3 text-center">İsim</th>
-                            <th class="px-4 py-3 text-center">Aşı Adı</th>
-                            <th class="px-4 py-3 text-center">Aşı Tarihi</th>
-                            <th class="px-4 py-3 text-center">Kaç Gün Oldu</th>
-                            <th class="px-4 py-3 text-center">İşlemler</th>
+                            <!-- Aşı sütunları dinamik olarak buraya eklenecek -->
                         </tr>
                     </thead>
                     <tbody id="vaccineTableBody" class="divide-y divide-gray-200">
@@ -63,13 +56,6 @@ const layout = `
                         <div class="absolute top-1/2 left-full transform -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-l-4 border-l-gray-800"></div>
                     </div>
             </button>
-            <button title="Toplu aşı seçimi" class="cursor-pointer bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-select">
-                Seç
-                    <div class="help-bubble -top-10 left-[90px] transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
-                        <span class="block">Toplu Aşı Seçimi</span>
-                        <div class="absolute top-full left-9/10 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
-                    </div>
-            </button>
             <button title="Ana menüye yönlendirir" class="relative cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50" id="btn-menu">
                 Ana Menü
                     <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
@@ -81,10 +67,6 @@ const layout = `
         `;
 
 const vaccinesBody = document.getElementById("vaccinesBody");
-
-// Toplu seçim için değişkenler
-let isSelectionMode = false;
-let selectedVaccineIds = [];
 
 window.electronAPI.refresh((allDatas) => {
     showDatas(allDatas);
@@ -109,14 +91,11 @@ document.addEventListener("keydown", (event) => {
 
 function showDatas(allDatas) {
     vaccinesBody.innerHTML = layout;
-
+    const tableHead = document.getElementById("tableHead");
     const menuButton = document.getElementById("btn-menu");
     const titleVaccine = document.getElementById("titleVaccine");
     const vaccineTableBody = document.getElementById("vaccineTableBody");
     const addVaccine = document.getElementById("btn-add-vaccine");
-    const selectButton = document.getElementById("btn-select");
-    const selectHeader = document.getElementById("selectHeader");
-    const selectAllCheckbox = document.getElementById("selectAll");
 
     // If showInformationButton is false, Hidden the button.
     const infoBtn = document.getElementById("infoBtn");
@@ -139,252 +118,143 @@ function showDatas(allDatas) {
         window.vaccineAPI.openAddVaccine();
     });
 
-    // Seç/Sil buton işlevselliği
-    selectButton.addEventListener("click", () => {
-        if (!isSelectionMode) {
-            // Seçim modunu aç
-            isSelectionMode = true;
-            selectButton.textContent = "Sil";
-            selectButton.className =
-                "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
-            selectHeader.style.display = "table-cell";
+    // Verileri pivotlama - Her hayvan için aşıları gruplama
+    const animalVaccineMap = {};
+    const allVaccineNames = new Set();
 
-            // Tüm checkbox'ları göster
-            const checkboxes = document.querySelectorAll(".row-checkbox");
-            checkboxes.forEach((checkbox) => {
-                checkbox.style.display = "table-cell";
-            });
-        } else {
-            // Silme işlemi
-            if (selectedVaccineIds.length === 0) {
-                alert("Silmek için en az bir aşı seçmelisiniz!");
-                return;
-            }
-
-            const sure = window.confirm(
-                selectedVaccineIds.length +
-                    " adet aşı silinecek.\nOnaylıyor musunuz?"
-            );
-
-            if (sure) {
-                // Silme işlemini buraya yazabilirsiniz
-                window.vaccineAPI.removeVaccine(selectedVaccineIds);
-                // Örnek: window.vaccineAPI.removeMultipleVaccines(selectedVaccineIds);
-
-                // Seçim modunu kapat
-                resetSelectionMode();
-            }
+    allDatas.vaccineDatas.forEach((vaccine) => {
+        const animalId = vaccine.Animals.EarringNo;
+        
+        if (!animalVaccineMap[animalId]) {
+            animalVaccineMap[animalId] = {
+                earringNo: vaccine.Animals.EarringNo,
+                name: vaccine.Animals.Name,
+                vaccines: {}
+            };
         }
+
+        // Aşı ismini sete ekle
+        allVaccineNames.add(vaccine.VaccineName);
+        
+        // Her aşı için tarih ve ID bilgisini sakla
+        if (!animalVaccineMap[animalId].vaccines[vaccine.VaccineName]) {
+            animalVaccineMap[animalId].vaccines[vaccine.VaccineName] = [];
+        }
+        
+        animalVaccineMap[animalId].vaccines[vaccine.VaccineName].push({
+            date: vaccine.VaccineDate,
+            id: vaccine.Id
+        });
     });
 
-    // Tümünü seç/seçme işlevselliği
-    selectAllCheckbox.addEventListener("change", (e) => {
-        const checkboxes = document.querySelectorAll(".vaccine-checkbox");
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = e.target.checked;
-            const vaccineId = checkbox.getAttribute("data-vaccine-id");
+    // Aşı isimlerini sırala
+    const vaccineNames = Array.from(allVaccineNames).sort();
 
-            if (e.target.checked) {
-                if (!selectedVaccineIds.includes(vaccineId)) {
-                    selectedVaccineIds.push(vaccineId);
-                }
-            } else {
-                selectedVaccineIds = selectedVaccineIds.filter(
-                    (id) => id !== vaccineId
-                );
-            }
-        });
-        updateSelectButtonText();
+    // Dinamik olarak aşı sütunlarını ekle
+    vaccineNames.forEach(vaccineName => {
+        const th = document.createElement('th');
+        th.className = 'px-4 py-3 text-center vaccine-column';
+        th.textContent = vaccineName;
+        tableHead.appendChild(th);
     });
 
-    function resetSelectionMode() {
-        isSelectionMode = false;
-        selectedVaccineIds = [];
-        selectButton.textContent = "Seç";
-        selectButton.className =
-            "bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 z-50";
-        selectHeader.style.display = "none";
-        selectAllCheckbox.checked = false;
-
-        // Tüm checkbox'ları gizle
-        const checkboxes = document.querySelectorAll(".row-checkbox");
-        checkboxes.forEach((checkbox) => {
-            checkbox.style.display = "none";
-        });
-
-        // Tüm vaccine checkbox'ları temizle
-        const vaccineCheckboxes =
-            document.querySelectorAll(".vaccine-checkbox");
-        vaccineCheckboxes.forEach((checkbox) => {
-            checkbox.checked = false;
-        });
-    }
-
-    function updateSelectButtonText() {
-        if (selectedVaccineIds.length > 0) {
-            selectButton.textContent = `Sil (${selectedVaccineIds.length})`;
-        } else {
-            selectButton.textContent = "Sil";
-        }
-    }
-
+    // Silme işlemi için event listener
     vaccineTableBody.addEventListener("click", function (event) {
         const target = event.target;
-        let tableRow = target.closest("tr");
-        let earringNo = tableRow.querySelector("#earringNo");
-        let vaccineId = tableRow.querySelector("#vaccineId");
-        let vaccineName = tableRow.querySelector("#vaccineName");
-        let vaccineDate = tableRow.querySelector("#vaccineDate");
+        
+        if (target.classList.contains("delete-vaccine-btn") || target.closest(".delete-vaccine-btn")) {
+            const button = target.classList.contains("delete-vaccine-btn") ? target : target.closest(".delete-vaccine-btn");
+            const vaccineId = button.getAttribute("data-vaccine-id");
+            const earringNo = button.getAttribute("data-earring-no");
+            const vaccineName = button.getAttribute("data-vaccine-name");
+            const vaccineDate = button.getAttribute("data-vaccine-date");
 
-        // if (target.id === "updateIco") {
-        //     datas = earringNo.textContent;
-        //     if (window.electronAPI) window.electronAPI.openUpdateAnimal(earringNo.textContent);
-        // }
-
-        if (target.id === "deleteIco") {
             const sure = window.confirm(
-                earringNo.textContent +
-                    " küpe numaralı hayvanın " +
-                    vaccineDate.textContent +
-                    " tarihli " +
-                    vaccineName.textContent +
-                    " isimli aşısı silinecek" +
-                    "\nOnaylıyor musunuz?"
+                earringNo + " küpe numaralı hayvanın " +
+                vaccineDate + " tarihli " +
+                vaccineName + " isimli aşısı silinecek" +
+                "\nOnaylıyor musunuz?"
             );
+            
             if (sure) {
-                // Remove cow from the databases.
-                window.vaccineAPI.removeVaccine(vaccineId.textContent);
+                window.vaccineAPI.removeVaccine(vaccineId);
             }
         }
     });
 
-    // Checkbox değişim olayları
-    vaccineTableBody.addEventListener("change", function (event) {
-        if (event.target.classList.contains("vaccine-checkbox")) {
-            const vaccineId = event.target.getAttribute("data-vaccine-id");
-
-            if (event.target.checked) {
-                if (!selectedVaccineIds.includes(vaccineId)) {
-                    selectedVaccineIds.push(vaccineId);
-                }
-            } else {
-                selectedVaccineIds = selectedVaccineIds.filter(
-                    (id) => id !== vaccineId
-                );
-                selectAllCheckbox.checked = false;
-            }
-
-            updateSelectButtonText();
-
-            // Tümü seçili mi kontrol et
-            const allCheckboxes =
-                document.querySelectorAll(".vaccine-checkbox");
-            const checkedCheckboxes = document.querySelectorAll(
-                ".vaccine-checkbox:checked"
-            );
-            selectAllCheckbox.checked =
-                allCheckboxes.length === checkedCheckboxes.length &&
-                allCheckboxes.length > 0;
-        }
-    });
-
+    // Tabloyu doldur
     let count = 1;
-    allDatas.vaccineDatas.forEach((vaccine) => {
+    Object.values(animalVaccineMap).forEach((animal) => {
         let tableRow = document.createElement("tr");
-        let selectCell = document.createElement("td");
-        let selectCheckbox = document.createElement("input");
-        let vaccineId = document.createElement("td");
+        tableRow.className = "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
+
+        // Sayı
         let number = document.createElement("td");
-        let earringNo = document.createElement("td");
-        let name = document.createElement("td");
-        let vaccineName = document.createElement("td");
-        let vaccineDate = document.createElement("td");
-        let days = document.createElement("td");
-
-        let nav = document.createElement("td");
-        let navDiv = document.createElement("div");
-        let deleteButton = document.createElement("button");
-        // let updateButton = document.createElement("button");
-        let deleteIco = document.createElement("span");
-        // let updateIco = document.createElement("span");
-
-        deleteButton.title = "Aşıyı sil";
-
-        // Checkbox ayarları
-        selectCell.className = "px-4 py-3 text-center row-checkbox";
-        selectCell.style.display = "none";
-        selectCheckbox.type = "checkbox";
-        selectCheckbox.className = "w-4 h-4 vaccine-checkbox";
-        selectCheckbox.setAttribute("data-vaccine-id", vaccine.Id);
-        selectCell.appendChild(selectCheckbox);
-
-        // Tailwind classes
-        tableRow.className =
-            "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
-        vaccineId.className = "px-4 py-3 text-center";
         number.className = "px-4 py-3 text-center";
+        number.textContent = count.toString() + "-)";
+
+        // Küpe No
+        let earringNo = document.createElement("td");
         earringNo.className = "px-4 py-3 text-center";
+        earringNo.textContent = animal.earringNo;
+
+        // İsim
+        let name = document.createElement("td");
         name.className = "px-4 py-3 text-center";
-        vaccineName.className = "px-4 py-3 text-center";
-        vaccineDate.className = "px-4 py-3 text-center";
-        days.className = "px-4 py-3 text-center";
-        nav.className = "px-4 py-3 text-center";
+        name.textContent = animal.name;
 
-        navDiv.className = "flex justify-center gap-1";
-        // deleteButton.className = "cursor-pointer px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors duration-200";
-        // updateButton.className = "px-2 py-1 bg-indigo-500 hover:bg-indigo-600 text-white text-xs rounded transition-colors duration-200";
-
-        deleteButton.innerHTML = `<svg id="deleteIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="deleteIco" stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
-        // updateButton.innerHTML = `<svg id="updateIco" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path id="updateIco" stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>`;
-
-        deleteButton.className =
-            "cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
-        // updateButton.className =
-        //     "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded text-xs transition-colors flex items-center justify-center";
-
-        nav.appendChild(navDiv);
-
-        // navDiv.appendChild(updateButton);
-        navDiv.appendChild(deleteButton);
-
-        deleteButton.appendChild(deleteIco);
-        // updateButton.appendChild(updateIco);
-
-        vaccineTableBody.appendChild(tableRow);
-        tableRow.appendChild(selectCell);
-        tableRow.appendChild(vaccineId);
         tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
-        tableRow.appendChild(vaccineName);
-        tableRow.appendChild(vaccineDate);
-        tableRow.appendChild(days);
-        tableRow.appendChild(nav);
 
-        earringNo.id = "earringNo";
-        vaccineId.id = "vaccineId";
-        vaccineName.id = "vaccineName";
-        vaccineDate.id = "vaccineDate";
+        // Her aşı için hücre oluştur
+        vaccineNames.forEach(vaccineName => {
+            let vaccineCell = document.createElement("td");
+            vaccineCell.className = "px-4 py-3 text-center";
+            
+            if (animal.vaccines[vaccineName] && animal.vaccines[vaccineName].length > 0) {
+                // Eğer birden fazla aynı aşı varsa hepsini göster
+                const vaccineDiv = document.createElement("div");
+                vaccineDiv.className = "space-y-1";
+                
+                animal.vaccines[vaccineName].forEach(vaccine => {
+                    const dateDiv = document.createElement("div");
+                    dateDiv.className = "flex items-center justify-center gap-2";
+                    
+                    const dateSpan = document.createElement("span");
+                    dateSpan.className = "text-sm";
+                    dateSpan.textContent = new Date(vaccine.date).toLocaleDateString("tr-TR");
+                    
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "delete-vaccine-btn text-red-500 hover:text-red-700 transition-colors";
+                    deleteBtn.setAttribute("data-vaccine-id", vaccine.id);
+                    deleteBtn.setAttribute("data-earring-no", animal.earringNo);
+                    deleteBtn.setAttribute("data-vaccine-name", vaccineName);
+                    deleteBtn.setAttribute("data-vaccine-date", new Date(vaccine.date).toLocaleDateString("tr-TR"));
+                    deleteBtn.title = "Bu aşıyı sil";
+                    deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>`;
+                    
+                    dateDiv.appendChild(dateSpan);
+                    dateDiv.appendChild(deleteBtn);
+                    vaccineDiv.appendChild(dateDiv);
+                });
+                
+                vaccineCell.appendChild(vaccineDiv);
+            } else {
+                vaccineCell.textContent = "-";
+                vaccineCell.className += " text-gray-400";
+            }
+            
+            tableRow.appendChild(vaccineCell);
+        });
 
-        deleteIco.id = "deleteIco";
-        // updateIco.id = "updateIco";
-        deleteButton.id = "deleteIco";
-        // updateButton.id = "updateIco";
-
-        vaccineId.textContent = vaccine.Id;
-        number.textContent = count.toString() + "-)";
-        earringNo.textContent = vaccine.Animals.EarringNo;
-        name.textContent = vaccine.Animals.Name;
-        vaccineName.textContent = vaccine.VaccineName;
-        vaccineDate.textContent = new Date(
-            vaccine.VaccineDate
-        ).toLocaleDateString("tr-TR");
-        days.textContent = calculateDays(vaccine.VaccineDate).toString();
-
+        vaccineTableBody.appendChild(tableRow);
         count += 1;
     });
-    titleVaccine.textContent =
-        "Listede toplam " + (count - 1).toString() + " aşı var.";
+
+    const totalAnimals = Object.keys(animalVaccineMap).length;
+    const totalVaccines = allDatas.vaccineDatas.length;
+    titleVaccine.textContent = `Listede toplam ${totalAnimals} hayvan var (${totalVaccines} aşı kaydı)`;
 }
 
 // Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).
@@ -398,7 +268,7 @@ function parseTurkishDate(wDate) {
 function getTodayDate() {
     let today = new Date();
     let year = today.getFullYear();
-    let month = String(today.getMonth() + 1).padStart(2, "0"); // Ocak = 0
+    let month = String(today.getMonth() + 1).padStart(2, "0");
     let day = String(today.getDate()).padStart(2, "0");
 
     return new Date(`${year}-${month}-${day}`);

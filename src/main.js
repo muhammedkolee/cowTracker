@@ -170,6 +170,7 @@ app.on("ready", async () => {
                 } else if (pageName === "vaccines") {
                     const allDatas = {};
                     // allDatas.vaccineDatas = await getVaccinesDatas();
+                    allDatas.vaccineNames = await getVaccinesNames();
                     allDatas.vaccineDatas = store.get("Vaccines");
                     allDatas.settingsDatas = store.get("settings");
                     mainWindow.webContents.send("sendDatas", allDatas);
@@ -887,6 +888,16 @@ async function getBullsDatas() {
         log.info("main.js 679 | Dana bilgileri çekilirken bir hata oluştu: ", error);
     }
     return data;
+}
+
+async function getVaccinesNames() {
+    const {data: allVaccineNames, error: vaccineError } = await supabase
+    .from("Vaccines")
+    .select("VaccineName", { ascending: true });
+
+    const vaccineNames = [...new Set(allVaccineNames.map(v => v.VaccineName))];
+    
+    return vaccineNames;
 }
 
 // Get datas of vaccines.

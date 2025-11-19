@@ -32,10 +32,11 @@ const layout = `
                 </button>
                 <h2 class="mb-4 text-center text-2xl font-bold" id="titleVaccine"></h2>
             </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                    <thead class="sticky top-0 z-10 bg-gray-800 text-white">
-                        <tr class="bg-gray-800" id="tableHead">
+            <div class="shadow-lg rounded-lg">
+                <table class="min-w-full bg-white
+                ">
+                    <thead class="bg-gray-800 text-white">
+                        <tr class="sticky top-0 z-10 bg-gray-800" id="tableHead">
                             <th class="px-4 py-3 text-center">Sayı</th>
                             <th class="px-4 py-3 text-center">Küpe No.</th>
                             <th class="px-4 py-3 text-center">İsim</th>
@@ -123,7 +124,7 @@ function showDatas(allDatas) {
     const allVaccineNames = new Set();
 
     allDatas.vaccineDatas.forEach((vaccine) => {
-        const animalId = vaccine.Animals.EarringNo;
+        const animalId = vaccine.Animals.Id;
         
         if (!animalVaccineMap[animalId]) {
             animalVaccineMap[animalId] = {

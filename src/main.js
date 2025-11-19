@@ -904,8 +904,8 @@ async function getVaccinesNames() {
 async function getVaccinesDatas() {
     const { data, error } = await supabase
         .from("Vaccines")
-        .select("Id, VaccineName, VaccineDate, Animals (Id, EarringNo, Name)")
-        .order("VaccineDate", { ascending: false });
+        .select("*, Animals (Id, EarringNo, Name)")
+        .order("Id", { ascending: true });
     if (error) {
         log.info("main.js 691 | Aşı bilgileri çekilirken bir hata oluştu: ", error);
     }

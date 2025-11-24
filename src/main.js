@@ -64,7 +64,7 @@ app.on("ready", async () => {
     
     // Load index.html to Main Window.
     mainWindow
-    .loadFile(path.join(__dirname, "../views/index.html"))
+    .loadFile(path.join(__dirname, "../views/signIn-Up.html"))
     .then(async () => {
             const datas = {};
             datas.animalsDatas = store.get("Animals");

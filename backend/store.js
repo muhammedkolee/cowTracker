@@ -4,13 +4,13 @@ const Store = require("electron-store").default;
 const schema = {
   settings: {
     default: {
-        showInformationButton: false,    // Information Button is visible or not.
-        gestationDays: 280,             // Insemination Date + gestationDays = Birth Date
-        dryOffDays: 220,                // Insemination Date + dryOffDays = DryDate
-        calfReduceToTwoLiterDays: 80,   // Calf Birth Date + this value
-        calfReduceToOneLiterDays: 85,   // Calf Birth Date + this value
-        calfWeaningDays: 90,           // Calf Birth Date + this value
-        calfToAdultDays: 365            // For Data Auto Update
+        showInformationButton: false,     // Information Button is visible or not.
+        gestationDays: 280,               // Insemination Date + gestationDays = Birth Date
+        dryOffDays: 220,                  // Insemination Date + dryOffDays = DryDate
+        calfReduceToTwoLiterDays: 80,     // Calf Birth Date + this value
+        calfReduceToOneLiterDays: 85,     // Calf Birth Date + this value
+        calfWeaningDays: 90,              // Calf Birth Date + this value
+        calfToAdultDays: 365              // For Data Auto Update
     },
   },
 
@@ -44,5 +44,9 @@ const schema = {
 };
 
 const store = new Store({ schema });
+
+if (!store.has('lastUpdatedAt')) {
+    store.set('lastUpdatedAt', new Date().toISOString());
+}
 
 module.exports = store;

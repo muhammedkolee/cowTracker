@@ -128,22 +128,25 @@ window.electronAPI.refresh((datas) => {
 });
 
 window.electronAPI.updateAvailable((event, version) => {
-    const result = window.confirm(`Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`);
+    const result = window.confirm(
+        `Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`
+    );
     if (result) {
         window.electronAPI.updateResponse(true);
-        window.confirm("Bu işlem birkaç dakika kadar sürebilir. Uygulama güncellendikten sonra kapanacak ve güncelleme otomatik olarak yüklenecektir.\nLütfen uygulamayı kapatmayın!");
-    }
-    else {
+        window.confirm(
+            "Bu işlem birkaç dakika kadar sürebilir. Uygulama güncellendikten sonra kapanacak ve güncelleme otomatik olarak yüklenecektir.\nLütfen uygulamayı kapatmayın!"
+        );
+    } else {
         window.electronAPI.updateResponse(false);
     }
 });
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "F1") {
-        const helpBubbles = document.querySelectorAll('.help-bubble');
-        helpBubbles.forEach(bubble => {
-            bubble.classList.toggle('visible');
-        });        
+        const helpBubbles = document.querySelectorAll(".help-bubble");
+        helpBubbles.forEach((bubble) => {
+            bubble.classList.toggle("visible");
+        });
     }
 });
 
@@ -164,9 +167,9 @@ function showDatas(allDatas) {
     }
 
     infoBtn.addEventListener("click", () => {
-        const helpBubbles = document.querySelectorAll('.help-bubble');
-        helpBubbles.forEach(bubble => {
-            bubble.classList.toggle('visible');
+        const helpBubbles = document.querySelectorAll(".help-bubble");
+        helpBubbles.forEach((bubble) => {
+            bubble.classList.toggle("visible");
         });
     });
 
@@ -183,13 +186,21 @@ function showDatas(allDatas) {
 
     excelBtn.addEventListener("click", () => {
         const tableData = getCowsTableData();
-        const response = window.electronAPI.exportExcel({ tableData: tableData, fileName: "İnekler" });
+        const response = window.electronAPI.exportExcel({
+            tableData: tableData,
+            fileName: "İnekler",
+        });
 
-        if(response == false) {
-            window.confirm("İşlem sırasında bir hata meydana geldi, tekrar deneyiniz!");
-        }
-        else {
-            window.confirm("Dosya başarıyla ", response, " konumuna oluşturuldu!");
+        if (response == false) {
+            window.confirm(
+                "İşlem sırasında bir hata meydana geldi, tekrar deneyiniz!"
+            );
+        } else {
+            window.confirm(
+                "Dosya başarıyla ",
+                response,
+                " konumuna oluşturuldu!"
+            );
         }
     });
 
@@ -201,10 +212,18 @@ function showDatas(allDatas) {
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { animalId: cowId.textContent, type: "cow", earringNo: earringNo.textContent };
+            let datas = {
+                animalId: cowId.textContent,
+                type: "cow",
+                earringNo: earringNo.textContent,
+            };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: cowId.textContent, type: "cow", earringNo: earringNo.textContent };
+            datas = {
+                animalId: cowId.textContent,
+                type: "cow",
+                earringNo: earringNo.textContent,
+            };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -285,7 +304,8 @@ function showDatas(allDatas) {
         isPregnant.className = cellClasses;
         lastBirthDate.className = cellClasses;
         emptyDay.className = cellClasses;
-        notes.className = "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
+        notes.className =
+            "px-4 py-3 text-center font-bold overflow-y-auto scrollbar-thin";
 
         let nav = document.createElement("td");
         let navDiv = document.createElement("div");
@@ -384,19 +404,36 @@ function showDatas(allDatas) {
         // console.log(animal.Name)
         name.textContent = animal.Name;
         breed.textContent = animal.Animals.Breed;
-        lastBirthDate.textContent = (animal.LastBirthDate !== null ? new Date(animal.LastBirthDate).toLocaleDateString("tr-TR") : "-");
-        emptyDay.textContent = (animal.LastBirthDate !== null ? 
-            (Math.floor((new Date(animal.InseminationDate) - new Date(animal.LastBirthDate)) / (1000 * 60 * 60 * 24)))
-            : "-")
+        lastBirthDate.textContent =
+            animal.LastBirthDate !== null
+                ? new Date(animal.LastBirthDate).toLocaleDateString("tr-TR")
+                : "-";
+        emptyDay.textContent =
+            animal.LastBirthDate !== null
+                ? Math.floor(
+                      (new Date(animal.InseminationDate) -
+                          new Date(animal.LastBirthDate)) /
+                          (1000 * 60 * 60 * 24)
+                  )
+                : "-";
 
         inseminationDate.textContent = new Date(
             animal.InseminationDate
         ).toLocaleDateString("tr-TR");
 
-        whenBirth.textContent = calculateWhenBirth({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});
-        leftDay.textContent = calculateLeftDay({InseminationDate: animal.InseminationDate, gestationDays: allDatas.settingsDatas.gestationDays});    // ***
+        whenBirth.textContent = calculateWhenBirth({
+            InseminationDate: animal.InseminationDate,
+            gestationDays: allDatas.settingsDatas.gestationDays,
+        });
+        leftDay.textContent = calculateLeftDay({
+            InseminationDate: animal.InseminationDate,
+            gestationDays: allDatas.settingsDatas.gestationDays,
+        }); // ***
         passDay.textContent = calculatePassDay(animal.InseminationDate);
-        kuruDate.textContent = calculateDryDate({InseminationDate: animal.InseminationDate, dryOffDays: allDatas.settingsDatas.dryOffDays});  // ***
+        kuruDate.textContent = calculateDryDate({
+            InseminationDate: animal.InseminationDate,
+            dryOffDays: allDatas.settingsDatas.dryOffDays,
+        }); // ***
         bullName.textContent = animal.BullName;
         notes.textContent = animal.Animals.Note;
 
@@ -410,20 +447,17 @@ function showDatas(allDatas) {
         }
 
         // Row color based on days left for birth
-        const intLeftDay = parseInt(calculateLeftDay(animal.InseminationDate)); 
-        if (
-            intLeftDay <= 30 &&
-            intLeftDay > 0
-        ) {
+        const intLeftDay = parseInt(calculateLeftDay({
+            InseminationDate: animal.InseminationDate,
+            gestationDays: allDatas.settingsDatas.gestationDays,
+        }));
+        if (intLeftDay <= 30 && intLeftDay > 0) {
             tableRow.className =
                 "bg-green-200 hover:bg-green-300 transition-colors";
         } else if (intLeftDay <= 0) {
             tableRow.className =
                 "bg-red-200 hover:bg-red-300 transition-colors";
-        } else if (
-            intLeftDay <= 80 &&
-            intLeftDay > 30
-        ) {
+        } else if (intLeftDay <= 80 && intLeftDay > 30) {
             tableRow.className =
                 "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         } else {
@@ -535,7 +569,7 @@ function getCowsTableData() {
     // TH'leri al, ilk ve sonuncuyu çıkar (Id + İşlemler)
     const headers = Array.from(tableHead.querySelectorAll("th"))
         .slice(1, -1)
-        .map(th => th.innerText.trim());
+        .map((th) => th.innerText.trim());
 
     // TR'leri dolaş
     const rows = Array.from(tableBody.querySelectorAll("tr"));
@@ -543,7 +577,7 @@ function getCowsTableData() {
     return rows.map((row) => {
         const cells = Array.from(row.querySelectorAll("td"))
             .slice(1, -1) // Id ve İşlemler kolonunu çıkar
-            .map(cell => cell.innerText.trim());
+            .map((cell) => cell.innerText.trim());
 
         const obj = {};
         headers.forEach((h, i) => {

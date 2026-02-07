@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Arka plan animasyonu */
+        .bg-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: float-bg 20s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        .loading-container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* İkon Container */
+        .icon-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 40px;
+        }
+
+        /* Gerçek İkon */
+        .icon-image {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* border-radius: 24px;  <- İsterseniz silebilirsiniz */
+            /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); <- Gölgeyi isterseniz tutun veya silin */
+            animation: float-icon 3s ease-in-out infinite;
+            background: transparent; /* Beyaz yerine transparan yaptık */
+            padding: 0; /* Boşluğu sıfırladık */
+        }
+
+        .icon-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain; /* Görselin bozulmadan sığmasını sağlar */
+            /* border-radius: 20px; <- Kareleştirme yapmaması için silebilirsiniz */
+        }
+
+        /* Parlama efekti */
+/* 1. Dönen halkaları ve parlamaları gizle */
+.circle-outer, .circle-middle, .circle-inner, .icon-glow {
+    display: none;
+}
+
+/* 2. Logoyu taşıyan ana kutuyu ve boyutunu ayarla */
+.icon-wrapper {
+    position: relative;
+    width: 280px; /* Genişliği artırdık */
+    height: 280px; /* Yüksekliği artırdık */
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3. Logonun kendisi ve animasyonu */
+.icon-image {
+    width: 100%; /* Kutuya tam yayılmasını sağladık */
+    height: auto;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none; /* Merkeze alma işlemini flex ile yaptık */
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    /* Sadece aşağı yukarı süzülme animasyonu kalsın */
+    animation: simple-float 3s ease-in-out infinite;
+}
+
+.icon-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0; /* Köşeleri yuvarlamayı kaldırdık */
+}
+
+/* 4. Sadece aşağı yukarı hareket eden yeni animasyon */
+@keyframes simple-float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-25px); /* Hareket mesafesini buradan artırabilirsin */
+    }
+}
+
+        /* Loading Yazısı */
+        .loading-text {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        /* Alt Metin */
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            animation: progress 2s ease-in-out infinite, shimmer 2s linear infinite;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Yüzde Göstergesi */
+        .percentage {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Loading Noktaları */
+        .dots {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .dots span {
+            display: inline-block;
+            animation: blink 1.4s infinite;
+        }
+
+        .dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Partiküller */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(102, 126, 234, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+            animation: float-particle 8s infinite;
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 80%; left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { top: 30%; right: 15%; animation-delay: 4s; }
+        .particle:nth-child(4) { top: 70%; right: 25%; animation-delay: 1s; }
+        .particle:nth-child(5) { top: 50%; left: 45%; animation-delay: 3s; }
+        .particle:nth-child(6) { top: 15%; right: 35%; animation-delay: 5s; }
+        .particle:nth-child(7) { bottom: 20%; left: 30%; animation-delay: 6s; }
+        .particle:nth-child(8) { top: 40%; right: 40%; animation-delay: 7s; }
+
+        /* Animasyonlar */
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes float-icon {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0px);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-15px);
+                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0;
+            }
+            25% {
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-120px) translateX(60px) scale(1.5);
+                opacity: 1;
+            }
+            75% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-240px) translateX(0) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float-bg {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .loading-text {
+                font-size: 24px;
+            }
+
+            .progress-bar-container {
+                width: 250px;
+            }
+
+            .icon-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+
+            .icon-image {
+                width: 100px;
+                height: 100px;
+            }
+
+            .circle-outer {
+                width: 140px;
+                height: 140px;
+            }
+
+            .circle-inner {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Arka Plan Animasyonu -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Partiküller -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="loading-container">
+        <!-- İkon ve Halkalar -->
+        <div class="icon-wrapper">
+            <div class="icon-glow"></div>
+            <div class="circle-outer"></div>
+            <div class="circle-middle"></div>
+            <div class="circle-inner"></div>
+            <div class="icon-image">
+                <img src="../../iconnn.png">
+            </div>
+        </div>
+
+        <!-- Loading Yazısı -->
+        <div class="loading-text">
+            YÜKLENİYOR<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+        </div>
+
+        <!-- Alt Metin -->
+        <div class="loading-subtext">
+            Lütfen bekleyiniz
+        </div>
+    </div>
+
+    <script src="../src/loadingScreen.js"></script>
+</body>
+</html>

@@ -22,25 +22,15 @@ const removeAnimal = require("../backend/removeAnimalF.js");
 const addVaccine = require("../backend/addVaccineF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
+const signIn = require("../backend/signInF.js");
+const signUp = require("../backend/signUpF.js");
 const supabase = require("../backend/databaseConnection.js");
 const { error, info } = require("console");
-const { eventNames } = require("process");
 
 let mainWindow;
 
 // If app is ready, this block will be run.
 app.on("ready", async () => {
-    // autoUpdater.checkForUpdatesAndNotify();
-    
-    // Synchronize cloud datas with local datas.
-    try {
-        await setAllLocalDatas();
-        store.set("Vaccines", await getVaccinesDatas());
-        store.set("updatedDatas", await updateDatabase());
-    }
-    catch {
-
-    }
     // Get primary display to maximize window.
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
@@ -60,19 +50,12 @@ app.on("ready", async () => {
     // It make window maximize.
     mainWindow.maximize();
 
+    // To remove default top menu.
     mainWindow.setMenu(null);
-    
+
     // Load index.html to Main Window.
-    mainWindow
-    .loadFile(path.join(__dirname, "../views/signIn-Up.html"))
-    .then(async () => {
-            const datas = {};
-            datas.animalsDatas = store.get("Animals");
-            datas.updatedDatas = store.get("updatedDatas");
-            datas.appVersion = app.getVersion();
-            mainWindow.webContents.send("sendDatas", datas);
-        });
-        
+    mainWindow.loadFile(path.join(__dirname, "../views/loadingScreen.html"));
+
     //Dev
     //This block will be deleted after dev phase.
     mainWindow.webContents.on("before-input-event", (event, input) => {
@@ -88,13 +71,12 @@ app.on("ready", async () => {
     autoUpdater.on("checking-for-update", () => {
         log.info("Checking for update");
     });
-    
+
     autoUpdater.on("update-available", (info) => {
         log.info("Update Available, Version: ", info.version);
         mainWindow.webContents.send("update-available", "info.version");
     });
-    
-    
+
     autoUpdater.on("update-not-available", () => {
         log.info("Update Not Available");
     });
@@ -102,9 +84,9 @@ app.on("ready", async () => {
     autoUpdater.on("error", (err) => {
         log.info("Error in Updater", err);
     });
-    
+
     autoUpdater.on("update-downloaded", (info) => {
-        log.info("Update successfully downloaded.", );
+        log.info("Update successfully downloaded.");
         autoUpdater.quitAndInstall();
     });
 
@@ -112,88 +94,137 @@ app.on("ready", async () => {
         if (response) {
             log.info("User accepted dowloading the update");
             autoUpdater.downloadUpdate();
-        }
-        else {
+        } else {
             log.info("User denied the update.");
         }
-    }); 
+    });
     // This block will be change.
-    
+
     // EasterEgg
     mainWindow.webContents.on("before-input-event", (event, input) => {
-       if (input.key === "m" && input.control && input.type === "keyDown") {
-            mainWindow.loadFile(path.join(__dirname, "../views/egg.html"))
-       } 
+        if (input.key === "m" && input.control && input.type === "keyDown") {
+            mainWindow.loadFile(path.join(__dirname, "../views/egg.html"));
+        }
     });
     // EasterEgg
+    
+});
 
-    ipcMain.on("ipcMain:openOfflinePage", () => {
-        mainWindow.loadFile(path.join(__dirname, "../views/offlinePage.html"));
-    });
+// Get the device is connected the internet or not.
+ipcMain.on("getStatus", async (event, status) => {
+    if (status) {
+        await syncDatas();
+    } else {
+        const datas = {};
+        datas.animalsDatas = store.get("Animals");
+        datas.updatedDatas = store.get("updatedDatas");
+        datas.appVersion = app.getVersion();
 
-    // To open page which user want to open.
-    // pageName => file name without .html
-    ipcMain.on("ipcMain:openPage", (event, pageName) => {
-        mainWindow.loadFile(path.join(__dirname, "../views/" + pageName + ".html"));
+        mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
+        mainWindow.webContents.once("did-finish-load", () => {
+            mainWindow.webContents.send("sendLoadingDatas", datas);
+        });
+    }
+});
 
-        mainWindow.webContents.once("did-finish-load", async () => {
-                if (pageName === "animals") {
-                    const allDatas = {}; 
-                    // allDatas.animalDatas = await getAnimalsDatas();
-                    allDatas.animalDatas = store.get("Animals");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "cows") {
-                    const allDatas = {};
-                    // allDatas.animalDatas = await getCowsDatas();
-                    allDatas.animalDatas = store.get("Cows");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "heifers") {
-                    const allDatas = {};
-                    // allDatas.animalDatas = await getHeifersDatas();
-                    allDatas.animalDatas = store.get("Heifers");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "calves") {
-                    const allDatas = {};
-                    // allDatas.animalDatas = await getCalvesDatas();
-                    allDatas.animalDatas = store.get("Calves");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "bulls") {
-                    const allDatas = {};
-                    // allDatas.animalDatas = await getBullsDatas();
-                    allDatas.animalDatas = store.get("Bulls");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "vaccines") {
-                    const allDatas = {};
-                    // allDatas.vaccineDatas = await getVaccinesDatas();
-                    allDatas.vaccineNames = await getVaccinesNames();
-                    allDatas.vaccineDatas = store.get("Vaccines");
-                    allDatas.settingsDatas = store.get("settings");
-                    mainWindow.webContents.send("sendDatas", allDatas);
-                } else if (pageName === "settings") {
-                    mainWindow.webContents.send("sendSettingsDatas", store.get("settings"));
-                }
-            });
-    });
+// If the device is connected the internet, update datas.
+async function syncDatas() {
+    const localLastUpdate = store.get("lastUpdatedAt");
+    const { data: cloudLastUpdate, error: err } = await supabase.from("UpdateTime").select("*")
 
-    // To open main menu.
-    ipcMain.on("ipcMain:openMenu", () => {        
-        mainWindow
-            .loadFile(path.join(__dirname, "../views/index.html"))
-            .then(async () => {
-                const datas = {};
-                datas.animalsDatas = store.get("Animals");
-                datas.updatedDatas = store.get("updatedDatas");
-                datas.appVersion = app.getVersion();
-                mainWindow.webContents.send("sendDatas", datas);
-            });
+    if (new Date(localLastUpdate).getTime() < new Date(cloudLastUpdate[0].lastUpdatedAt).getTime()) {
+        await setAllLocalDatas();
+        store.set("Vaccines", await getVaccinesDatas());
+        store.set("updatedDatas", await updateDatabase());
+    }    
+    const datas = {}
+
+    datas.animalsDatas = store.get("Animals");
+    datas.updatedDatas = store.get("updatedDatas");
+    datas.appVersion = app.getVersion();
+
+    // sender.send("sendNewDatas", datas);
+
+    // mainWindow.webContents.send("sendLoadingDatas", datas);
+    mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
+    // mainWindow.webContents.once("did-finish-load", async () => {
+    // });
+}
+
+ipcMain.handle("sendLoadingDatas", async () => {
+    const datas = {}
+
+    datas.animalsDatas = store.get("Animals");
+    datas.updatedDatas = store.get("updatedDatas");
+    datas.appVersion = app.getVersion();
+    
+    return datas;
+});
+
+// To open page which user want to open.
+// pageName => file name without .html
+ipcMain.on("ipcMain:openPage", (event, pageName) => {
+    mainWindow.loadFile(path.join(__dirname, "../views/" + pageName + ".html"));
+
+    mainWindow.webContents.once("did-finish-load", async () => {
+        if (pageName === "animals") {
+            const allDatas = {};
+            // allDatas.animalDatas = await getAnimalsDatas();
+            allDatas.animalDatas = store.get("Animals");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "cows") {
+            const allDatas = {};
+            // allDatas.animalDatas = await getCowsDatas();
+            allDatas.animalDatas = store.get("Cows");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "heifers") {
+            const allDatas = {};
+            // allDatas.animalDatas = await getHeifersDatas();
+            allDatas.animalDatas = store.get("Heifers");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "calves") {
+            const allDatas = {};
+            // allDatas.animalDatas = await getCalvesDatas();
+            allDatas.animalDatas = store.get("Calves");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "bulls") {
+            const allDatas = {};
+            // allDatas.animalDatas = await getBullsDatas();
+            allDatas.animalDatas = store.get("Bulls");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "vaccines") {
+            const allDatas = {};
+            // allDatas.vaccineDatas = await getVaccinesDatas();
+            allDatas.vaccineNames = await getVaccinesNames();
+            allDatas.vaccineDatas = store.get("Vaccines");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
+        } else if (pageName === "settings") {
+            mainWindow.webContents.send(
+                "sendSettingsDatas",
+                store.get("settings"),
+            );
+        }
     });
 });
 
+// To open main menu.
+ipcMain.on("ipcMain:openMenu", () => {
+    mainWindow
+        .loadFile(path.join(__dirname, "../views/index.html"))
+        .then(async () => {
+            const datas = {};
+            datas.animalsDatas = store.get("Animals");
+            datas.updatedDatas = store.get("updatedDatas");
+            datas.appVersion = app.getVersion();
+            mainWindow.webContents.send("sendDatas", datas);
+        });
+});
 
 // MENUS
 // Add Animal menu.
@@ -208,6 +239,7 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
             enableRemoteModule: false,
         },
     });
+
 
     addAnimalMenu.setMenu(null);
 
@@ -225,9 +257,12 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
             addAnimalMenu.webContents.send(
                 "sendMothersEarringNo",
-                await getMotherEarringNos()
+                await getMotherEarringNos(),
             );
-            addAnimalMenu.webContents.send("sendBullsName", await getBullsName());
+            addAnimalMenu.webContents.send(
+                "sendBullsName",
+                await getBullsName(),
+            );
         });
 });
 
@@ -262,28 +297,28 @@ ipcMain.on("ipcMain:openAnimalDetail", (event, datas) => {
 
                 animalDetailWindow.webContents.send(
                     "sendDetailDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "heifer") {
                 const allDatas = await getHeiferDatas(datas);
 
                 animalDetailWindow.webContents.send(
                     "sendDetailDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "bull") {
                 const allDatas = await getBullDatas(datas);
 
                 animalDetailWindow.webContents.send(
                     "sendDetailDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "calf") {
                 const allDatas = await getCalfDatas(datas);
 
                 animalDetailWindow.webContents.send(
                     "sendDetailDatas",
-                    allDatas
+                    allDatas,
                 );
             }
         });
@@ -320,38 +355,40 @@ ipcMain.on("ipcMain:openUpdateAnimal", (event, datas) => {
 
                 updateAnimalWindow.webContents.send(
                     "sendUpdateDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "heifer") {
                 const allDatas = await getHeiferDatas(datas);
 
                 updateAnimalWindow.webContents.send(
                     "sendUpdateDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "bull") {
                 const allDatas = await getBullDatas(datas);
 
                 updateAnimalWindow.webContents.send(
                     "sendUpdateDatas",
-                    allDatas
+                    allDatas,
                 );
             } else if (datas.type === "calf") {
                 const allDatas = await getCalfDatas(datas);
 
                 updateAnimalWindow.webContents.send(
                     "sendUpdateDatas",
-                    allDatas
+                    allDatas,
                 );
             }
 
             updateAnimalWindow.webContents.send(
                 "sendMothersEarringNo",
-                await getMotherEarringNos()
+                await getMotherEarringNos(),
             );
 
-            updateAnimalWindow.webContents.send("sendBullsName", await getBullsName());
-
+            updateAnimalWindow.webContents.send(
+                "sendBullsName",
+                await getBullsName(),
+            );
         });
 });
 
@@ -385,11 +422,14 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
                 .from("Animals")
                 .select("EarringNo, Name, Id");
             if (animalsError) {
-                log.info("main.js 384 | Aşı bilgileri çekilirken bir hata oluştu: ", animalsError);
+                log.info(
+                    "main.js 384 | Aşı bilgileri çekilirken bir hata oluştu: ",
+                    animalsError,
+                );
             } else {
                 addVaccineWindow.webContents.send(
                     "sendAnimalsDatas",
-                    animalsDatas
+                    animalsDatas,
                 );
             }
         });
@@ -397,6 +437,30 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
 // END OF THE MENUS
 
 // FUNCTIONS
+// Log In
+ipcMain.on("logInData", async (event, existUserData) => {
+    const result = await signIn(existUserData.email, existUserData.password);
+    if (result) {
+        event.sender.send("sendLoginResult", true);
+    } else {
+        event.sender.send("sendLoginResult", false);
+    }
+});
+
+// Sign Up
+ipcMain.on("signUpData", async (event, newUserData) => {
+    const result = await signUp(
+        newUserData.email,
+        newUserData.password,
+        newUserData.displayName,
+    );
+    if (result) {
+        event.sender.send("sendSignUpResult", true);
+    } else {
+        event.sender.send("sendSignUpResult", false);
+    }
+});
+
 // Add Animal
 ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
     if (await addAnimal(datas)) {
@@ -430,8 +494,8 @@ ipcMain.on("ipcMain:receiveVaccineDatas", async (event, vaccineDatas) => {
     store.set("Vaccines", await getVaccinesDatas());
     const allDatas = {
         settingsDatas: store.get("settings"),
-        vaccineDatas: store.get("Vaccines")
-    }
+        vaccineDatas: store.get("Vaccines"),
+    };
     mainWindow.webContents.send("refresh", allDatas);
 });
 
@@ -441,10 +505,9 @@ ipcMain.on("ipcMain:removeVaccine", async (event, vaccineId) => {
     store.set("Vaccines", await getVaccinesDatas());
     const allDatas = {
         settingsDatas: store.get("settings"),
-        vaccineDatas: store.get("Vaccines")
-    }
+        vaccineDatas: store.get("Vaccines"),
+    };
     mainWindow.webContents.send("refresh", allDatas);
-
 });
 
 // If animal gave birth.
@@ -454,7 +517,10 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
         .select("*")
         .eq("Id", datas.animalId);
     if (cowError) {
-        log.info("main.js 450 | İnek doğurdu olarak işaretlenirken bir hata oluştu: ", cowError);
+        log.info(
+            "main.js 450 | İnek doğurdu olarak işaretlenirken bir hata oluştu: ",
+            cowError,
+        );
     }
 
     const allDatas = {};
@@ -468,16 +534,22 @@ ipcMain.on("ipcMain:gaveBirth", async (event, datas) => {
     };
 
     if (!updateAnimal(allDatas)) {
-        log.info("main.js 464 | Hayvan Güncelleme sırasında bir hata oluştu");   
+        log.info("main.js 464 | Hayvan Güncelleme sırasında bir hata oluştu");
     }
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 // If animal was inseminated.
 ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
-    const { data: heiferData, error: heiferError } = await supabase.from("Animals").select("*").eq("Id", datas.animalId);
+    const { data: heiferData, error: heiferError } = await supabase
+        .from("Animals")
+        .select("*")
+        .eq("Id", datas.animalId);
     if (heiferError) {
-        log.info("main.js 472 | Düve tohumlama sırasında bir hata oluştu: ", heiferError);
+        log.info(
+            "main.js 472 | Düve tohumlama sırasında bir hata oluştu: ",
+            heiferError,
+        );
     }
 
     const allDatas = {};
@@ -489,13 +561,12 @@ ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
         Name: allDatas.animalData.Name,
         InseminationDate: datas.date,
         BullName: datas.bullName,
-        CheckedDate: "1970-01-01"
+        CheckedDate: "1970-01-01",
     };
 
     if (updateAnimal(allDatas)) {
         await setAllLocalDatas();
-    }
-    else {
+    } else {
         log.info("main.js 491 | Bir hata oluştu:");
     }
     mainWindow.webContents.send("refresh", await refreshDatas());
@@ -503,11 +574,20 @@ ipcMain.on("ipcMain:applyInsemination", async (event, datas) => {
 
 // Save setting's datas to local.
 ipcMain.on("ipcMain:saveSettingsDatas", (event, settinsDatas) => {
-    store.set("settings.showInformationButton", settinsDatas.showInformationButton);
+    store.set(
+        "settings.showInformationButton",
+        settinsDatas.showInformationButton,
+    );
     store.set("settings.gestationDays", settinsDatas.gestationDays);
     store.set("settings.dryOffDays", settinsDatas.dryOffDays);
-    store.set("settings.calfReduceToOneLiterDays", settinsDatas.calfReduceToOneLiterDays);
-    store.set("settings.calfReduceToTwoLiterDays", settinsDatas.calfReduceToTwoLiterDays);
+    store.set(
+        "settings.calfReduceToOneLiterDays",
+        settinsDatas.calfReduceToOneLiterDays,
+    );
+    store.set(
+        "settings.calfReduceToTwoLiterDays",
+        settinsDatas.calfReduceToTwoLiterDays,
+    );
     store.set("settings.calfWeaningDays", settinsDatas.calfWeaningDays);
     store.set("settings.calfToAdultDays", settinsDatas.calfToAdultDays);
 });
@@ -542,7 +622,7 @@ ipcMain.handle("exportExcel", async (event, datas) => {
     // }
     // else if (pageName === "heifers") {
     //     datas = await getHeifersDatas();
-    //     fileName = `Düveler - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;    
+    //     fileName = `Düveler - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
     //     headerMap = {
     //         EarringNo: "Küpe No.",
     //         Name: "İsim",
@@ -556,7 +636,7 @@ ipcMain.handle("exportExcel", async (event, datas) => {
     //         EarringNo: "Küpe No.",
     //         Name: "İsim",
     //         BirthDate: "Doğum Tarihi",
-    //         Gender: "Cinsiyet"            
+    //         Gender: "Cinsiyet"
     //     }
     // }
     // else if (pageName === "bulls") {
@@ -570,17 +650,17 @@ ipcMain.handle("exportExcel", async (event, datas) => {
     //         MotherName: "Anne İsmi"
     //     }
     // }
-    
+
     let fileName = `${datas.fileName} - ${new Date().toLocaleDateString("tr-TR")}.xlsx`;
 
-    const {canceled, filePath } = await dialog.showSaveDialog({
+    const { canceled, filePath } = await dialog.showSaveDialog({
         title: "Excel Dosyasını Kaydet",
         defaultPath: `${app.getPath("desktop")}/${fileName}`,
         filters: { name: "Excel Files", extensions: ["xlsx"] },
     });
-    
+
     if (canceled || !filePath) {
-        return false
+        return false;
     }
 
     try {
@@ -592,10 +672,13 @@ ipcMain.handle("exportExcel", async (event, datas) => {
         worksheet.columns = headers.map((key) => ({
             header: key,
             key: key,
-            width: Math.max(
-                key.length,
-                ...datas.tableData.map((row) => (row[key] ? row[key].toString().length : 0))
-            ) + 2,
+            width:
+                Math.max(
+                    key.length,
+                    ...datas.tableData.map((row) =>
+                        row[key] ? row[key].toString().length : 0,
+                    ),
+                ) + 2,
         }));
 
         // Verileri ekle
@@ -666,7 +749,6 @@ ipcMain.handle("exportExcel", async (event, datas) => {
     //     worksheet.addRow(newRow);
     // });
 
-
     // worksheet.eachRow((row, rowNumber) => {
     //     row.eachCell((cell) => {
     //         cell.border = {
@@ -688,7 +770,7 @@ ipcMain.handle("exportExcel", async (event, datas) => {
     // });
 
     // Dosyayı kaydet
-    // await workbook.xlsx.writeFile(filePath); 
+    // await workbook.xlsx.writeFile(filePath);
 
     // return filePath
 });
@@ -702,7 +784,7 @@ app.on("window-all-closed", () => {
 // Functions of JS
 // Get datas of one cow.
 async function getCowDatas(datas) {
-    console.log(datas)
+    // console.log(datas);
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
@@ -796,7 +878,14 @@ async function getCalfDatas(datas) {
         .eq("EarringNo", datas.earringNo);
 
     if (animalError || vaccinesError) {
-        log.info("main.js 608 | Buzağı bilgileri çekilirken bir hata oluştu: ", animalError, "\n", calfError, "\n", vaccinesError);
+        log.info(
+            "main.js 608 | Buzağı bilgileri çekilirken bir hata oluştu: ",
+            animalError,
+            "\n",
+            calfError,
+            "\n",
+            vaccinesError,
+        );
     }
 
     const allDatas = {
@@ -815,8 +904,13 @@ async function getAnimalsDatas() {
         .select("*")
         .order("Type", { ascending: false });
     if (error) {
-        log.info("main.js 627 | Hayvan bilgileri çekilirken bir hata oluştu: ", error);
+        // log.info(
+        //     "main.js 627 | Hayvan bilgileri çekilirken bir hata oluştu: ",
+        //     error,
+        // );
+        console.log(error);
     }
+    // console.log(data);
     return data;
 }
 
@@ -827,17 +921,20 @@ async function getCowsDatas() {
         .select("*, Animals (Breed, Note)")
         .order("InseminationDate", { ascending: true });
     if (error) {
-        log.info("main.js 639 | İnek bilgileri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 639 | İnek bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
 
-    for (let cow of cowsData){
+    for (let cow of cowsData) {
         const { data: calfData, error: calfError } = await supabase
-        .from("Animals")
-        .select("BirthDate")
-        .eq("MotherEarringNo", cow.EarringNo)
-        .order("BirthDate", { ascending: false })
-        .limit(1)
-        .maybeSingle()
+            .from("Animals")
+            .select("BirthDate")
+            .eq("MotherEarringNo", cow.EarringNo)
+            .order("BirthDate", { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
         if (calfError) {
             console.log("Bir sorun oluştu.", calfError);
@@ -857,7 +954,10 @@ async function getHeifersDatas() {
         .select("*, Animals (Breed, Note)")
         .order("LastBirthDate", { ascending: false });
     if (error) {
-        log.info("main.js 651 | Düve bilgileri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 651 | Düve bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return data;
 }
@@ -866,13 +966,14 @@ async function getHeifersDatas() {
 async function getCalvesDatas() {
     const { data: calvesData, error: calvesError } = await supabase
         .from("Calves")
-        .select(
-            "*, Animals (MotherEarringNo, MotherName, Breed, Note)"
-        )
+        .select("*, Animals (MotherEarringNo, MotherName, Breed, Note)")
         .order("BirthDate", { ascending: false });
 
     if (calvesError) {
-        log.info("main.js 666 | Buzağı bilgileri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 666 | Buzağı bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return calvesData;
 }
@@ -885,18 +986,23 @@ async function getBullsDatas() {
         .eq("Type", "bull")
         .order("BirthDate", { ascending: true });
     if (error) {
-        log.info("main.js 679 | Dana bilgileri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 679 | Dana bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return data;
 }
 
 async function getVaccinesNames() {
-    const {data: allVaccineNames, error: vaccineError } = await supabase
-    .from("Vaccines")
-    .select("VaccineName", { ascending: true });
+    const { data: allVaccineNames, error: vaccineError } = await supabase
+        .from("Vaccines")
+        .select("VaccineName", { ascending: true });
 
-    const vaccineNames = [...new Set(allVaccineNames.map(v => v.VaccineName))];
-    
+    const vaccineNames = [
+        ...new Set(allVaccineNames.map((v) => v.VaccineName)),
+    ];
+
     return vaccineNames;
 }
 
@@ -907,7 +1013,10 @@ async function getVaccinesDatas() {
         .select("*, Animals (Id, EarringNo, Name)")
         .order("Id", { ascending: true });
     if (error) {
-        log.info("main.js 691 | Aşı bilgileri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 691 | Aşı bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return data;
 }
@@ -919,7 +1028,10 @@ async function getMotherEarringNos() {
         .select("EarringNo, Name")
         .in("Type", ["cow", "heifer"]);
     if (error) {
-        log.info("main.js 701 | İnek küpe numaraları çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 701 | İnek küpe numaraları çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return data;
 }
@@ -931,7 +1043,10 @@ async function getBullsName() {
         .select("Name")
         .eq("Type", "bull");
     if (error) {
-        log.info("main.js 891 | Dana isimleri çekilirken bir hata oluştu: ", error);
+        log.info(
+            "main.js 891 | Dana isimleri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
     return data;
 }
@@ -949,31 +1064,20 @@ async function refreshDatas() {
     const pageName = path.basename(mainWindow.webContents.getURL());
     const allDatas = {
         settingsDatas: store.get("settings"),
-    }
+    };
     if (pageName === "cows.html") {
         allDatas.animalDatas = store.get("Cows");
-    }
-    else if (pageName === "heifers.html") {
+    } else if (pageName === "heifers.html") {
         allDatas.animalDatas = store.get("Heifers");
-    }
-    else if (pageName === "calves.html") {
+    } else if (pageName === "calves.html") {
         allDatas.animalDatas = store.get("Calves");
-    }
-    else if (pageName === "bulls.html") {
+    } else if (pageName === "bulls.html") {
         allDatas.animalDatas = store.get("Bulls");
-    }
-    else if (pageName === "animals.html") {
+    } else if (pageName === "animals.html") {
         allDatas.animalDatas = store.get("Animals");
     }
 
     return allDatas;
-}
-
-function formatDateTR(value) {
-    if (!value) return value;
-    const date = new Date(value);
-    if (isNaN(date)) return value;
-    return new Intl.DateTimeFormat("tr-TR").format(date); 
 }
 
 /*

@@ -1,9 +1,25 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld("loading", {
+    isOnline: (status) => ipcRenderer.send('getStatus', status),
+
+    getDatas: () => ipcRenderer.invoke('sendLoadingDatas')
+
+    // getDatas: (callback) => {
+    //     ipcRenderer.on("sendLoadingDatas", (event, datas) => {
+    //         callback(datas);
+    //     });
+    // }
+});
+
 contextBridge.exposeInMainWorld("offline", {
-    openOfflinePage: () => {
-        ipcRenderer.send("ipcMain:openOfflinePage");
-    },
+    // isOnline: (status) => ipcRenderer.invoke('getStatus', status),
+
+    receiveNewDatas: (callback) => {
+        ipcRenderer.on("sendNewDatas", (event, newDatas) => {
+            callback(newDatas);
+        });
+    }
 });
 
 contextBridge.exposeInMainWorld("addAnimalAPI", {
@@ -12,7 +28,7 @@ contextBridge.exposeInMainWorld("addAnimalAPI", {
             callback(animalType);
         });
     },
-
+ 
     addAnimal: (datas) => {
         ipcRenderer.send("ipcMain:addAnimal", datas);
     },
@@ -162,5 +178,26 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     exportExcel: (pageName) => {
         ipcRenderer.invoke("exportExcel", pageName);
+    },
+
+    login: (existUserData) => {
+        console.log("login calisti");
+        ipcRenderer.send("logInData", existUserData);
+    },
+
+    receiveLoginResult: (callback) => {
+        ipcRenderer.on("sendLoginResult", (event, result) => {
+            callback(result);
+        });
+    },
+
+    signUp: (newUserData) => {
+        ipcRenderer.send("signUpData", newUserData);
+    },
+
+    receiveSignUpResult: (callback) => {
+        ipcRenderer.on("sendSignUpResult", (event, result) => {
+            callback(result);
+        });
     }
 });

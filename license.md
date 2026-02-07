@@ -1,37 +1,37 @@
-# Kullaným Lisansý ve Sözleþmesi
+# Kullanï¿½m Lisansï¿½ ve Sï¿½zleï¿½mesi
 
-Bu yazýlým (“Uygulama”), Muhammed Köle ve Fatih Arslanol tarafýndan geliþtirilmiþtir ve yalnýzca aþaðýdaki þartlar dahilinde kullanýlabilir.
+Bu yazï¿½lï¿½m (ï¿½Uygulamaï¿½), Muhammed Kï¿½le ve Fatih Arslanol tarafï¿½ndan geliï¿½tirilmiï¿½tir ve yalnï¿½zca aï¿½aï¿½ï¿½daki ï¿½artlar dahilinde kullanï¿½labilir.
 
-## 1. Kullaným Hakký
+## 1. Kullanï¿½m Hakkï¿½
 
-Kullanýcý, bu yazýlýmý yalnýzca kendi kiþisel amacý doðrultusunda ve ücretsiz olarak kullanabilir. Uygulama hiçbir þekilde satýlamaz, kiralanamaz, ticari olarak daðýtýlamaz. Bu yazýlým açýk kaynaklýdýr, isteyen kiþiler istediði þekilde kodlarý indirebilir, deðiþiklik yapabilir ve kendine özgü þekilde deðiþtirebilir ve kendi istekleri doðrultusunda kullanabilir fakat deðiþtirilen uygulamanýn halka açýk þekilde herhangi bir siteden veya uygulama yayýncýsýndan yayýnlanmasý kesinlikle yasaktýr.
+Kullanï¿½cï¿½, bu yazï¿½lï¿½mï¿½ yalnï¿½zca kendi kiï¿½isel amacï¿½ doï¿½rultusunda ve ï¿½cretsiz olarak kullanabilir. Uygulama hiï¿½bir ï¿½ekilde satï¿½lamaz, kiralanamaz, ticari olarak daï¿½ï¿½tï¿½lamaz. Bu yazï¿½lï¿½m aï¿½ï¿½k kaynaklï¿½dï¿½r, isteyen kiï¿½iler istediï¿½i ï¿½ekilde kodlarï¿½ indirebilir, deï¿½iï¿½iklik yapabilir ve kendine ï¿½zgï¿½ ï¿½ekilde deï¿½iï¿½tirebilir ve kendi istekleri doï¿½rultusunda kullanabilir fakat deï¿½iï¿½tirilen uygulamanï¿½n halka aï¿½ï¿½k ï¿½ekilde herhangi bir siteden veya uygulama yayï¿½ncï¿½sï¿½ndan yayï¿½nlanmasï¿½ kesinlikle yasaktï¿½r.
 
-## 2. Web Entegrasyonu Hakkýnda
+## 2. Web Entegrasyonu Hakkï¿½nda
 
-Uygulama þu anda yalnýzca masaüstü üzerinde çalýþmakta olup, gelecekte internet üzerinden çalýþan servislerle entegre olabilir. Bu deðiþiklikler, kullanýcýya uygun yollarla (uygulama içi bilgilendirme, güncelleme notlarý vb.) duyurulacaktýr.
+Uygulama ÅŸu anda yalnï¿½zca masaï¿½stï¿½ ï¿½zerinde ï¿½alï¿½ï¿½makta olup, gelecekte internet ï¿½zerinden ï¿½alï¿½ï¿½an servislerle entegre olabilir. Bu deï¿½iï¿½iklikler, kullanï¿½cï¿½ya uygun yollarla (uygulama iï¿½i bilgilendirme, gï¿½ncelleme notlarï¿½ vb.) duyurulacaktï¿½r.
 
-## 3. Kiþisel Verilerin Korunmasý
+## 3. Kiï¿½isel Verilerin Korunmasï¿½
 
-Uygulama kapsamýnda toplanan tüm veriler, yalnýzca uygulama içinde yerel olarak iþlenmekte ve saklanmaktadýr. Bu veriler; kullanýcýya, hayvanlara ve performans bilgilerine iliþkin olabilir. Veriler veritabaný bulut sunucusu haricinde hiçbir üçüncü kiþiyle paylaþýlmaz, daðýtýlmaz veya satýlmaz.
+Uygulama kapsamï¿½nda toplanan tï¿½m veriler, yalnï¿½zca uygulama iï¿½inde yerel olarak iï¿½lenmekte ve saklanmaktadï¿½r. Bu veriler; kullanï¿½cï¿½ya, hayvanlara ve performans bilgilerine iliï¿½kin olabilir. Veriler veritabanï¿½ bulut sunucusu haricinde hiï¿½bir ï¿½ï¿½ï¿½ncï¿½ kiï¿½iyle paylaï¿½ï¿½lmaz, daï¿½ï¿½tï¿½lmaz veya satï¿½lmaz.
 
-Ýleride yapýlacak web entegrasyonu sürecinde, kullanýcýdan **açýk rýza** alýnmadan hiçbir veri çevrimiçi ortama aktarýlmayacaktýr.
+ï¿½leride yapï¿½lacak web entegrasyonu sï¿½recinde, kullanï¿½cï¿½dan **aï¿½ï¿½k rï¿½za** alï¿½nmadan hiï¿½bir veri ï¿½evrimiï¿½i ortama aktarï¿½lmayacaktï¿½r.
 
-Geliþtirici, 6698 sayýlý Kiþisel Verilerin Korunmasý Kanunu (“KVKK”) uyarýnca, veri güvenliði ve gizliliðini saðlamak adýna gerekli tüm teknik ve idari tedbirleri almayý taahhüt eder.
+Geliï¿½tirici, 6698 sayï¿½lï¿½ Kiï¿½isel Verilerin Korunmasï¿½ Kanunu (ï¿½KVKKï¿½) uyarï¿½nca, veri gï¿½venliï¿½i ve gizliliï¿½ini saï¿½lamak adï¿½na gerekli tï¿½m teknik ve idari tedbirleri almayï¿½ taahhï¿½t eder.
 
 ## 4. Sorumluluk Reddi
 
-Uygulama, hayvancýlýk ile ilgili kayýt ve takip iþlemleri için yardýmcý bir araçtýr. Geliþtirici, uygulamanýn hatasýz çalýþacaðý, doðru ve eksiksiz bilgi saðlayacaðý veya kullanýcýya herhangi bir maddi ya da hukuki sorumluluk yüklemeyeceði konusunda garanti vermez.
+Uygulama, hayvancï¿½lï¿½k ile ilgili kayï¿½t ve takip iï¿½lemleri iï¿½in yardï¿½mcï¿½ bir araï¿½tï¿½r. Geliï¿½tirici, uygulamanï¿½n hatasï¿½z ï¿½alï¿½ï¿½acaï¿½ï¿½, doï¿½ru ve eksiksiz bilgi saï¿½layacaï¿½ï¿½ veya kullanï¿½cï¿½ya herhangi bir maddi ya da hukuki sorumluluk yï¿½klemeyeceï¿½i konusunda garanti vermez.
 
-Kullanýcý, uygulamayý kendi sorumluluðu altýnda kullanýr.
+Kullanï¿½cï¿½, uygulamayï¿½ kendi sorumluluï¿½u altï¿½nda kullanï¿½r.
 
-## 5. Güncellemeler
+## 5. Gï¿½ncellemeler
 
-Geliþtirici, herhangi bir zamanda uygulamayý güncelleme, deðiþtirme veya tamamen kullaným dýþý býrakma hakkýný saklý tutar.
+Geliï¿½tirici, herhangi bir zamanda uygulamayï¿½ gï¿½ncelleme, deï¿½iï¿½tirme veya tamamen kullanï¿½m dï¿½ï¿½ï¿½ bï¿½rakma hakkï¿½nï¿½ saklï¿½ tutar.
 
 ## 6. Uygulanacak Hukuk ve Yetkili Mahkeme
 
-Bu sözleþme Türkiye Cumhuriyeti yasalarýna tabi olup, taraflar arasýnda doðabilecek ihtilaflarda Ýstanbul (Anadolu) Mahkemeleri ve Ýcra Daireleri yetkilidir.
+Bu sï¿½zleï¿½me Tï¿½rkiye Cumhuriyeti yasalarï¿½na tabi olup, taraflar arasï¿½nda doï¿½abilecek ihtilaflarda ï¿½stanbul (Anadolu) Mahkemeleri ve ï¿½cra Daireleri yetkilidir.
 
 ---
 
-© 2025 Cow Tracker – Tüm haklarý saklýdýr.
+ï¿½ 2025 Cow Tracker ï¿½ Tï¿½m haklarï¿½ saklï¿½dï¿½r.

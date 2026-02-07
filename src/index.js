@@ -5,17 +5,19 @@ const loadingTemplate = `
     </div>
 `;
 
-window.addEventListener("DOMContentLoaded", () => {
-    if (navigator.onLine) {
-        showLoading();
-        window.animalsAPI.receiveDatas((datas) => {
-            document.getElementById("appVersionTag").textContent += datas.appVersion;
-            showDatas(datas.animalsDatas);
-            fillDataBoxes(datas.updatedDatas);
-        });
-    } else {
-        window.offline.openOfflinePage();
-    }
+window.addEventListener("DOMContentLoaded", async () => {
+    const datas = await window.loading.getDatas();
+
+    document.getElementById("appVersionTag").textContent = "App Version: " + datas.appVersion;
+    showDatas(datas.animalsDatas);
+    fillDataBoxes(datas.updatedDatas);
+});
+
+// If the device is connected the internet, receive last datas.
+window.offline.receiveNewDatas((newDatas) => {
+    document.getElementById("appVersionTag").textContent = "App Version: " + newDatas.appVersion;
+    showDatas(newDatas.animalsDatas);
+    fillDataBoxes(newDatas.updatedDatas);
 });
 
 window.electronAPI.updateAvailable((version) => {
@@ -37,9 +39,7 @@ const heiferNumber = document.getElementById("heiferNumber");
 const bullNumber = document.getElementById("bullNumber");
 const infoContainer = document.getElementById("infoContainer");
 const closestCowsContainer = document.getElementById("closestCowsContainer");
-const closestHeifersContainer = document.getElementById(
-    "closestHeifersContainer"
-);
+const closestHeifersContainer = document.getElementById("closestHeifersContainer");
 const settings = document.getElementById("settings");
 
 buttons.addEventListener("click", function (e) {

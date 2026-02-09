@@ -209,6 +209,11 @@ ipcMain.on("ipcMain:openPage", (event, pageName) => {
                 "sendSettingsDatas",
                 store.get("settings"),
             );
+        } else if (pageName === "deletedAnimals") {
+            allDatas = {};
+            allDatas.animalDatas = store.get("deletedAnimals");
+            allDatas.settingsDatas = store.get("settings");
+            mainWindow.webContents.send("sendDatas", allDatas);
         }
     });
 });
@@ -994,6 +999,20 @@ async function getBullsDatas() {
     return data;
 }
 
+async function getDeletedAnimalsDatas() {
+    const { data, error} = await supabase
+        .from("DeletedAnimals")
+        .select("*")
+        .order("DeathDate", { ascending: true })
+
+    if (error) {
+        log.info("main.js getDeletedAnimals function has an error!", error);
+    }
+    console.log("data")
+    console.log(data)
+    return data;
+}
+
 async function getVaccinesNames() {
     const { data: allVaccineNames, error: vaccineError } = await supabase
         .from("Vaccines")
@@ -1057,6 +1076,7 @@ async function setAllLocalDatas() {
     store.set("Heifers", await getHeifersDatas());
     store.set("Calves", await getCalvesDatas());
     store.set("Bulls", await getBullsDatas());
+    store.set("deletedAnimals", await getDeletedAnimalsDatas());
 }
 
 async function refreshDatas() {

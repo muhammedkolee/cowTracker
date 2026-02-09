@@ -49,4 +49,8 @@ if (!store.has('lastUpdatedAt')) {
     store.set('lastUpdatedAt', new Date().toISOString());
 }
 
+if (!store.has('deletedAnimals')) {
+    store.set('deletedAnimals', []);
+}
+
 module.exports = store;

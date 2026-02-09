@@ -20,6 +20,8 @@ window.offline.receiveNewDatas((newDatas) => {
     fillDataBoxes(newDatas.updatedDatas);
 });
 
+
+
 window.electronAPI.updateAvailable((version) => {
     const result = window.confirm(`Yeni güncelleme var!\nVersiyon: ${version}\nŞimdi güncellensin mi?`);
     
@@ -41,15 +43,20 @@ const infoContainer = document.getElementById("infoContainer");
 const closestCowsContainer = document.getElementById("closestCowsContainer");
 const closestHeifersContainer = document.getElementById("closestHeifersContainer");
 const settings = document.getElementById("settings");
+const deletedAnimals = document.getElementById("deletedAnimalsBtn");
 
-buttons.addEventListener("click", function (e) {
+buttons.addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
         window.electronAPI.openPage(e.target.id);
     }
 });
 
-settings.addEventListener("click", function () {
+settings.addEventListener("click", ()  => {
     window.electronAPI.openPage("settings");
+});
+
+deletedAnimals.addEventListener("click", () => {
+    window.electronAPI.openPage("deletedAnimals")
 });
 
 document.addEventListener("keydown", (event) => {

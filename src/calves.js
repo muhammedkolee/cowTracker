@@ -53,16 +53,16 @@ const layout = `
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-800 text-white">
                         <tr class="sticky top-0 z-10 bg-gray-800 text-white">
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Id</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Küpe No.</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Adı</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Cinsi</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Cinsiyeti</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Doğum Tarihi</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Kaç Günlük</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">1 LT Düşürme Tar.</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Sütten Kesme Tar.</th>
-                            <th class="px-2 py-3 text-center font-semibold text-sm">Sütten Kesmeye Kalan Gün</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm">Sayı</th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('EarringNo')">Küpe No. <span id="sort-icon-EarringNo">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Name')">Adı <span id="sort-icon-Name">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Breed')">Cinsi <span id="sort-icon-Breed">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Gender')">Cinsiyeti <span id="sort-icon-Gender">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">Doğum Tarihi <span id="sort-icon-BirthDate">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">Kaç Günlük <span id="sort-icon-BirthDate">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">1 LT Düşürme Tar. <span id="sort-icon-BirthDate">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">Sütten Kesme Tar. <span id="sort-icon-BirthDate">↕</span></th>
+                            <th class="px-2 py-3 text-center font-semibold text-sm cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">Sütten Kesmeye Kalan Gün <span id="sort-icon-BirthDate">↕</span></th>
                             <th class="px-2 py-3 text-center font-semibold text-sm">Anne Küpe No.</th>
                             <th class="px-2 py-3 text-center font-semibold text-sm">Anne Adı</th>
                             <th class="px-2 py-3 text-center font-semibold text-sm">Notlar</th>
@@ -104,19 +104,25 @@ const layout = `
         `;
 
 const calvesBody = document.getElementById("calvesBody");
+let currentAnimalsData = [];
+let allDatas = [];
+let sortConfig = { key: "Type", direction: "desc"}
 
-window.addEventListener("DOMContentLoaded", () => {
-    calvesBody.innerHTML = loadingTemplate;
-    if (window.animalsAPI) {
-        window.animalsAPI.receiveDatas((allDatas) => {
-            showDatas(allDatas);
-        });
-    }
+// window.addEventListener("DOMContentLoaded", () => {
+//     calvesBody.innerHTML = loadingTemplate;
+//     if (window.animalsAPI) {
+//     }
+// });
+
+window.animalsAPI.receiveDatas((receivedDatas) => {
+    allDatas = receivedDatas;
+    showDatas(allDatas);
 });
 
 // After update database, refresh the table.
-window.electronAPI.refresh((datas) => {
-    showDatas(datas);
+window.electronAPI.refresh((receivedDatas) => {
+    allDatas = receivedDatas;
+    showDatas(allDatas);
 });
 
 window.electronAPI.updateAvailable((event, version) => {
@@ -139,8 +145,18 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-
 function showDatas(allDatas) {
+    currentAnimalsData = allDatas.animalDatas;
+    calvesBody.innerHTML = layout; // Ana iskeleti kur
+    
+    // Başlangıç ayarlarını yap (buton event listener'lar vs. senin mevcut kodun)
+    setupEventListeners(allDatas);
+    
+    // Verileri tabloya bas
+    renderTableOnly(currentAnimalsData);    
+}
+
+function setupEventListeners(allDatas) {
     calvesBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
@@ -189,13 +205,13 @@ function showDatas(allDatas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
-        let calfId = tableRow.querySelector("#calfId");
+        // let calfId = tableRow.querySelector("#calfId");
 
         if (target.id === "infoIco") {
-            let datas = { animalId: calfId.textContent, type: "cow", earringNo: earringNo.textContent };
+            let datas = { animalId: tableRow.dataset.calfId, type: "cow", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: calfId.textContent, type: "calf", earringNo: earringNo.textContent };
+            datas = { animalId: tableRow.dataset.calfId, type: "calf", earringNo: earringNo.textContent };
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
             const sure = window.confirm(
@@ -205,7 +221,7 @@ function showDatas(allDatas) {
             );
             if (sure) {
                 const datas = {
-                    animalId: calfId.textContent,
+                    animalId: tableRow.dataset.calfId,
                     Type: "calf",
                     pageName: "calves",
                 };
@@ -213,12 +229,16 @@ function showDatas(allDatas) {
             }
         }
     });
+}
+
+function renderTableOnly(currentAnimalsData) {
+    calvesTableBody.innerHTML = "";
 
     let count = 1;
-    allDatas.animalDatas.forEach((calf) => {
+    currentAnimalsData.forEach((calf) => {
         let tableRow = document.createElement("tr");
-        let calfId = document.createElement("td");
-        // let number = document.createElement("td");
+        tableRow.dataset.calfId = calf.Id;
+        let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
         let breed = document.createElement("td");
@@ -256,8 +276,8 @@ function showDatas(allDatas) {
 
         // Tailwind classes
         // tableRow.className = "hover:bg-gray-50 transition-colors duration-150";
-        calfId.className = cellClasses;
-        // number.className = cellClasses;
+        // calfId.className = cellClasses;
+        number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
         breed.className = cellClasses;
@@ -311,8 +331,8 @@ function showDatas(allDatas) {
         // shutButton.appendChild(shutIco);
 
         calvesTableBody.appendChild(tableRow);
-        tableRow.appendChild(calfId);
-        // tableRow.appendChild(number);
+        // tableRow.appendChild(calfId);
+        tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
         tableRow.appendChild(breed);
@@ -328,7 +348,7 @@ function showDatas(allDatas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
-        calfId.id = "calfId";
+        // calfId.id = "calfId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -339,8 +359,8 @@ function showDatas(allDatas) {
         updateButton.id = "updateIco";
         // shutButton.id = "shutIco";
 
-        calfId.textContent = calf.Id;
-        // number.textContent = count.toString() + "-)";
+        // calfId.textContent = calf.Id;
+        number.textContent = count.toString() + "-)";
         earringNo.textContent = calf.EarringNo;
         name.textContent = calf.Name;
         breed.textContent = calf.Animals.Breed;
@@ -371,11 +391,11 @@ function showDatas(allDatas) {
         // Gender-based background color
         if (calf.Gender) {
             tableRow.className =
-                "bg-red-200 hover:bg-red-300 transition-colors duration-150";
+                "bg-pink-300 hover:bg-pink-400 transition-colors duration-150";
             gender.textContent = "Dişi";
         } else {
             tableRow.className =
-                "bg-blue-200 hover:bg-blue-300 transition-colors duration-150";
+                "bg-blue-300 hover:bg-blue-400 transition-colors duration-150";
             gender.textContent = "Erkek";
         }
 
@@ -439,3 +459,73 @@ function getCalvesTableData() {
         return obj;
     });
 }
+
+function handleSort(key) {
+    // 1. Sıralama yönünü belirle
+    let direction = (sortConfig.key === key && sortConfig.direction === 'asc') ? 'desc' : 'asc';
+    sortConfig = { key, direction };
+
+    // 2. İkonları güncelle
+    updateSortIcons(key, direction);
+
+    currentAnimalsData.sort((a, b) => {
+        // İç içe alanlara erişim
+        let valA, valB;
+        
+        if (key === 'Breed') {
+            valA = a.Animals?.Breed;
+            valB = b.Animals?.Breed;
+        } else if (key === 'Name') {
+            valA = a.Name;
+            valB = b.Name;
+        } else {
+            valA = a[key];
+            valB = b[key];
+        }
+
+        // Boş değerleri her zaman sonda tutmak için
+        // if (valA === null || valA === undefined || valA === "") return 1;
+        // if (valB === null || valB === undefined || valB === "") return -1;
+
+        // --- A. TARİH SIRALAMASI ---
+        const dateKeys = ['BirthDate'];
+        if (dateKeys.includes(key)) {
+            let dateA = new Date(valA);
+            let dateB = new Date(valB);
+            return direction === 'asc' ? dateA - dateB : dateB - dateA;
+        }
+
+        // --- C. METİNSEL SIRALAMA (Türkçe Duyarlı) ---
+        let compareResult = String(valA).localeCompare(String(valB), 'tr', { 
+            sensitivity: 'accent', 
+            numeric: true
+        });
+        
+        return direction === 'asc' ? compareResult : -compareResult;
+    });
+
+    renderTableOnly(currentAnimalsData);
+}
+
+// handleSort('EarringNo')">
+// handleSort('Name')">
+// handleSort('Breed')">
+// handleSort('Gender')">
+// handleSort('BirthDate')">
+// handleSort('BirthDate')">
+// handleSort('BirthDate')">
+// handleSort('BirthDate')">
+// handleSort('BirthDate')">
+
+// Görsel geri bildirim için yardımcı fonksiyon
+function updateSortIcons(activeKey, direction) {
+    // Tüm ikonları sıfırla
+    document.querySelectorAll('[id^="sort-icon-"]').forEach(span => span.innerText = '↕');
+    // Aktif olanı güncelle
+    const activeIcon = document.getElementById(`sort-icon-${activeKey}`);
+    if (activeIcon) {
+        activeIcon.innerText = direction === 'asc' ? '↑' : '↓';
+    }
+}
+
+window.handleSort = handleSort;

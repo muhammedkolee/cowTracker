@@ -187,7 +187,7 @@ function showDatas(allDatas) {
     let count = 1;
     Object.values(animalVaccineMap).forEach((animal) => {
         let tableRow = document.createElement("tr");
-        tableRow.className = "hover:bg-blue-200 transition-colors duration-150 font-bold bg-yellow-100";
+        tableRow.className = "hover:bg-blue-300 transition-colors duration-150 font-bold bg-yellow-200";
 
         // Sayı
         let number = document.createElement("td");

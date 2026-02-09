@@ -51,12 +51,12 @@ const layout = `
                         <table class="min-w-full bg-white">
                             <thead class="sticky top-0 z-10 bg-gray-800 text-white">
                                 <tr class="bg-gray-800">
-                                    <th class="px-4 py-3 text-center font-semibold">Id</th>
-                                    <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
-                                    <th class="px-4 py-3 text-center font-semibold">İnek Adı</th>
-                                    <th class="px-4 py-3 text-center font-semibold">İnek Cinsi</th>
-                                    <th class="px-4 py-3 text-center font-semibold">Son Doğurduğu Tarih</th>
-                                    <th class="px-4 py-3 text-center font-semibold">Boş Gün *</th>
+                                    <th class="px-4 py-3 text-center font-semibold">Sayı</th>
+                                    <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('EarringNo')">Küpe Numarası <span id="sort-icon-EarringNo">↕</span></th>
+                                    <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Name')">İnek Adı <span id="sort-icon-Name">↕</span></th>
+                                    <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Breed')">İnek Cinsi <span id="sort-icon-Breed">↕</span></th>
+                                    <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('LastBirthDate')">Son Doğurduğu Tarih <span id="sort-icon-LastBirthDate">↕</span></th>
+                                    <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('LastBirthDate')">Boş Gün <span id="sort-icon-LastBirthDate">↕</span></th>
                                     <th class="px-4 py-3 text-center font-semibold">Notlar</th>
                                     <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
                                 </tr>
@@ -114,13 +114,17 @@ const layout = `
         `;
 
 const heifersBody = document.getElementById("heifersBody");
+let currentAnimalsData = [];
+let allDatas = [];
+let sortConfig = { key: "Type", direction: "desc"}
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     heifersBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((allDatas) => {
-        showDatas(allDatas);
-    });
+});
+
+window.animalsAPI.receiveDatas((allDatas) => {
+    showDatas(allDatas);
 });
 
 // After update database, refresh the table.
@@ -149,6 +153,17 @@ document.addEventListener("keydown", (event) => {
 });
 
 function showDatas(allDatas) {
+    currentAnimalsData = allDatas.animalDatas;
+    heifersBody.innerHTML = layout; // Ana iskeleti kur
+    
+    // Başlangıç ayarlarını yap (buton event listener'lar vs. senin mevcut kodun)
+    setupEventListeners(allDatas);
+    
+    // Verileri tabloya bas
+    renderTableOnly(currentAnimalsData);    
+}
+
+function setupEventListeners(allDatas) {
     heifersBody.innerHTML = layout;
 
     const menuButton = document.getElementById("btn-menu");
@@ -199,10 +214,10 @@ function showDatas(allDatas) {
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
-            let datas = { animalId: heiferId.textContent, type: "heifer", earringNo: earringNo.textContent };
+            let datas = { animalId: tableRow.dataset.heiferId, type: "heifer", earringNo: earringNo.textContent };
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
-            datas = { animalId: heiferId.textContent, type: "heifer", earringNo: earringNo.textContent
+            datas = { animalId: tableRow.dataset.heiferId, type: "heifer", earringNo: earringNo.textContent
                 
              };
             window.electronAPI.openUpdateAnimal(datas);
@@ -214,7 +229,7 @@ function showDatas(allDatas) {
             );
             if (sure) {
                 const datas = {
-                    animalId: heiferId.textContent,
+                    animalId: tableRow.dataset.heiferId,
                     Type: "heifer",
                     pageName: "heifers",
                 };
@@ -227,7 +242,7 @@ function showDatas(allDatas) {
             const selectedDate = await openDateModal();
 
             window.electronAPI.applyInsemination({
-                animalId: heiferId.textContent,
+                animalId: tableRow.dataset.heiferId,
                 date: selectedDate,
                 bullName: document.getElementById("bullName").textContent
             });
@@ -235,12 +250,16 @@ function showDatas(allDatas) {
             window.confirm("Düve başarıyla tohumlandı olarak kaydedildi.");
         }
     });
+}
+
+function renderTableOnly(currentAnimalsData) {
+    heiferTableBody.innerHTML = "";
 
     let count = 1;
-    allDatas.animalDatas.forEach((heifer) => {
+    currentAnimalsData.forEach((heifer) => {
         let tableRow = document.createElement("tr");
-        let heiferId = document.createElement("td");
-        // let number = document.createElement("td");
+        tableRow.dataset.heiferId = currentAnimalsData.animalId;
+        let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
         let breed = document.createElement("td");
@@ -250,8 +269,8 @@ function showDatas(allDatas) {
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
-        heiferId.className = cellClasses;
-        // number.className = cellClasses;
+        // heiferId.className = cellClasses;
+        number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
         breed.className = cellClasses;
@@ -312,8 +331,8 @@ function showDatas(allDatas) {
         inseminationApplyButton.title = "Tohumlandı Olarak İşaretle";
 
         heiferTableBody.appendChild(tableRow);
-        tableRow.appendChild(heiferId);
-        // tableRow.appendChild(number);
+        // tableRow.appendChild(heiferId);
+        tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
         tableRow.appendChild(breed);
@@ -324,7 +343,7 @@ function showDatas(allDatas) {
         nav.appendChild(navDiv);
 
         earringNo.id = "earringNo";
-        heiferId.id = "heiferId";
+        // heiferId.id = "heiferId";
 
         // deleteIco.id = "deleteIco";
         // infoIco.id = "infoIco";
@@ -347,8 +366,8 @@ function showDatas(allDatas) {
 
         // console.log(heifer.lastBirthDate)
 
-        heiferId.textContent = heifer.Id;
-        // number.textContent = count.toString() + "-)";
+        // heiferId.textContent = heifer.Id;
+        number.textContent = count.toString() + "-)";
         earringNo.textContent = heifer.EarringNo;
         name.textContent = heifer.Name;
         breed.textContent = heifer.Animals.Breed;
@@ -359,30 +378,22 @@ function showDatas(allDatas) {
         notes.textContent = heifer.Animals.Note;
 
         // Row color based on empty days
-        tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
+        tableRow.className = "bg-blue-300 hover:bg-blue-400 transition-colors";
         if (
             calculateDate(heifer.LastBirthDate) >= 40 &&
             calculateDate(heifer.LastBirthDate) < 60
         ) {
             tableRow.className =
-                "bg-yellow-200 hover:bg-yellow-300 transition-colors";
+                "bg-yellow-300 hover:bg-yellow-400 transition-colors";
         } else if (calculateDate(heifer.LastBirthDate) >= 60) {
             tableRow.className =
-                "bg-red-200 hover:bg-red-300 transition-colors";
+                "bg-red-300 hover:bg-red-400 transition-colors";
         }
         count += 1;
     });
 
-    titleHeifer.textContent =
-        "Listede toplam " + (count - 1).toString() + " adet düve var.";
+    titleHeifer.textContent = "Listede toplam " + (count - 1).toString() + " adet düve var.";
 }
-
-// Convert from Turkish Date (01.01.1970) to JavaScript Date (1979-01-01).
-// function parseTurkishDate(wDate) {
-//     let [day, month, year] = wDate.split(".");
-//     let date = new Date(`${year}-${month}-${day}`);
-//     return date;
-// }
 
 // Get today's date as JavaScript date.
 function getTodayDate() {
@@ -468,3 +479,63 @@ function getHeifersTableData() {
         return obj;
     });
 }
+
+function handleSort(key) {
+    // 1. Sıralama yönünü belirle
+    let direction = (sortConfig.key === key && sortConfig.direction === 'asc') ? 'desc' : 'asc';
+    sortConfig = { key, direction };
+
+    // 2. İkonları güncelle
+    updateSortIcons(key, direction);
+
+    currentAnimalsData.sort((a, b) => {
+        // İç içe alanlara erişim
+        let valA, valB;
+        
+        if (key === 'Breed') {
+            valA = a.Animals?.Breed;
+            valB = b.Animals?.Breed;
+        } else if (key === 'Name') {
+            valA = a.Name;
+            valB = b.Name;
+        } else {
+            valA = a[key];
+            valB = b[key];
+        }
+
+        // Boş değerleri her zaman sonda tutmak için
+        // if (valA === null || valA === undefined || valA === "") return 1;
+        // if (valB === null || valB === undefined || valB === "") return -1;
+
+        // --- A. TARİH SIRALAMASI ---
+        const dateKeys = ['LastBirthDate'];
+        if (dateKeys.includes(key)) {
+            let dateA = new Date(valA);
+            let dateB = new Date(valB);
+            return direction === 'asc' ? dateA - dateB : dateB - dateA;
+        }
+
+        // --- C. METİNSEL SIRALAMA (Türkçe Duyarlı) ---
+        let compareResult = String(valA).localeCompare(String(valB), 'tr', { 
+            sensitivity: 'accent', 
+            numeric: true
+        });
+        
+        return direction === 'asc' ? compareResult : -compareResult;
+    });
+
+    renderTableOnly(currentAnimalsData);
+}
+
+// Görsel geri bildirim için yardımcı fonksiyon
+function updateSortIcons(activeKey, direction) {
+    // Tüm ikonları sıfırla
+    document.querySelectorAll('[id^="sort-icon-"]').forEach(span => span.innerText = '↕');
+    // Aktif olanı güncelle
+    const activeIcon = document.getElementById(`sort-icon-${activeKey}`);
+    if (activeIcon) {
+        activeIcon.innerText = direction === 'asc' ? '↑' : '↓';
+    }
+}
+
+window.handleSort = handleSort;

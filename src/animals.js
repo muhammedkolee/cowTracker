@@ -51,14 +51,14 @@ const layout = `
                 <table class="min-w-full bg-white rounded*lg">
                     <thead class="bg-gray-800 text-white">
                         <tr class="sticky top-0 z-10 bg-gray-800">
-                            <th class="px-4 py-3 text-center font-semibold">Id</th>
-                            <th class="px-4 py-3 text-center font-semibold">Küpe Numarası</th>
-                            <th class="px-4 py-3 text-center font-semibold">Hayvan Adı</th>
-                            <th class="px-4 py-3 text-center font-semibold">Doğum Tarihi</th>
-                            <th class="px-4 py-3 text-center font-semibold">Cinsi</th>
-                            <th class="px-4 py-3 text-center font-semibold">Türü</th>
-                            <th class="px-4 py-3 text-center font-semibold">Anne Küpe No</th>
-                            <th class="px-4 py-3 text-center font-semibold">Anne Adı</th>
+                            <th class="px-4 py-3 text-center font-semibold">Sayı</th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('EarringNo')">Küpe Numarası <span id="sort-icon-EarringNo">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Name')">Hayvan Adı <span id="sort-icon-Name">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('BirthDate')">Doğum Tarihi <span id="sort-icon-BirthDate">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Breed')">Cinsi <span id="sort-icon-Breed">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('Type')">Türü <span id="sort-icon-Type">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('MotherEarringNo')">Anne Küpe No <span id="sort-icon-MotherEarringNo">↕</span></th>
+                            <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:bg-gray-700 transition-colors" onclick="handleSort('MotherName')">Anne Adı <span id="sort-icon-MotherName">↕</span></th>
                             <th class="px-4 py-3 text-center font-semibold">Not</th>
                             <th class="px-4 py-3 text-center font-semibold">İşlemler</th>
                         </tr>
@@ -113,15 +113,17 @@ const layout = `
     </div>
 `;
 
+let animalsData = [];
+let sortConfig = { key: "Type", direction: "desc"}
 const animalsBody = document.getElementById("animalsBody");
 
 // After DOM Content Loaded, receive datas.
 window.addEventListener("DOMContentLoaded", () => {
     animalsBody.innerHTML = loadingTemplate;
-    window.animalsAPI.receiveDatas((allDatas) => {
-        console.log(allDatas);
-        showDatas(allDatas);
-    });
+});
+
+window.animalsAPI.receiveDatas((allDatas) => {
+    showDatas(allDatas);
 });
 
 // After update database, refresh the table.
@@ -150,9 +152,17 @@ document.addEventListener("keydown", (event) => {
 });
 
 function showDatas(allDatas) {
-    animalsBody.innerHTML = layout;
+    currentAnimalsData = allDatas.animalDatas; // Veriyi globale al
+    animalsBody.innerHTML = layout; // Ana iskeleti kur
     
-    
+    // Başlangıç ayarlarını yap (buton event listener'lar vs. senin mevcut kodun)
+    setupEventListeners(allDatas); 
+
+    // Verileri tabloya bas
+    renderTableOnly(currentAnimalsData);
+}
+
+function setupEventListeners(allDatas) {
     const menuButton = document.getElementById("btn-menu");
     const titleAnimal = document.getElementById("titleAnimal");
     const animalTableBody = document.getElementById("animalTableBody");
@@ -197,32 +207,32 @@ function showDatas(allDatas) {
         const target = event.target;
         let tableRow = target.closest("tr");
         let earringNo = tableRow.querySelector("#earringNo");
-        let animalId = tableRow.querySelector("#animalId");
+        let animalId = tableRow.dataset.animalId;
         let calfName = tableRow.querySelector("#calfName");
         let type = tableRow.querySelector("#type");
 
         if (target.id === "infoIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
-                var datas = { animalId: animalId.textContent, type: "cow", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "cow", earringNo: earringNo.textContent };
             } else if (type.textContent == "Düve") {
-                var datas = { animalId: animalId.textContent, type: "heifer", earringNo: earringNo.textContent};
+                var datas = { animalId: animalId, type: "heifer", earringNo: earringNo.textContent};
             } else if (type.textContent == "Buzağı") {
-                var datas = { animalId: animalId.textContent, type: "calf", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "calf", earringNo: earringNo.textContent };
             } else if (type.textContent == "Dana") {
-                var datas = { animalId: animalId.textContent, type: "bull", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "bull", earringNo: earringNo.textContent };
             }
             window.electronAPI.openAnimalDetail(datas);
         } else if (target.id === "updateIco") {
             // infoButtonClick(earringNo.textContent);
             if (type.textContent == "İnek") {
-                var datas = { animalId: animalId.textContent, type: "cow", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "cow", earringNo: earringNo.textContent };
             } else if (type.textContent == "Düve") {
-                var datas = { animalId: animalId.textContent, type: "heifer", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "heifer", earringNo: earringNo.textContent };
             } else if (type.textContent == "Buzağı") {
-                var datas = { animalId: animalId.textContent, type: "calf", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "calf", earringNo: earringNo.textContent };
             } else if (type.textContent == "Dana") {
-                var datas = { animalId: animalId.textContent, type: "bull", earringNo: earringNo.textContent };
+                var datas = { animalId: animalId, type: "bull", earringNo: earringNo.textContent };
             }
             window.electronAPI.openUpdateAnimal(datas);
         } else if (target.id === "deleteIco") {
@@ -234,7 +244,7 @@ function showDatas(allDatas) {
             if (sure) {
                 // Remove cow from the databases.
                 const datas = {
-                    animalId: animalId.textContent,
+                    animalId: animalId,
                     pageName: "animals",
                 };
                 if (type.textContent === "İnek") {
@@ -250,12 +260,16 @@ function showDatas(allDatas) {
             }
         }
     });
+}
+
+function renderTableOnly(dataList) {
+    animalTableBody.innerHTML = "";
 
     let count = 1;
-    allDatas.animalDatas.forEach((animal) => {
-        // Create table row for each animal.
+    dataList.forEach((animal) => {
         let tableRow = document.createElement("tr");
-        let animalId = document.createElement("td");
+        tableRow.dataset.animalId = animal.Id;
+        let animalNumber = document.createElement("td");
         // let number = document.createElement("td");
         let earringNo = document.createElement("td");
         let name = document.createElement("td");
@@ -268,7 +282,7 @@ function showDatas(allDatas) {
 
         // Base styling for all cells
         const cellClasses = "px-4 py-3 text-center font-bold whitespace-nowrap";
-        animalId.className = cellClasses;
+        animalNumber.className = cellClasses;
         // number.className = cellClasses;
         earringNo.className = cellClasses;
         name.className = cellClasses;
@@ -326,7 +340,7 @@ function showDatas(allDatas) {
         // updateButton.appendChild(updateIco);
 
         animalTableBody.appendChild(tableRow);
-        tableRow.appendChild(animalId);
+        tableRow.appendChild(animalNumber);
         // tableRow.appendChild(number);
         tableRow.appendChild(earringNo);
         tableRow.appendChild(name);
@@ -339,7 +353,7 @@ function showDatas(allDatas) {
         tableRow.appendChild(nav);
 
         earringNo.id = "earringNo";
-        animalId.id = "animalId";
+        animalNumber.id = "animalNumber";
         breed.id = "breed";
         type.id = "type";
         name.id = "calfName";
@@ -352,7 +366,7 @@ function showDatas(allDatas) {
         infoButton.id = "infoIco";
         updateButton.id = "updateIco";
 
-        animalId.textContent = animal.Id;
+        animalNumber.textContent = count.toString() + "-)";
         // number.textContent = count.toString() + "-)";
         earringNo.textContent = animal.EarringNo;
         name.textContent = animal.Name;
@@ -394,34 +408,52 @@ function showDatas(allDatas) {
             tableRow.className =
                 "bg-yellow-200 hover:bg-yellow-300 transition-colors";
         }
-        count += 1;
+        count++;
     });
-    titleAnimal.textContent =
-        "Toplam " + (count - 1).toString() + " hayvan var!";
+    titleAnimal.textContent = "Toplam " + (count - 1).toString() + " hayvan var!";
+    updateSortIcons();
 }
 
-function getAnimalsTableData() {
-    const tableHead = document.querySelector("thead tr");
-    const tableBody = document.querySelector("#animalTableBody");
+function handleSort(key) {
+    let direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    sortConfig = { key, direction };
 
-    // TH'leri al, ilk ve sonuncuyu çıkar (Id + İşlemler)
-    const headers = Array.from(tableHead.querySelectorAll("th"))
-        .slice(1, -1)
-        .map(th => th.innerText.trim());
+    currentAnimalsData.sort((a, b) => {
+        let valA = a[key] ?? "";
+        let valB = b[key] ?? "";
 
-    // TR'leri dolaş
-    const rows = Array.from(tableBody.querySelectorAll("tr"));
+        // 1. Sayısal ve Tarihsel Sıralama (Id ve BirthDate)
+        if (key === 'BirthDate') {
+            let numA = (key === 'BirthDate') ? new Date(valA).getTime() : parseFloat(valA);
+            let numB = (key === 'BirthDate') ? new Date(valB).getTime() : parseFloat(valB);
+            
+            if (numA < numB) return direction === 'asc' ? -1 : 1;
+            if (numA > numB) return direction === 'asc' ? 1 : -1;
+            return 0;
+        } 
 
-    return rows.map((row) => {
-        const cells = Array.from(row.querySelectorAll("td"))
-            .slice(1, -1) // Id ve İşlemler kolonunu çıkar
-            .map(cell => cell.innerText.trim());
-
-        const obj = {};
-        headers.forEach((h, i) => {
-            obj[h] = cells[i] || "";
-        });
-
-        return obj;
+        // 2. Metinsel Sıralama (Name, Type, Breed, vs.)
+        // Türkçe karakter desteği ve harf duyarlılığı için localeCompare
+        let compareResult = String(valA).localeCompare(String(valB), 'tr', { sensitivity: 'base' });
+        
+        return direction === 'asc' ? compareResult : -compareResult;
     });
+
+    renderTableOnly(currentAnimalsData);
 }
+
+function updateSortIcons() {
+    // Tüm ikonları sıfırla
+    const icons = ['EarringNo', 'Name', 'BirthDate', 'Type', 'Breed', 'MotherEarringNo', 'MotherName'].forEach(key => {
+        const el = document.getElementById(`sort-icon-${key}`);
+        if (el) el.innerText = ' ↕';
+    });
+
+    // Aktif olanı güncelle
+    const activeIcon = document.getElementById(`sort-icon-${sortConfig.key}`);
+    if (activeIcon) {
+        activeIcon.innerText = sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    }
+}
+
+window.handleSort = handleSort;

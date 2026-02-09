@@ -2,8 +2,10 @@
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
 
+// Don't update the app automatically
 autoUpdater.autoDownload = false;
 
+// For errors
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = "info";
 
@@ -27,6 +29,7 @@ const signUp = require("../backend/signUpF.js");
 const supabase = require("../backend/databaseConnection.js");
 const { error, info } = require("console");
 
+// Global variable to access everywhere
 let mainWindow;
 
 // If app is ready, this block will be run.
@@ -136,19 +139,18 @@ async function syncDatas() {
         await setAllLocalDatas();
         store.set("Vaccines", await getVaccinesDatas());
         store.set("updatedDatas", await updateDatabase());
-    }    
-    const datas = {}
+    } 
 
-    datas.animalsDatas = store.get("Animals");
-    datas.updatedDatas = store.get("updatedDatas");
-    datas.appVersion = app.getVersion();
+    // else bloğu ile lokaldeki veriler daha güncel olduğunda buluta yüklensin mi uyarısı gösterilsin.
+    // const datas = {}
+
+    // datas.animalsDatas = store.get("Animals");
+    // datas.updatedDatas = store.get("updatedDatas");
+    // datas.appVersion = app.getVersion();
 
     // sender.send("sendNewDatas", datas);
 
-    // mainWindow.webContents.send("sendLoadingDatas", datas);
     mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
-    // mainWindow.webContents.once("did-finish-load", async () => {
-    // });
 }
 
 ipcMain.handle("sendLoadingDatas", async () => {
@@ -167,52 +169,34 @@ ipcMain.on("ipcMain:openPage", (event, pageName) => {
     mainWindow.loadFile(path.join(__dirname, "../views/" + pageName + ".html"));
 
     mainWindow.webContents.once("did-finish-load", async () => {
+        const allDatas = {};
+        allDatas.settingsDatas = store.get("settings");
         if (pageName === "animals") {
-            const allDatas = {};
-            // allDatas.animalDatas = await getAnimalsDatas();
             allDatas.animalDatas = store.get("Animals");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "cows") {
-            const allDatas = {};
-            // allDatas.animalDatas = await getCowsDatas();
             allDatas.animalDatas = store.get("Cows");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "heifers") {
-            const allDatas = {};
-            // allDatas.animalDatas = await getHeifersDatas();
             allDatas.animalDatas = store.get("Heifers");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "calves") {
-            const allDatas = {};
-            // allDatas.animalDatas = await getCalvesDatas();
             allDatas.animalDatas = store.get("Calves");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "bulls") {
-            const allDatas = {};
-            // allDatas.animalDatas = await getBullsDatas();
             allDatas.animalDatas = store.get("Bulls");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "vaccines") {
-            const allDatas = {};
-            // allDatas.vaccineDatas = await getVaccinesDatas();
             allDatas.vaccineNames = await getVaccinesNames();
             allDatas.vaccineDatas = store.get("Vaccines");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "settings") {
             mainWindow.webContents.send(
                 "sendSettingsDatas",
-                store.get("settings"),
+                allDatas,
             );
         } else if (pageName === "deletedAnimals") {
-            allDatas = {};
             allDatas.animalDatas = store.get("deletedAnimals");
-            allDatas.settingsDatas = store.get("settings");
             mainWindow.webContents.send("sendDatas", allDatas);
         }
     });
@@ -245,7 +229,6 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
         },
     });
 
-
     addAnimalMenu.setMenu(null);
 
     // Dev Phase
@@ -260,10 +243,12 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
         .loadFile(path.join(__dirname, "../views/addAnimal.html"))
         .then(async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
+
             addAnimalMenu.webContents.send(
                 "sendMothersEarringNo",
                 await getMotherEarringNos(),
             );
+
             addAnimalMenu.webContents.send(
                 "sendBullsName",
                 await getBullsName(),
@@ -1042,32 +1027,52 @@ async function getVaccinesDatas() {
 
 // Get Mom's Earring Nos
 async function getMotherEarringNos() {
-    const { data, error } = await supabase
+    const { data: aliveCowData, error: cowError } = await supabase
         .from("Animals")
         .select("EarringNo, Name")
         .in("Type", ["cow", "heifer"]);
-    if (error) {
+    if (cowError) {
         log.info(
             "main.js 701 | İnek küpe numaraları çekilirken bir hata oluştu: ",
             error,
         );
     }
-    return data;
+
+    const { data: deathCowData, error: deathCowError } = await supabase
+        .from("DeletedAnimals")
+        .select("EarringNo, Name")
+        .in("Type", ["cow", "heifer"]);
+    if (deathCowError) {
+        log.info("main.js getMotherEarringNos | Silinmiş inek küpe numaraları çekilirken bir hata oluştu: ", deathCowError);
+    }
+
+    // Merge aliveCowData and deathCowData, then remove same datas.
+    return [...new Map([...aliveCowData, ...deathCowData].map(item => [item.EarringNo, item])).values()];
 }
 
 // Get Bulls' Names
 async function getBullsName() {
-    const { data, error } = await supabase
+    const { data: aliveBullData, error: aliveBullError } = await supabase
         .from("Animals")
         .select("Name")
         .eq("Type", "bull");
-    if (error) {
+    if (aliveBullError) {
         log.info(
             "main.js 891 | Dana isimleri çekilirken bir hata oluştu: ",
-            error,
+            aliveBullError,
         );
     }
-    return data;
+
+    const { data: deathBullData, deathBullError } = await supabase
+        .from("DeletedAnimals")
+        .select("Name")
+        .eq("Type", "bull");
+    if (deathBullError) {
+        log.info("main.js getBullsName | Silinmiş dana isimleri çekilirken bir hata oluştu: ", deathCowError)
+    }
+
+    return [...new Map([...aliveBullData, ...deathBullData].map(item => [item.Name, item])).values()];
+    // return aliveBullData
 }
 
 async function setAllLocalDatas() {
@@ -1101,7 +1106,6 @@ async function refreshDatas() {
 }
 
 /*
-2-) Silinen hayvanlar için trash sayfası yapılacak.
 3-) Mouse'dan geri tuşuna basıldığında veya alt + sol ok tuşuna basıldığında openMenu() fonksyionu çalıştırılacak.
 
 * Tabloları Excel Dosyasına Çevirme Fonksiyonu Eklendi *

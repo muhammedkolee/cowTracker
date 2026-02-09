@@ -39,6 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     window.addAnimalAPI.receiveBullsName((Names) => {
         bullsData = Names;
+        setupBullEarringSelection();
     });
 });
 
@@ -376,7 +377,7 @@ const template = `
 
         <div class="space-y-2">
             <label for="earringNo" class="block text-sm font-semibold text-gray-700">Küpe Numarası</label>
-            <input placeholder="TR181818" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
+            <input placeholder="TR1818 (Küpesi olmayan buzağılar için boş bırakın)" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" id="earringNo" required/>
         </div>
 
         <div class="space-y-2">

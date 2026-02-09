@@ -397,16 +397,16 @@ function renderTableOnly(dataList) {
         notes.textContent = animal.Note;
 
         // Row color based on animal type
-        tableRow.className = "bg-blue-200 hover:bg-blue-300 transition-colors";
+        tableRow.className = "bg-blue-300 hover:bg-blue-400 transition-colors";
         if (animal.Type === "cow") {
             tableRow.className =
-                "bg-green-200 hover:bg-green-300 transition-colors";
+                "bg-green-300 hover:bg-green-400 transition-colors";
         } else if (animal.Type === "heifer") {
             tableRow.className =
-                "bg-red-200 hover:bg-red-300 transition-colors";
+                "bg-red-300 hover:bg-red-400 transition-colors";
         } else if (animal.Type === "calf") {
             tableRow.className =
-                "bg-yellow-200 hover:bg-yellow-300 transition-colors";
+                "bg-yellow-300 hover:bg-yellow-400 transition-colors";
         }
         count++;
     });

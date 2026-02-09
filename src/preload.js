@@ -5,11 +5,6 @@ contextBridge.exposeInMainWorld("loading", {
 
     getDatas: () => ipcRenderer.invoke('sendLoadingDatas')
 
-    // getDatas: (callback) => {
-    //     ipcRenderer.on("sendLoadingDatas", (event, datas) => {
-    //         callback(datas);
-    //     });
-    // }
 });
 
 contextBridge.exposeInMainWorld("offline", {

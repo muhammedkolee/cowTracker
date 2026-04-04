@@ -1,14 +1,17 @@
 const supabase = require("./databaseConnection");
 
 async function addVaccine(vaccineDatas) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
     if (vaccineDatas.all) {
-        const { data, error } = await supabase.from("Animals").select("*");
+        const { data, error } = await supabase.from("Animals").select("*").eq("user_id", user.id);
 
         for (const animal of data) {
             const { error } = await supabase.from("Vaccines").insert({
                 VaccineName: vaccineDatas.VaccineName,
                 VaccineDate: vaccineDatas.VaccineDate,
                 AnimalId: animal.Id,
+                user_id: user.id
             });
             if (error) {
                 return;
@@ -30,13 +33,15 @@ async function addVaccine(vaccineDatas) {
             const { data: cowData, error: cowError } = await supabase
                 .from("Animals")
                 .select("*")
-                .eq("Type", "cow");
+                .eq("Type", "cow")
+                .eq("user_id", user.id);
             
             for (const cow of cowData) {
                 const { error } = await supabase.from("Vaccines").insert({
                     VaccineName: vaccineDatas.VaccineName,
                     VaccineDate: vaccineDatas.VaccineDate,
                     AnimalId: cow.Id,
+                    user_id: user.id
                 });
             }
             
@@ -52,13 +57,15 @@ async function addVaccine(vaccineDatas) {
             const { data: heiferData, error: heiferError } = await supabase
                 .from("Animals")
                 .select("*")
-                .eq("Type", "heifer");
+                .eq("Type", "heifer")
+                .eq("user_id", user.id);
             
             for (const heifer of heiferData) {
                 const { error } = await supabase.from("Vaccines").insert({
                     VaccineName: vaccineDatas.VaccineName,
                     VaccineDate: vaccineDatas.VaccineDate,
                     AnimalId: heifer.Id,
+                    user_id: user.id
                 });
             }
             
@@ -74,15 +81,16 @@ async function addVaccine(vaccineDatas) {
             const { data: calvesData, error: calvesError } = await supabase
                 .from("Animals")
                 .select("*")
-                .eq("Type", "calf");
+                .eq("Type", "calf")
+                .eq("user_id", user.id);
             
             for (const calf of calvesData) {
                 const { error } = await supabase.from("Vaccines").insert({
                     VaccineName: vaccineDatas.VaccineName,
                     VaccineDate: vaccineDatas.VaccineDate,
                     AnimalId: calf.Id,
+                    user_id: user.id
                 });
-                console.log("eklendi: ", calf.Id);
             }
 
             //     calvesData.forEach(async (calf) => {
@@ -97,13 +105,15 @@ async function addVaccine(vaccineDatas) {
             const { data: bullsData, error: bullsError } = await supabase
                 .from("Animals")
                 .select("*")
-                .eq("Type", "bull");
+                .eq("Type", "bull")
+                .eq("user_id", user.id);
             
             for (const bull of bullsData) {
                 const { error } = await supabase.from("Vaccines").insert({
                     VaccineName: vaccineDatas.VaccineName,
                     VaccineDate: vaccineDatas.VaccineDate,
                     AnimalId: bull.Id,
+                    user_id: user.id
                 });
             }
             
@@ -115,8 +125,16 @@ async function addVaccine(vaccineDatas) {
                 // });
             // });
         }
-    } else if (vaccineDatas.AnimalId) {
-        const { error } = await supabase.from("Vaccines").insert(vaccineDatas);
+    } else if (vaccineDatas.AnimalIds && vaccineDatas.AnimalIds.length > 0) {
+        const records = vaccineDatas.AnimalIds.map((id) => ({
+            AnimalId: id,
+            VaccineName: vaccineDatas.VaccineName,
+            VaccineDate: vaccineDatas.VaccineDate,
+            user_id: user.id
+        }));
+
+
+        const { error } = await supabase.from("Vaccines").insert(records);
     }
 }
 

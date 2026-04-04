@@ -1,5 +1,9 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld("middleware", {
+    checkSessionHandle: () => ipcRenderer.send('sendSession')
+});
+
 contextBridge.exposeInMainWorld("loading", {
     isOnline: (status) => ipcRenderer.send('getStatus', status),
 
@@ -58,22 +62,13 @@ contextBridge.exposeInMainWorld("animalDetailAPI", {
 contextBridge.exposeInMainWorld("animalsAPI", {
     receiveDatas: (callback) => {
         ipcRenderer.on("sendDatas", (event, allDatas) => {
-            console.log(allDatas)
             callback(allDatas);
         });
     },
 });
 
 contextBridge.exposeInMainWorld("updateAPI", {
-    updateAnimalDatas: (allDatas) => {
-        ipcRenderer.send("ipcMain:updateAnimalDatas", allDatas);
-    },
-
-    updateResult: (callback) => {
-        ipcRenderer.on("updateResult", (event, data) => {
-            callback(data);
-        });
-    },
+    updateAnimalDatas: (allDatas) => ipcRenderer.invoke("ipcMain:updateAnimalDatas", allDatas),
 });
 
 contextBridge.exposeInMainWorld("vaccineAPI", {
@@ -144,9 +139,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.send("ipcMain:getAnimalsDatas");
     },
 
-    removeAnimal: (datas) => {
-        ipcRenderer.send("ipcMain:removeAnimal", datas);
-    },
+    removeAnimal: (datas) => { ipcRenderer.send("ipcMain:removeAnimal", datas) },
 
     refresh: (callback) => {
         ipcRenderer.on("refresh", (event, datas) => {
@@ -173,12 +166,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
     },
 
     exportExcel: (pageName) => {
-        ipcRenderer.invoke("exportExcel", pageName);
+        return ipcRenderer.invoke("exportExcel", pageName);
     },
 
     login: (existUserData) => {
-        console.log("login calisti");
         ipcRenderer.send("logInData", existUserData);
+    },
+
+    logout: () => {
+        return ipcRenderer.invoke("ipcMain:logout");
+    },
+
+    logoutSuccess: () => {
+        ipcRenderer.send("ipcMain:logoutsuccess");
     },
 
     receiveLoginResult: (callback) => {
@@ -195,5 +195,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.on("sendSignUpResult", (event, result) => {
             callback(result);
         });
+    },
+
+    restoreAnimal: (animalId) => {
+        ipcRenderer.send("ipcMain:restore", animalId);
+    },
+
+    permanentDeleteAnimal: (animalId) => {
+        ipcRenderer.send("ipcMain:permanentDeleteAnimal", animalId);
     }
 });

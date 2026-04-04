@@ -36,6 +36,7 @@ async function getBullsDatas() {
 }
 
 async function updateDatabase() {
+    const { data: { user } } = await supabase.auth.getUser();
     // Get datas of calves.
     const calvesDatas = await getCalvesDatas();
 
@@ -47,15 +48,16 @@ async function updateDatabase() {
             const responseDelete = await supabase
                 .from("Calves")
                 .delete()
-                .eq("EarringNo", calf.EarringNo);
+                .eq("Id", calf.Id);
 
             // If calf is a girl, insert Heifers.
             if (calf.Gender) {
                 const { data: addHeiferData, error: addHeiferError } =
                     await supabase.from("Heifers").insert({
+                        Id: calf.Id,
                         EarringNo: calf.EarringNo,
                         Name: calf.Name,
-                        LastBirthDate: getTodayDate(),
+                        user_id: user.id
                     });
 
                 // Update data of Animals table
@@ -63,7 +65,16 @@ async function updateDatabase() {
                     await supabase
                         .from("Animals")
                         .update({ Type: "heifer" })
-                        .eq("EarringNo", calf.EarringNo);
+                        .eq("Id", calf.Id);
+
+                        const { data: infoData, error: infoError } = await supabase
+                            .from("Information")
+                            .insert({
+                                Info:
+                                    calf.EarringNo +
+                                    ` küpe numaralı buzağı "Düve" olarak kaydedildi!`,
+                                user_id: user.id
+                            });
             }
             // If calf is a boy, insert Bulls.
             else {
@@ -71,15 +82,17 @@ async function updateDatabase() {
                     await supabase
                         .from("Animals")
                         .update({ Type: "bull" })
-                        .eq("EarringNo", calf.EarringNo);
+                        .eq("Id", calf.Id);
+
+                        const { data: infoData, error: infoError } = await supabase
+                            .from("Information")
+                            .insert({
+                                Info:
+                                    calf.EarringNo +
+                                    ` küpe numaralı buzağı "Dana" olarak kaydedildi!`,
+                                user_id: user.id
+                            });
             }
-            const { data: infoData, error: infoError } = await supabase
-                .from("Information")
-                .insert({
-                    Info:
-                        calf.EarringNo +
-                        ` küpe numaralı buzağı "Düve" olarak kaydedildi!`,
-                });
         }
     });
 
@@ -153,7 +166,7 @@ async function updateDatabase() {
 function getTodayDate() {
     let today = new Date();
     let year = today.getFullYear();
-    let month = String(today.getMonth() + 1).padStart(2, "0"); // Ocak = 0
+    let month = String(today.getMonth() + 1).padStart(2, "0"); // January = 0
     let day = String(today.getDate()).padStart(2, "0");
 
     return new Date(`${year}-${month}-${day}`);

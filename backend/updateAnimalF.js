@@ -1,4 +1,42 @@
 const supabase = require("./databaseConnection");
+const store = require("../backend/store.js");
+
+// function updateAnimalOffline(updateDatas) {
+//     store.set("Animals", store.get("Animals").map(animal => {
+//         if (animal.Id == updateDatas.animalData.Id) {
+//             return { ...animal, ...updateDatas.animalData }
+//         }
+//         return animal
+//     }));
+
+//     if (updateDatas.animalData.Type == "cow") {
+//         store.set("Cows", store.get("Cows").map(cow => {
+//             if (cow.Id == updateDatas.cowData.Id) {
+//                 return { ...cow, ...updateDatas.cowData }
+//             }
+//             return cow
+//         }));
+//     }
+
+//     else if (updateDatas.animalData.Type == "heifer") {
+//         store.set("Heifers", store.get("Heifers").map(heifer => {
+//             if (heifer.Id == updateDatas.heiferData.Id) {
+//                 return { ...heifer, ...updateDatas.heiferData }
+//             }
+//             return heifer
+//         }));
+//     }
+//     else if (updateDatas.animalData.Type == "calf") {
+//         store.set("Calves", store.get("Calves").map(calf => {
+//             if(calf.Id == updateDatas.calfData.Id) {
+//                 return { ...calf, ...updateDatas.calfData }
+//             }
+//             return calf
+//         }));
+//     }
+//     store.set("lastUpdatedAt", new Date());
+//     return true
+// }
 
 async function updateAnimal(allDatas) {
     const { data: willRemoveAnimal, error: animalError } = await supabase
@@ -60,6 +98,8 @@ async function updateAnimal(allDatas) {
         }
     }
 
+    const { data: lastUpdateData, error: lastUpdateError } = await supabase.from("UpdateTime").update({ "lastUpdatedAt": new Date().toISOString() }).eq("Id", 1);
+
     const { error } = await supabase
         .from("Animals")
         .update(allDatas.animalData)
@@ -71,4 +111,4 @@ async function updateAnimal(allDatas) {
     }
 }
 
-module.exports = updateAnimal;
+module.exports = {updateAnimal};

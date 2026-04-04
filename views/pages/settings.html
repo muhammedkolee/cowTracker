@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="../../styles/output.css" />
+  <style>
+    /* Sayfanın dışına taşmayı engeller ve tam ekran yapar */
+    body, html {
+      height: 100%;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center p-4">
+  <div class="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8 flex flex-col justify-between h-fit">
+    
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Ayarlar</h1>
+
+    <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+      
+      <div class="col-span-2 flex items-center justify-between bg-blue-50 p-3 rounded-lg">
+        <label for="showInformationButton" class="font-bold text-gray-700">
+          Sayfa İçi Bilgi Butonunu Göster
+        </label>
+        <input type="checkbox" id="showInformationButton" class="h-6 w-6 text-blue-600 rounded cursor-pointer" />
+      </div>
+
+      <div>
+        <label for="gestationDays" class="block text-gray-600 font-medium mb-1 text-sm">İnekler İçin Doğurma Gün Sayısı</label>
+        <input type="number" id="gestationDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+
+      <div>
+        <label for="dryOffDays" class="block text-gray-600 font-medium mb-1 text-sm">Kuruya Çıkarma Gün Sayısı</label>
+        <input type="number" id="dryOffDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+
+      <div>
+        <label for="calfReduceToTwoLiterDays" class="block text-gray-600 font-medium mb-1 text-sm">Buzağı 2 Litreye Düşürme Günü</label>
+        <input type="number" id="calfReduceToTwoLiterDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+
+      <div>
+        <label for="calfReduceToOneLiterDays" class="block text-gray-600 font-medium mb-1 text-sm">Buzağı 1 Litreye Düşürme Günü</label>
+        <input type="number" id="calfReduceToOneLiterDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+
+      <div>
+        <label for="calfWeaningDays" class="block text-gray-600 font-medium mb-1 text-sm">Buzağı Sütten Kesme Gün Sayısı</label>
+        <input type="number" id="calfWeaningDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+
+      <div>
+        <label for="calfToAdultDays" class="block text-gray-600 font-medium mb-1 text-sm">Yetişkinlik Evresine Geçiş Günü</label>
+        <input type="number" id="calfToAdultDays" class="w-full font-bold rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      </div>
+    </div>
+
+    <hr class="my-6 border-gray-100">
+
+    <div class="flex items-center justify-between border-t pt-6 mt-4">
+      
+      <div class="flex items-center bg-gray-100 p-3 rounded-2xl border border-gray-200">
+        <div class="flex flex-col mr-4">
+          <span class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Aktif Oturum</span>
+          <span id="userEmail" class="text-sm text-gray-800 font-semibold italic">Yükleniyor...</span>
+        </div>
+        <button id="logoutButton" class="px-4 py-2 cursor-pointer bg-red-500 text-white text-xs rounded-xl hover:bg-red-600 transition-all duration-200 font-bold shadow-sm hover:shadow-md active:scale-95">
+          Çıkış Yap
+        </button>
+      </div>
+
+      <button title="Ayarları kaydeder ve ana menüye döndürür" id="saveSettings" class="px-10 py-3 cursor-pointer bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition duration-200 font-bold">
+        Kaydet ve Çık
+      </button>
+    </div>
+
+  </div>
+
+  <script src="../../src/pages/settings.js"></script>
+</body>
+</html>

@@ -2,6 +2,9 @@
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
 
+// To check internet connection
+const dns = require('dns');
+
 // Don't update the app automatically
 autoUpdater.autoDownload = false;
 
@@ -19,8 +22,9 @@ const ExcelJS = require("exceljs");
 
 // Import files for backend.
 const addAnimal = require("../backend/addAnimalF.js");
-const updateAnimal = require("../backend/updateAnimalF.js");
-const removeAnimal = require("../backend/removeAnimalF.js");
+const { updateAnimal, updateAnimalOffline } = require("../backend/updateAnimalF.js");
+const { removeAnimal } = require("../backend/removeAnimalF.js");
+const checkSession = require("../middleware/checkSession.js");
 const addVaccine = require("../backend/addVaccineF.js");
 const updateDatabase = require("../backend/updateDatabaseF.js");
 const removeVaccine = require("../backend/removeVaccineF.js");
@@ -28,6 +32,9 @@ const signIn = require("../backend/signInF.js");
 const signUp = require("../backend/signUpF.js");
 const supabase = require("../backend/databaseConnection.js");
 const { error, info } = require("console");
+const logOut = require("../backend/logOut.js");
+const restoreAnimal = require("../backend/restoreAnimalF.js");
+const permanentDelete = require("../backend/permanentDelete.js");
 
 // Global variable to access everywhere
 let mainWindow;
@@ -56,8 +63,8 @@ app.on("ready", async () => {
     // To remove default top menu.
     mainWindow.setMenu(null);
 
-    // Load index.html to Main Window.
-    mainWindow.loadFile(path.join(__dirname, "../views/loadingScreen.html"));
+    // Show loading screen to check session.
+    mainWindow.loadFile(path.join(__dirname, "../views/pages/loadingScreen.html"));
 
     //Dev
     //This block will be deleted after dev phase.
@@ -106,7 +113,7 @@ app.on("ready", async () => {
     // EasterEgg
     mainWindow.webContents.on("before-input-event", (event, input) => {
         if (input.key === "m" && input.control && input.type === "keyDown") {
-            mainWindow.loadFile(path.join(__dirname, "../views/egg.html"));
+            mainWindow.loadFile(path.join(__dirname, "../views/pages/egg.html"));
         }
     });
     // EasterEgg
@@ -114,32 +121,76 @@ app.on("ready", async () => {
 });
 
 // Get the device is connected the internet or not.
-ipcMain.on("getStatus", async (event, status) => {
-    if (status) {
-        await syncDatas();
-    } else {
-        const datas = {};
-        datas.animalsDatas = store.get("Animals");
-        datas.updatedDatas = store.get("updatedDatas");
-        datas.appVersion = app.getVersion();
+ipcMain.once("getStatus", async (event, sessionStatus) => {
+    if (sessionStatus) { 
+        if (sessionStatus) {
 
-        mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
-        mainWindow.webContents.once("did-finish-load", () => {
-            mainWindow.webContents.send("sendLoadingDatas", datas);
-        });
+            await syncDatas();
+            
+            const datas = {};
+            datas.animalsDatas = store.get("Animals");
+            datas.updatedDatas = store.get("updatedDatas");
+            datas.appVersion = app.getVersion();
+            
+            mainWindow.loadFile(path.join(__dirname, "../views/pages/index.html"));
+        } else {
+            mainWindow.loadFile(path.join(__dirname, "../views/auth/signIn-Up.html"));
+        }
+    } else {
+        mainWindow.loadFile(path.join(__dirname, "../views/pages/notAllowed.html"));
     }
 });
 
 // If the device is connected the internet, update datas.
 async function syncDatas() {
     const localLastUpdate = store.get("lastUpdatedAt");
-    const { data: cloudLastUpdate, error: err } = await supabase.from("UpdateTime").select("*")
+    const { data: { user }} = await supabase.auth.getUser();
+    const { data: cloudLastUpdate, error: err } = await supabase.from("UpdateTime").select("lastUpdatedAt").eq("user_id", user.id);
 
-    if (new Date(localLastUpdate).getTime() < new Date(cloudLastUpdate[0].lastUpdatedAt).getTime()) {
-        await setAllLocalDatas();
-        store.set("Vaccines", await getVaccinesDatas());
-        store.set("updatedDatas", await updateDatabase());
-    } 
+    log.info("Cloud data was received.");
+
+    await setAllLocalDatas();
+
+    store.set("Vaccines", await getVaccinesDatas());
+    store.set("updatedDatas", await updateDatabase());
+    const {data: timeDate, error: timeError } = await supabase.from("UpdateTime").select("lastUpdatedAt").eq("Id", 1)
+    store.set("lastUpdatedAt", timeDate[0].lastUpdatedAt || new Date().toISOString());
+
+
+
+
+    // // If cloud data is newer than local.
+    // if (new Date(localLastUpdate).getTime() <= new Date(cloudLastUpdate[0]?.lastUpdatedAt).getTime()) {
+    //     log.info("Cloud data was received.")
+
+    //     await setAllLocalDatas();
+
+    //     store.set("Vaccines", await getVaccinesDatas());
+    //     store.set("updatedDatas", await updateDatabase());
+    //     const {data: timeDate, error: timeError } = await supabase.from("UpdateTime").select("lastUpdatedAt").eq("Id", 1)
+    //     store.set("lastUpdatedAt", timeDate[0].lastUpdatedAt || new Date().toISOString());
+    // } 
+    // // If local data is newer than cloud.
+    // else if (new Date(localLastUpdate).getTime() > new Date(cloudLastUpdate[0]?.lastUpdatedAt).getTime()) 
+    // {
+    //     log.info("Local data was send.")
+
+    //     const { data: animalData, error: animalError } = await supabase.from("Animals").upsert(store.get("Animals"));
+
+    //     const { data: cowData, error: cowError } = await supabase.from("Cows").upsert(store.get("Cows"));
+
+    //     const { data: heiferData, error: heiferError } = await supabase.from("Heifer").upsert(store.get("Heifers"));
+
+    //     const { data: calfData, error: calfError } = await supabase.from("Calves").upsert(store.get("Calves"));
+
+    //     const { data: deletedAnimalData, error: deletedAnimalsError } = await supabase.from("DeletedAnimals").upsert(store.get("deletedAnimals"));
+
+    //     const { data: vaccinesData, error: vaccinesError } = await supabase.from("Vaccines").upsert(store.get("Vaccines"));
+        
+    //     // const { data: informationData, error: informationError } = await supabase.from("Information").upsert(store.get("Information"))
+        
+    //     const { data: lastUpdatedAtData, error: lastUpdateError } = await supabase.from("UpdateTime").update({"lastUpdatedAt": new Date(store.get("lastUpdatedAt")).toISOString()}).eq("Id", 1);
+    // }
 
     // else bloğu ile lokaldeki veriler daha güncel olduğunda buluta yüklensin mi uyarısı gösterilsin.
     // const datas = {}
@@ -150,7 +201,7 @@ async function syncDatas() {
 
     // sender.send("sendNewDatas", datas);
 
-    mainWindow.loadFile(path.join(__dirname, "../views/index.html"));
+    // mainWindow.loadFile(path.join(__dirname, "../views/auth/signIn-Up.html"));        // This line is writed but i dont know why and this line is commented but again i dont know ??
 }
 
 ipcMain.handle("sendLoadingDatas", async () => {
@@ -163,12 +214,40 @@ ipcMain.handle("sendLoadingDatas", async () => {
     return datas;
 });
 
+ipcMain.on("sendSession", async () => {
+    
+    if (await checkInternetConnection()) {
+        if (await checkSession()) {
+            await syncDatas();
+            
+            // const datas = {};
+            // datas.animalsDatas = store.get("Animals");
+            // datas.updatedDatas = store.get("updatedDatas");
+            // datas.appVersion = app.getVersion();
+            
+            mainWindow.loadFile(path.join(__dirname, "../views/pages/index.html"));
+        } else {
+            mainWindow.loadFile(path.join(__dirname, "../views/auth/signIn-Up.html"));
+        }
+    } else {
+        mainWindow.loadFile(path.join(__dirname, "../views/pages/notAllowed.html"));
+    }
+    
+});
+
+
+ipcMain.handle("ipcMain:logout", async () => {
+    return await logOut();
+});
+
+ipcMain.on("ipcMain:logoutsuccess", () => {
+    mainWindow.loadFile(path.join(__dirname, "../views/auth/signIn-Up.html"));
+});
+
 // To open page which user want to open.
 // pageName => file name without .html
 ipcMain.on("ipcMain:openPage", (event, pageName) => {
-    mainWindow.loadFile(path.join(__dirname, "../views/" + pageName + ".html"));
-
-    mainWindow.webContents.once("did-finish-load", async () => {
+    mainWindow.loadFile(path.join(__dirname, "../views/pages/" + pageName + ".html")).then(async () => {
         const allDatas = {};
         allDatas.settingsDatas = store.get("settings");
         if (pageName === "animals") {
@@ -191,28 +270,46 @@ ipcMain.on("ipcMain:openPage", (event, pageName) => {
             allDatas.vaccineDatas = store.get("Vaccines");
             mainWindow.webContents.send("sendDatas", allDatas);
         } else if (pageName === "settings") {
+            const { data: { user }} = await supabase.auth.getUser();
+            allDatas.settingsDatas.userMail = user.email;
             mainWindow.webContents.send(
                 "sendSettingsDatas",
-                allDatas,
+                allDatas.settingsDatas,
             );
         } else if (pageName === "deletedAnimals") {
             allDatas.animalDatas = store.get("deletedAnimals");
             mainWindow.webContents.send("sendDatas", allDatas);
         }
+
     });
+
+    // mainWindow.webContents.once("did-finish-load", async () => {
+    // });
 });
 
 // To open main menu.
 ipcMain.on("ipcMain:openMenu", () => {
     mainWindow
-        .loadFile(path.join(__dirname, "../views/index.html"))
+        .loadFile(path.join(__dirname, "../views/pages/index.html"))
         .then(async () => {
             const datas = {};
             datas.animalsDatas = store.get("Animals");
+            datas.animalsDatas = await getAnimalsDatas();
             datas.updatedDatas = store.get("updatedDatas");
             datas.appVersion = app.getVersion();
             mainWindow.webContents.send("sendDatas", datas);
         });
+});
+
+// To restore the animal who is deleted.
+ipcMain.on("ipcMain:restore", async (event, animalId) => {
+    await restoreAnimal(animalId);
+    mainWindow.webContents.send("refresh", await refreshDatas());
+});
+
+ipcMain.on("ipcMain:permanentDeleteAnimal", async (event, animalId) => {
+    await permanentDelete(animalId);
+    mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
 // MENUS
@@ -240,7 +337,7 @@ ipcMain.on("ipcMain:openAddAnimalMenu", (event, animalType) => {
     // Dev Phase
 
     addAnimalMenu
-        .loadFile(path.join(__dirname, "../views/addAnimal.html"))
+        .loadFile(path.join(__dirname, "../views/pages/addAnimal.html"))
         .then(async () => {
             addAnimalMenu.webContents.send("sendAnimalType", animalType);
 
@@ -280,7 +377,7 @@ ipcMain.on("ipcMain:openAnimalDetail", (event, datas) => {
     // Dev Phase
 
     animalDetailWindow
-        .loadFile(path.join(__dirname, "../views/animalDetail.html"))
+        .loadFile(path.join(__dirname, "../views/pages/animalDetail.html"))
         .then(async () => {
             if (datas.type === "cow") {
                 const allDatas = await getCowDatas(datas);
@@ -338,7 +435,7 @@ ipcMain.on("ipcMain:openUpdateAnimal", (event, datas) => {
     // Dev Phase
 
     updateAnimalWindow
-        .loadFile(path.join(__dirname, "../views/updateAnimal.html"))
+        .loadFile(path.join(__dirname, "../views/pages/updateAnimal.html"))
         .then(async () => {
             if (datas.type === "cow") {
                 const allDatas = await getCowDatas(datas);
@@ -406,7 +503,7 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
     // Dev Phase
 
     addVaccineWindow
-        .loadFile(path.join(__dirname, "../views/addVaccine.html"))
+        .loadFile(path.join(__dirname, "../views/pages/addVaccine.html"))
         .then(async () => {
             const { data: animalsDatas, error: animalsError } = await supabase
                 .from("Animals")
@@ -428,10 +525,25 @@ ipcMain.on("ipcMain:openAddVaccine", () => {
 
 // FUNCTIONS
 // Log In
+// ipcMain.removeAllListeners("logInData");
 ipcMain.on("logInData", async (event, existUserData) => {
     const result = await signIn(existUserData.email, existUserData.password);
     if (result) {
-        event.sender.send("sendLoginResult", true);
+        mainWindow
+            .loadFile(path.join(__dirname, "../views/pages/index.html"))
+            .then( async () => {
+                const datas = {};
+                // const { data: { user } } = await supabase.auth.getUser();
+                await syncDatas();
+                
+                // datas.animalsDatas = await supabase.from("Animals").select("*").eq("user_id", user.id);
+                
+                // datas.animalsDatas = store.get("Animals");
+                // datas.updatedDatas = store.get("updatedDatas");
+                // datas.appVersion = app.getVersion();
+                // mainWindow.webContents.send("sendDatas", datas);
+            })
+        // event.sender.send("sendLoginResult", true);
     } else {
         event.sender.send("sendLoginResult", false);
     }
@@ -463,18 +575,37 @@ ipcMain.on("ipcMain:addAnimal", async (event, datas) => {
 });
 
 // Update Animal
-ipcMain.on("ipcMain:updateAnimalDatas", async (event, updateDatas) => {
-    if (await updateAnimal(updateDatas)) {
-        event.sender.send("updateResult", true);
-    } else {
-        event.sender.send("updateResult", false);
-    }
+ipcMain.handle("ipcMain:updateAnimalDatas", async (event, updateDatas) => {
+    let result = false;
+
+    // result = updateAnimalOffline(updateDatas);
+    
+    // if (updateDatas.online) {
+    //     result = await updateAnimal(updateDatas);
+    // } 
+    if (await checkInternetConnection()) {
+        result = await updateAnimal(updateDatas);
+    } 
+
     mainWindow.webContents.send("refresh", await refreshDatas());
+
+    return result
 });
 
 // Remove Animal
 ipcMain.on("ipcMain:removeAnimal", async (event, datas) => {
+    // removeAnimalOffline(datas);
+
+    // if (datas.online) {
+    //     await removeAnimal(datas);
+    // }
+    // if (await checkInternetConnection()) {
+    //     await removeAnimal(datas);
+    // }
+
     await removeAnimal(datas);
+
+    // await refreshDatas();
     mainWindow.webContents.send("refresh", await refreshDatas());
 });
 
@@ -774,7 +905,6 @@ app.on("window-all-closed", () => {
 // Functions of JS
 // Get datas of one cow.
 async function getCowDatas(datas) {
-    // console.log(datas);
     const { data: animalData, error: animalError } = await supabase
         .from("Animals")
         .select("*")
@@ -788,18 +918,25 @@ async function getCowDatas(datas) {
     const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("Type", "calf")
-        .eq("MotherEarringNo", datas.earringNo);
+        .eq("MotherEarringNo", datas.earringNo)
+        .order("BirthDate", { ascending: false });
+
+    const { data: deletedCalves, error: deletedCalvesError } = await supabase
+        .from("DeletedAnimals")
+        .select("*")
+        .eq("MotherEarringNo", datas.earringNo)
+        .order("BirthDate", { ascending: false });
 
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("AnimalId", datas.animalId);
+        .eq("AnimalId", datas.animalId)
+        .order("VaccineDate", { ascending: false });
 
     const allDatas = {
         animalData: animalData,
         cowData: cowData,
-        calvesData: calvesData,
+        calvesData: calvesData.concat(deletedCalves),
         vaccinesData: vaccinesData,
     };
 
@@ -812,24 +949,34 @@ async function getHeiferDatas(datas) {
         .from("Animals")
         .select("*")
         .eq("Id", datas.animalId);
+
     const { data: heiferData, error: heiferError } = await supabase
         .from("Heifers")
         .select("*")
         .eq("Id", datas.animalId);
-    const { data: calvesData, error: calvesError } = await supabase
+    
+        const { data: calvesData, error: calvesError } = await supabase
         .from("Animals")
         .select("*")
-        .eq("Type", "calf")
-        .eq("MotherEarringNo", datas.earringNo);
-    const { data: vaccinesData, error: vaccinesError } = await supabase
+        .eq("MotherEarringNo", datas.earringNo)
+        .order("BirthDate", { ascending: false });
+
+        const { data: deletedCalves, error: deletedCalvesError } = await supabase
+        .from("DeletedAnimals")
+        .select("*")
+        .eq("MotherEarringNo", datas.earringNo)
+        .order("BirthDate", { ascending: false });
+
+        const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("AnimalId", datas.animalId);
+        .eq("AnimalId", datas.animalId)
+        .order("VaccineDate", { ascending: false });
 
     const allDatas = {
         animalData: animalData,
         heiferData: heiferData,
-        calvesData: calvesData,
+        calvesData: calvesData.concat(deletedCalves),
         vaccinesData: vaccinesData,
     };
 
@@ -845,7 +992,8 @@ async function getBullDatas(datas) {
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("AnimalId", datas.animalId)
+        .order("VaccineDate", { ascending: false });
 
     const allDatas = { animalData: animalData, vaccinesData: vaccinesData };
 
@@ -858,25 +1006,17 @@ async function getCalfDatas(datas) {
         .from("Animals")
         .select("*")
         .eq("Id", datas.animalId);
-    const { data: calfData, error: calfError } = await supabase
+    
+        const { data: calfData, error: calfError } = await supabase
         .from("Calves")
         .select("*")
         .eq("Id", datas.animalId);
+
     const { data: vaccinesData, error: vaccinesError } = await supabase
         .from("Vaccines")
         .select("*")
-        .eq("EarringNo", datas.earringNo);
+        .eq("AnimalId", datas.animalId);
 
-    if (animalError || vaccinesError) {
-        log.info(
-            "main.js 608 | Buzağı bilgileri çekilirken bir hata oluştu: ",
-            animalError,
-            "\n",
-            calfError,
-            "\n",
-            vaccinesError,
-        );
-    }
 
     const allDatas = {
         animalData: animalData,
@@ -889,26 +1029,34 @@ async function getCalfDatas(datas) {
 
 // Get datas of whole animals.
 async function getAnimalsDatas() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+
     const { data, error } = await supabase
         .from("Animals")
         .select("*")
+        .eq("user_id", user.id)
+        .eq("IsDeleted", false)
         .order("Type", { ascending: false });
     if (error) {
-        // log.info(
-        //     "main.js 627 | Hayvan bilgileri çekilirken bir hata oluştu: ",
-        //     error,
-        // );
-        console.log(error);
+        log.info(
+            "main.js 627 | Hayvan bilgileri çekilirken bir hata oluştu: ",
+            error,
+        );
     }
-    // console.log(data);
+
     return data;
 }
 
 // Get datas of whole cows.
 async function getCowsDatas() {
+    const { data: { user } } = await supabase.auth.getUser();
+
     const { data: cowsData, error } = await supabase
         .from("Cows")
-        .select("*, Animals (Breed, Note)")
+        .select("*, Animals!inner (Breed, Note, IsDeleted)")
+        .eq("Animals.IsDeleted", false)
+        .eq("user_id", user.id)
         .order("InseminationDate", { ascending: true });
     if (error) {
         log.info(
@@ -917,31 +1065,18 @@ async function getCowsDatas() {
         );
     }
 
-    for (let cow of cowsData) {
-        const { data: calfData, error: calfError } = await supabase
-            .from("Animals")
-            .select("BirthDate")
-            .eq("MotherEarringNo", cow.EarringNo)
-            .order("BirthDate", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-        if (calfError) {
-            console.log("Bir sorun oluştu.", calfError);
-            cow.LastBirthDate = null;
-            // continue;
-        }
-        cow.LastBirthDate = calfData?.BirthDate || null;
-    }
-
     return cowsData;
 }
 
 // Get datas of whole heifers.
 async function getHeifersDatas() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
     const { data, error } = await supabase
         .from("Heifers")
-        .select("*, Animals (Breed, Note)")
+        .select("*, Animals!inner (Breed, Note, IsDeleted)")
+        .eq("Animals.IsDeleted", false)
+        .eq("user_id", user.id)
         .order("LastBirthDate", { ascending: false });
     if (error) {
         log.info(
@@ -954,9 +1089,13 @@ async function getHeifersDatas() {
 
 // Get datas of whole calves.
 async function getCalvesDatas() {
+    const { data: { user } } = await supabase.auth.getUser();    
+    
     const { data: calvesData, error: calvesError } = await supabase
         .from("Calves")
-        .select("*, Animals (MotherEarringNo, MotherName, Breed, Note)")
+        .select("*, Animals!inner (MotherEarringNo, MotherName, Breed, Note, IsDeleted)")
+        .eq("Animals.IsDeleted", false)
+        .eq("user_id", user.id)
         .order("BirthDate", { ascending: false });
 
     if (calvesError) {
@@ -970,10 +1109,14 @@ async function getCalvesDatas() {
 
 // Get datas of whole bulls.
 async function getBullsDatas() {
+    const { data: { user } } = await supabase.auth.getUser();    
+    
     const { data, error } = await supabase
         .from("Animals")
         .select("*")
         .eq("Type", "bull")
+        .eq("IsDeleted", false)
+        .eq("user_id", user.id)
         .order("BirthDate", { ascending: true });
     if (error) {
         log.info(
@@ -985,16 +1128,17 @@ async function getBullsDatas() {
 }
 
 async function getDeletedAnimalsDatas() {
+    const { data: { user } } = await supabase.auth.getUser();    
+    
     const { data, error} = await supabase
         .from("DeletedAnimals")
         .select("*")
+        .eq("user_id", user.id)
         .order("DeathDate", { ascending: true })
 
     if (error) {
         log.info("main.js getDeletedAnimals function has an error!", error);
     }
-    console.log("data")
-    console.log(data)
     return data;
 }
 
@@ -1012,9 +1156,11 @@ async function getVaccinesNames() {
 
 // Get datas of vaccines.
 async function getVaccinesDatas() {
+    const { data: { user } } = await supabase.auth.getUser();
     const { data, error } = await supabase
         .from("Vaccines")
         .select("*, Animals (Id, EarringNo, Name)")
+        .eq("user_id", user.id)
         .order("Id", { ascending: true });
     if (error) {
         log.info(
@@ -1072,7 +1218,6 @@ async function getBullsName() {
     }
 
     return [...new Map([...aliveBullData, ...deathBullData].map(item => [item.Name, item])).values()];
-    // return aliveBullData
 }
 
 async function setAllLocalDatas() {
@@ -1087,6 +1232,8 @@ async function setAllLocalDatas() {
 async function refreshDatas() {
     await setAllLocalDatas();
     const pageName = path.basename(mainWindow.webContents.getURL());
+    console.log("refresh calisti")
+    console.log("pageName: ", pageName)
     const allDatas = {
         settingsDatas: store.get("settings"),
     };
@@ -1100,13 +1247,18 @@ async function refreshDatas() {
         allDatas.animalDatas = store.get("Bulls");
     } else if (pageName === "animals.html") {
         allDatas.animalDatas = store.get("Animals");
+        // await getAnimalsDatas();
+    } else if (pageName === "deletedAnimals.html") {
+        allDatas.animalDatas = store.get("deletedAnimals");
     }
 
     return allDatas;
 }
 
-/*
-3-) Mouse'dan geri tuşuna basıldığında veya alt + sol ok tuşuna basıldığında openMenu() fonksyionu çalıştırılacak.
-
-* Tabloları Excel Dosyasına Çevirme Fonksiyonu Eklendi *
-*/
+function checkInternetConnection() {
+    return new Promise((resolve) => {
+        dns.lookup('google.com', (err) => {
+            resolve(err ? false : true);
+        });
+    });
+}

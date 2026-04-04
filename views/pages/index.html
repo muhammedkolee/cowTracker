@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CowTracker - Ana Sayfa</title>
+        
+        <!-- Tailwind CSS -->
+        <link href="../../styles/output.css" rel="stylesheet" />
+
+        <style>
+            .help-bubble {
+                transition: opacity 0.3s ease-in-out;
+                opacity: 0;
+                pointer-events: none;
+                position: absolute;
+                z-index: 50;
+                white-space: normal;
+            }
+            .help-bubble.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 min-h-screen relative" id="indexBody">
+        <div class="container mx-auto px-4 py-6">   
+            <!-- Dashboard Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 text-center md:grid-cols-4 gap-4 mb-10">
+                <div class="bg-blue-600 text-white rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="cowNumber">İnek Sayısı</h5>
+                    <div class="help-bubble absolute top-full mt-2 left-0 bg-blue-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Çiftlikteki toplam dişi inek sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-4 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-blue-700"></div>
+                    </div>
+                </div>
+                <div class="bg-green-600 text-white text-center rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="calfNumber">Buzağı Sayısı</h5>
+                    <div class="help-bubble absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-green-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam buzağı sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-green-700"></div>
+                    </div>
+                </div>
+                <div class="bg-yellow-500 text-white text-center rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="heiferNumber">Düve Sayısı</h5>
+                    <div class="help-bubble absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-yellow-600 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam dişi dana (düve) sayısını gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-yellow-600"></div>
+                    </div>
+                </div>
+                <div class="bg-red-600 text-white text-center rounded-xl shadow p-4 relative">
+                    <h5 class="text-lg font-semibold" id="bullNumber">Boğa Sayısı</h5>
+                    <div class="help-bubble absolute top-full mt-2 right-0 bg-red-700 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Toplam erkek hayvan (boğa ve dana) sayısını gösterir.</span>
+                        <div class="absolute bottom-full right-4 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-red-700"></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menü Butonları -->
+            <div id="allButtons" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <button title="Tüm ineklerin listesini görüntüle" id="cows" class="px-4 py-3 text-blue-700 font-bold border-2 border-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer relative">
+                    Gebe İnekler
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Tüm sağılan ve kuru dönemindeki ineklerin listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
+                </button>
+                <button title="Bütün hayvanların listesini görüntüle" id="animals" class="px-4 py-3 text-white font-bold bg-green-600 rounded-xl hover:bg-green-700 cursor-pointer relative">
+                    Tüm Hayvanlar
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Bütün hayvanların listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
+                </button>
+                <button title="Tüm buzağıların listesini görüntüle" id="calves" class="px-4 py-3 text-green-700 font-bold border-2 border-green-600 rounded-xl hover:bg-green-300 cursor-pointer relative">
+                    Buzağılar
+                    <div class="help-bubble -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Tüm buzağıların listesini görüntüle.</span>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                    </div>
+                </button>
+                <button title="Tüm düvelerin listesini görüntüle" id="heifers" class="px-4 py-3 text-yellow-700 font-bold border-2 border-yellow-500 rounded-xl hover:bg-yellow-300 cursor-pointer relative">
+                    Boş İnekler ve Düveler
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Tüm boş ineklerin ve düvelerin listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </button>
+                <button title="Tüm danaların listesini görüntüle" id="bulls" class="px-4 py-3 text-indigo-700 font-bold border-2 border-indigo-500 rounded-xl hover:bg-indigo-300 cursor-pointer relative">
+                    Danalar
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Tüm danaların listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </button>
+                <button title="Yapılmış aşıların listesini görüntüle" id="vaccines" class="px-4 py-3 text-red-700 font-bold border-2 border-red-500 rounded-xl hover:bg-red-300 cursor-pointer relative">
+                    Aşılar
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                    <span class="block">Yapılmış aşıların listesini görüntüle.</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Veri Kutuları -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+                <!-- Yaklaşan Düveler Kutusu -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
+                    <div class="bg-purple-600 text-white px-4 py-3 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Yaklaşan Düveler</h3>
+                    </div>
+                    <div class="p-4 h-64 overflow-y-auto" id="closestHeifersContainer">
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Boş Gün Sayısı Çok Fazla Olan Düveler.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </div>
+
+                <!-- Yaklaşan İnekler Kutusu -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
+                    <div class="bg-blue-600 text-white px-4 py-3 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Yaklaşan İnekler</h3>
+                    </div>
+                    <div class="p-4 h-64 overflow-y-auto" id="closestCowsContainer">
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Doğumu Yaklaşan İnekler.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </div>
+
+                <!-- Bilgi/Güncellemeler Kutusu -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 relative">
+                    <div class="bg-green-600 text-white px-4 py-3 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Son Güncellemeler</h3>
+                    </div>
+                    <div class="p-4 h-64 overflow-y-auto" id="infoContainer">
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </div>
+                    <div class="help-bubble top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-xs p-2 rounded-lg shadow-md w-40 text-center text-white">
+                        <span class="block">Uygulamada otomatik olarak ayarlanan güncellemeleri gösterir.</span>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-800"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Version paragrafı sağ alt köşede, Ayarlar butonunun üstünde -->
+        <p id="appVersionTag" class="fixed bottom-20 right-6 text-gray-800 font-medium bg-white px-3 py-2 rounded-lg shadow-md">
+            App Version:
+        </p>
+
+        <!-- Silinen Hayvanlar Butonu - Sol Alt Köşe -->
+        <div class="fixed bottom-6 left-6 z-50">
+            <button
+                id="deletedAnimalsBtn"
+                class="group bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-end w-12 h-12 hover:w-48 hover:rounded-full overflow-hidden cursor-pointer"
+                title="Silinen hayvanlar sayfasına yönlendirir"
+                >
+                <span id="deletedAnimals" class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pr-5">Silinen Hayvanlar</span>
+                
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="flex-shrink-0 w-6 h-6 mr-3 transition-all duration-300 group-hover:mr-2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                    />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Ayarlar Butonu - Sağ Alt Köşe -->
+        <div class="fixed bottom-6 right-6 z-50">
+            <button
+                id="settingsBtn"
+                class="group bg-gray-700 hover:bg-gray-800 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 flex items-center justify-start w-12 h-12 hover:w-32 hover:rounded-full overflow-hidden cursor-pointer"
+                title="Ayarlar sayfasına yönlendirir"
+                >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="flex-shrink-0 w-6 h-6 ml-3 transition-all duration-300 group-hover:ml-2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
+                    />
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                </svg>
+
+                <span id="settings" class="font-medium text-m leading-none opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pl-5">Ayarlar</span>
+            </button>
+        </div>
+        <script src="../../src/pages/index.js"></script>
+    </body>
+</html>

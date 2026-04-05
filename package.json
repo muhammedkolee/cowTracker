@@ -12,6 +12,9 @@
     "build": {
         "appId": "com.muhammedkolee.cowtracker",
         "artifactName": "${name}-Setup-${version}.${ext}",
+        "extraResources": [
+            ".env"
+        ],
         "publish": {
             "provider": "github",
             "owner": "muhammedkolee",
@@ -25,9 +28,12 @@
         "files": [
             "src/**/*",
             "icon.ico",
+            "icon.png",
             "styles/**/*",
             "views/**/*",
-            "backend/**/*"
+            "backend/**/*",
+            "middleware/**/*",
+            "!.env"
         ],
         "win": {
             "target": "nsis",

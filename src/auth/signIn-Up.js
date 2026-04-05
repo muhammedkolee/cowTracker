@@ -363,13 +363,13 @@
                     showError(response.message || "Bir hata oluştu!");
                 }
 
-                if (isLogin && !response) {
-                    showError("Şifre ve e-posta adresi yanlış. Tekrar deneyin.")
-                }
+                // if (isLogin && !response) {
+                //     // showError("Şifre ve e-posta adresi yanlış. Tekrar deneyin.")
+                // }
 
             } catch (error) {
                 // Şifre yanlışsa veya ağ hatası varsa buraya düşer
-                showError("Şifre yanlış veya bir hata oluştu!");
+                // showError("Şifre yanlış veya bir hata oluştu!");
                 console.error("İşlem hatası:", error);
             } finally {
                 // --- İŞLEM BİTTİ ---

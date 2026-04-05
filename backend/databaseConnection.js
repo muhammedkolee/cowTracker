@@ -1,7 +1,10 @@
 const { createClient } = require('@supabase/supabase-js');
 const Store = require('electron-store').default;
 const dns = require('dns');
-require("dotenv").config();
+// const path = require("path");
+// require("dotenv").config();
+
+// require('dotenv').config(path.join(process.resourcesPath, '.env'))
 
 const authStore = new Store({ name: 'auth-session' });
 
@@ -35,7 +38,7 @@ let isOnline = false;
 
 checkInternet().then(status => {
     isOnline = status;
-    if(!isOnline) console.log("⚠️ Çevrimdışı mod: Supabase otomatik yenileme kapatıldı.");
+    if(!isOnline) console.log("Çevrimdışı mod: Supabase otomatik yenileme kapatıldı.");
 });
 
 const supabase = createClient(supabaseUrl, supabaseKey, {

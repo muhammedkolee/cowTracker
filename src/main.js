@@ -2,6 +2,11 @@
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
 
+// Source - https://stackoverflow.com/a/76535660
+// Posted by icc97, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-04-05, License - CC BY-SA 4.0
+
+
 // To check internet connection
 const dns = require('dns');
 
@@ -18,6 +23,13 @@ const store = require("../backend/store.js");
 // Frameworks
 const { app, BrowserWindow, ipcMain, screen, dialog } = require("electron");
 const path = require("path");
+
+require('dotenv').config({
+    path: app.isPackaged
+        ? path.join(process.resourcesPath, '.env')
+        : path.resolve(process.cwd(), '.env'),
+});
+
 const ExcelJS = require("exceljs");
 
 // Import files for backend.

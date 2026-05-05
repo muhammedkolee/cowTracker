@@ -1,0 +1,90 @@
+{
+    "name": "cowtracker",
+    "productName": "Hayvan Yönetimi",
+    "version": "2.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build && electron-builder",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.103.0",
+        "dotenv": "^17.4.1",
+        "electron-store": "^11.0.2",
+        "lucide-react": "^1.8.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^7.14.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.2.2",
+        "@types/react": "^18.2.64",
+        "@types/react-dom": "^18.2.21",
+        "@typescript-eslint/eslint-plugin": "^7.1.1",
+        "@typescript-eslint/parser": "^7.1.1",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.27",
+        "electron": "^30.0.1",
+        "electron-builder": "^24.13.3",
+        "eslint": "^8.57.0",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.4.5",
+        "postcss": "^8.5.9",
+        "tailwindcss": "^4.2.2",
+        "typescript": "^5.2.2",
+        "vite": "^5.1.6",
+        "vite-plugin-electron": "^0.28.6",
+        "vite-plugin-electron-renderer": "^0.14.5"
+    },
+    "main": "dist-electron/main.js",
+    "build": {
+        "appId": "com.muhammedkolee.cowtracker",
+        "artifactName": "${name}-Setup-${version}.${ext}",
+        "extraResources": [
+            ".env"
+        ],
+        "publish": {
+            "provider": "github",
+            "owner": "muhammedkolee",
+            "repo": "cowTracker"
+        },
+        "productName": "Hayvan Yönetimi",
+        "copyright": "Copyright © Muhammed Kole",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "out/**/*",
+            "!src/**/*",
+            "!electron/**/*",
+            "icon.ico",
+            "icon.png"
+        ],
+        "win": {
+            "target": "nsis",
+            "artifactName": "${name}-Setup-${version}.${ext}",
+            "icon": "icon.ico"
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Hayvan Yönetimi",
+            "license": "license.md",
+            "runAfterFinish": true,
+            "differentialPackage": true
+        }
+    },
+    "keywords": [
+        "cow",
+        "tracker",
+        "farm",
+        "animal management",
+        "desktop app"
+    ],
+    "author": "Muhammed Kole",
+    "description": "A simple desktop app for cow tracking."
+}

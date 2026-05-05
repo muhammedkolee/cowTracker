@@ -1,0 +1,22 @@
+├── electron/
+│   ├── main.ts            # Sadece pencere yönetimi ve temel ayarlar
+│   ├── preload.ts         # Köprü (Bridge) tanımlamaları
+│   └── services/          # Backend mantığı (Database, Dosya yazma vb.)
+│       └── database.ts    # Supabase veya yerel DB işlemleri
+├── src/                   # Burası tamamen FRONT-END (React)
+│   ├── assets/            # Görseller, ikonlar
+│   ├── components/        # Genel bileşenler (Button, Navbar, Modal)
+│   ├── features/          # ASIL MANTIK BURADA (Örn: cows, milk, health)
+│   │   └── cows/          # İnek yönetimi ile ilgili her şey
+│   │       ├── CowList.tsx
+│   │       ├── CowDetail.tsx
+│   │       └── cowSlice.ts (State yönetimi kullanacaksan)
+│   ├── hooks/             # Özel React hook'ları
+│   ├── layouts/           # Sayfa şablonları
+│   ├── types/             # Frontend tarafındaki interface tanımları
+│   ├── App.tsx
+│   └── main.tsx
+├── shared/                # HEM Electron HEM React'in ortak kullandığı tipler
+│   └── interfaces.ts      # Örn: interface Animal { id: string, name: string }
+├── index.html
+└── ... config dosyaları

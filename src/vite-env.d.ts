@@ -2,91 +2,119 @@
 
 import { SettingsData } from "../shared/interfaces";
 
-interface Window {
-	api: {
-		getCows: () => Promise<any[]>;
+declare global {
+    interface Window {
+        api: {
+            getCows: () => Promise<any[]>;
 
-		getCalves: () => Promise<any[]>;
+            getCalves: () => Promise<any[]>;
 
-		getAnimals: () => Promise<any[]>;
+            getAnimals: () => Promise<any[]>;
 
-		getHeifers: () => Promise<any[]>;
+            getHeifers: () => Promise<any[]>;
 
-		getBulls: () => Promise<any[]>;
+            getBulls: () => Promise<any[]>;
 
-		getVaccines: () => Promise<any[]>;
-			
-		getVaccinesName: () => Promise<any[]>;
+            getVaccines: () => Promise<any[]>;
 
-		openAddAnimalWindow: (type: string) => Promise<any[]>;
+            getVaccinesName: () => Promise<any[]>;
 
-		openAnimalDetailWindow: (animalId: number) => Promise<any[]>;
+            openAddAnimalWindow: (type: string) => Promise<any[]>;
 
-		openUpdateAnimalWindow: (animalId: number) => Promise<any[]>;
+            openAnimalDetailWindow: (animalId: number) => Promise<any[]>;
 
-		openAddVaccineWindow: () => Promise<any[]>;
+            openUpdateAnimalWindow: (animalId: number) => Promise<any[]>;
 
-		closeWindow: () => Promise<any[]>;
+            openAddVaccineWindow: () => Promise<any[]>;
 
-		onRefreshData: () => Promise<any[]>;
+            closeWindow: () => Promise<any[]>;
 
-		// vite-env.d.ts
-		
-	},
+            onRefreshData: (callback: (data) => void) => void;
 
-	addAnimalAPI: {
-        getMothersEarringNo(): unknown;
-        getBullsName(): unknown;
-		receiveAnimalType: () => string;
+            getCounts: () => Promise<any[]>;
 
-		receiveMothersEarringNo: () => any[];
-		
-		receiveBullsName: () => any[];
+            getUpcomingEvents: () => Promise<any[]>;
 
-		addAnimal: (animalData) => any[];
-		
-		// receiveAnimalType: () => Promise<any[]>;
-	},
+            getActivityLogs: () => Promise<any[]>;
 
-	animalDetailAPI: {
-		receiveData: () => any[];
-	},
+            // vite-env.d.ts
+        };
 
-	updateAnimalAPI: {
-		receiveData: () => any[];
+        addAnimalAPI: {
+            getMothersEarringNo: () => Promise<any>;
+            getBullsName: () => Promise<any>;
+            receiveAnimalType: (callback: (type: string) => void) => void;
 
-		updateAnimal: () => any[];
-	},
+            receiveMothersEarringNo: () => any[];
 
-	vaccineAPI: {
-		getAnimalsData: () => any[];
+            receiveBullsName: () => any[];
 
-		addVaccine: () => any[];
+            addAnimal: (animalData) => any[];
 
-		deleteVaccine: (vaccineId: number) => any;
-	},
+            // receiveAnimalType: () => Promise<any[]>;
+        };
 
-	deathAnimalsAPI: {
-		getDeletedAnimals: () => any[];
+        animalDetailAPI: {
+            receiveData: (
+                callback: (payload: {
+                    animal: any;
+                    vaccines: any[];
+                    calves: any[];
+                }) => void,
+            ) => any[];
+        };
 
-		restoreAnimal: (id: number) => any;
+        updateAnimalAPI: {
+            receiveData: (callback: (data: {animal: any, datasForType: any}) => void) => void;
 
-		permanentDelete: (payload: {id: number, type: string}) => any; 
-	},
+            updateAnimal: (data: any) => any;
+        };
 
-	settingsAPI: {
-		getSettingsData: () => SettingsData;
-	},
+        vaccineAPI: {
+            getAnimalsData: (
+                callback: (data: AnimalData[], names: string[]) => void,
+            ) => void;
 
-	authAPI: {
-		login: (payload: { mail: string, password: string }) => boolean,
+            addVaccine: (data: any) => void;
 
-		signup: (payload: { fullName: string, mail: string, password: string }) => boolean,
+            deleteVaccine: (vaccineId: number) => any;
+        };
 
-		getAuth: () => boolean;
+        deathAnimalsAPI: {
+            getDeletedAnimals: () => any[];
 
-		logout: () => void;
-	}
- }
+            restoreAnimal: (id: number) => any;
+
+            permanentDelete: (payload: { id: number; type: string }) => any;
+        };
+
+        settingsAPI: {
+            getSettingsData: () => SettingsData;
+
+			saveSettings: (data: any) => void;
+        };
+
+        authAPI: {
+            login: (payload: { email: string; password: string }) => boolean;
+
+            signup: (payload: {
+                fullName: string;
+                email: string;
+                password: string;
+            }) => boolean;
+
+            getAuth: () => boolean;
+
+            logout: () => void;
+        };
+        animalServiceAPI: {
+			removeAnimal: (trashData: any) => void;
+
+			gaveBirth: (data) => void;
+
+			applyInsemination: (data: any) => void;
+		};
+    }
+}
 
 declare const __APP_VERSION__: string;

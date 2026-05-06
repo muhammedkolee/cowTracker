@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.env*
+electron-builder.json5
+file_structer.txt

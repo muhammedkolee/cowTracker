@@ -59,7 +59,13 @@ contextBridge.exposeInMainWorld("api", {
         
         // Temizlik için bir fonksiyon döndür
         return () => ipcRenderer.removeListener('refresh-all-data', subscription);
-    }
+    },
+
+    getCounts: () => ipcRenderer.invoke("get-counts"),
+
+    getUpcomingEvents: () => ipcRenderer.invoke("get-upcoming-events"),
+
+    getActivityLogs: () => ipcRenderer.invoke("get-activity-logs"),
 });
 
 contextBridge.exposeInMainWorld('addAnimalAPI', {

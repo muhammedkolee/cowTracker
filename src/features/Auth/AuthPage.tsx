@@ -71,7 +71,7 @@ export default function AuthPage() {
         setLoading(true);
         setErrors({});
         try {
-            const result = await window.authAPI.login({
+            await window.authAPI.login({
                 email: loginForm.email,
                 password: loginForm.password,
             });
@@ -88,14 +88,11 @@ export default function AuthPage() {
         setLoading(true);
         setErrors({});
         try {
-            const result = await window.authAPI.signup({
+            await window.authAPI.signup({
                 fullName: signupForm.fullName,
                 email: signupForm.email,
                 password: signupForm.password,
             });
-            if (!result.success) {
-                setErrors({ general: result.message || "Kayıt oluşturulamadı." });
-            }
         } catch {
             setErrors({ general: "Bir hata oluştu. Tekrar deneyiniz." });
         } finally {
@@ -112,8 +109,8 @@ export default function AuthPage() {
         <div className="min-h-screen bg-slate-600 flex items-center justify-center p-4 relative overflow-hidden">
             {/* Arka plan dekorasyon */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[120px]" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-teal-500/10 blur-[120px]" />
+                <div className="absolute top-[-20%] left-[-10%] w-125 h-125 rounded-full bg-emerald-500/10 blur-[120px]" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-125 h-125 rounded-full bg-teal-500/10 blur-[120px]" />
                 <div
                     className="absolute inset-0 opacity-[0.03]"
                     style={{

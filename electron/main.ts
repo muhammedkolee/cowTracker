@@ -1,10 +1,10 @@
 // This file manage windows, base settings and etc..
 import { app, BrowserWindow } from "electron";
-import { createRequire } from "node:module";
+// import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const require = createRequire(import.meta.url);
+// const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // The built directory structure
@@ -52,7 +52,7 @@ let win: BrowserWindow | null;
 
 function createWindow() {
     win = new BrowserWindow({
-        icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+        icon: path.join(process.env.VITE_PUBLIC || '', "electron-vite.svg"),
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
         },
@@ -158,19 +158,19 @@ ipcMain.handle("get-bulls-name", async () => {
     return await databaseService.getBullsName();
 });
 
-ipcMain.handle("add-animal-data", async (event, animalData) => {
+ipcMain.handle("add-animal-data", async (_, animalData) => {
     return await addDataServices.addAnimal(animalData);
 });
 
-ipcMain.handle("update-animal-data", async (event, animalData) => {
+ipcMain.handle("update-animal-data", async (_, animalData) => {
     return await updateAnimalService.updateAnimal(animalData);
 });
 
-ipcMain.handle("add-vaccine", async (event, vaccineData) => {
+ipcMain.handle("add-vaccine", async (_, vaccineData) => {
     return await vaccineService.addVaccine(vaccineData);
 });
 
-ipcMain.handle("delete-vaccine", async (event, vaccineId) => {
+ipcMain.handle("delete-vaccine", async (_, vaccineId) => {
     await vaccineService.deleteVaccine(vaccineId);
     if (win) win.webContents.send("refresh-all-data");
 });
@@ -223,8 +223,20 @@ ipcMain.handle("sign-up", async (_, signupData: any) => {
     return await authService.signup(signupData.fullName, signupData.mail, signupData.password);
 });
 
-ipcMain.handle("get-auth", async(_) => {
+ipcMain.handle("get-auth", async (_) => {
     return await authService.getAuth();
+});
+
+ipcMain.handle("get-counts", async (_) => {
+    return await databaseService.getCounts();
+});
+
+ipcMain.handle("get-upcoming-events", async (_) => {
+    return await databaseService.getUpcomingEvents();
+});
+
+ipcMain.handle("get-activity-logs", async (_) => {
+    return await databaseService.getActivityLogs();
 });
 
 ipcMain.on("log-out", async (_) => {
@@ -280,7 +292,7 @@ ipcMain.on("open-add-animal-window", async (_, type) => {
     });
 });
 
-ipcMain.on("open-animal-detail-window", async (event, animalId: number) => {
+ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
     const detailWindow = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -295,7 +307,7 @@ ipcMain.on("open-animal-detail-window", async (event, animalId: number) => {
     // Veritabanından tüm ilişkili verileri çek
     const animal = await animalDetailServices.getAnimalDetail(animalId);
     const vaccines = await animalDetailServices.getAnimalVaccines(animalId);
-    const calves = await animalDetailServices.getAnimalCalves(animalId);
+    const calves = await animalDetailServices.getAnimalCalves();
 
     detailWindow.webContents.on(
         "before-input-event",
@@ -323,7 +335,7 @@ ipcMain.on("open-animal-detail-window", async (event, animalId: number) => {
     });
 });
 
-ipcMain.on("open-update-animal-window", async (event, animalId: number) => {
+ipcMain.on("open-update-animal-window", async (_, animalId: number) => {
     const updateWindow = new BrowserWindow({
         width: 1200,
         height: 800,

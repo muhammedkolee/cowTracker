@@ -339,6 +339,7 @@ export default function CowPage() {
                                     if (!trashData.Reason)
                                         return alert("Lütfen neden girin");
                                     await window.animalServiceAPI.removeAnimal(trashData);
+                                    fetchCows();
                                     setIsTrashModalOpen(false);
                                 }}
                             >

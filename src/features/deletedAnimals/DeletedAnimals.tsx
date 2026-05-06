@@ -44,6 +44,7 @@ export default function DeletedAnimalsPage() {
     };
 
     const handleModalConfirm = async () => {
+        setLoading(true);
         if (!modal.animal) return;
         setModal((m) => ({ ...m, isOpen: false }));
         if (modal.variant === "restore") {
@@ -56,7 +57,6 @@ export default function DeletedAnimalsPage() {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const result = await window.deathAnimalsAPI.getDeletedAnimals();
             setData(Array.isArray(result) ? result : []);
         } catch (err) {

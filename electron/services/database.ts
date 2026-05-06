@@ -10,36 +10,50 @@ var earringNoForCalves = "t";
 var typeForUpdate = "";
 
 if (!supabaseUrl || !supabaseAnonKey) {
-    // Eğer hala boş geliyorsa, ön eki MAIN_VITE_ olarak değiştirmeyi deneyeceğiz
     throw new Error(
         "Supabase URL veya Key alınamadı. Lütfen .env dosyasını ve ön ekleri kontrol et.",
     );
 }
 
 const supabaseAuthAdapter = {
-    getItem: (key: string): string | null => authSessionStore.get(key) as string | null,
+    getItem: (key: string): string | null =>
+        authSessionStore.get(key) as string | null,
     setItem: (key: string, value: string) => authSessionStore.set(key, value),
     removeItem: (key: string) => authSessionStore.delete(key),
 };
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-            storage: supabaseAuthAdapter,
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: false
-        }
+        storage: supabaseAuthAdapter,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+    },
 });
+
+// async function getUser() {
+//     const {data: { user } } = await supabase.auth.getUser();
+//     return user;
+// }
+
+// const user = getUser();
 
 export const authService = {
     async login(email: string, password: string) {
-        const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: password });
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
         if (error) throw error;
         return { success: true, user: data.user };
     },
 
     async signup(fullname: string, mail: string, password: string) {
-        const { data, error } = await supabase.auth.signUp({ email: mail, password: password, options: { data: {display_name: fullname } } });
+        const { data, error } = await supabase.auth.signUp({
+            email: mail,
+            password: password,
+            options: { data: { display_name: fullname } },
+        });
         if (error) return false;
         return data;
     },
@@ -52,20 +66,23 @@ export const authService = {
     },
 
     async getAuth() {
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log(session);
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
         return !!session;
     },
 
     async getEmail() {
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log(session);
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
         return session?.user.email;
-    }
-}
+    },
+};
 
 export const databaseService = {
     async getCows() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Cows")
             .select(
@@ -79,6 +96,7 @@ export const databaseService = {
 			`,
             )
             .eq("Animals.IsDeleted", false)
+            .eq("user_id", user?.id)
             .order("InseminationDate", { ascending: true });
 
         if (error) throw error;
@@ -86,6 +104,7 @@ export const databaseService = {
     },
 
     async getCalves() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Calves")
             .select(
@@ -106,6 +125,7 @@ export const databaseService = {
 			`,
             )
             .eq("Animals.IsDeleted", false)
+            .eq("user_id", user?.id)
             .order("BirthDate", { ascending: false });
 
         if (error) throw error;
@@ -113,6 +133,7 @@ export const databaseService = {
     },
 
     async getAnimals() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Animals")
             .select(
@@ -121,6 +142,7 @@ export const databaseService = {
 			`,
             )
             .eq("IsDeleted", false)
+            .eq("user_id", user?.id)
             .order("Type", { ascending: false });
 
         if (error) throw error;
@@ -129,6 +151,7 @@ export const databaseService = {
     },
 
     async getHeifers() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Heifers")
             .select(
@@ -142,6 +165,7 @@ export const databaseService = {
 			`,
             )
             .eq("Animals.IsDeleted", false)
+            .eq("user_id", user?.id)
             .order("LastBirthDate", { ascending: true });
 
         if (error) throw error;
@@ -149,6 +173,7 @@ export const databaseService = {
     },
 
     async getBulls() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Animals")
             .select(
@@ -158,6 +183,7 @@ export const databaseService = {
             )
             .eq("Type", "bull")
             .eq("IsDeleted", false)
+            .eq("user_id", user?.id)
             .order("BirthDate", { ascending: false });
 
         if (error) throw error;
@@ -165,6 +191,7 @@ export const databaseService = {
     },
 
     async getVaccines() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Vaccines")
             .select(
@@ -176,6 +203,7 @@ export const databaseService = {
             )
 			`,
             )
+            .eq("user_id", user?.id)
             .order("VaccineDate", { ascending: true });
 
         if (error) throw error;
@@ -183,9 +211,15 @@ export const databaseService = {
     },
 
     async getVaccinesName() {
-        const { data, error } = await supabase.from("Vaccines").select(`
+        const {data: { user } } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+            .from("Vaccines")
+            .select(
+                `
 			VaccineName
-			`);
+			`,
+            )
+            .eq("user_id", user?.id);
 
         if (error) throw error;
 
@@ -197,10 +231,12 @@ export const databaseService = {
 
     // For Add Animal API
     async getMothersEarringNo(): Promise<any[]> {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data: aliveCowData, error: cowError } = await supabase
             .from("Animals")
             .select("EarringNo, Name")
-            .in("Type", ["cow", "heifer"]);
+            .in("Type", ["cow", "heifer"])
+            .eq("user_id", user?.id);
 
         if (cowError) {
             console.log(cowError);
@@ -209,7 +245,8 @@ export const databaseService = {
         const { data: deathCowData, error: deathCowError } = await supabase
             .from("DeletedAnimals")
             .select("EarringNo, Name")
-            .in("Type", ["cow", "heifer"]);
+            .in("Type", ["cow", "heifer"])
+            .eq("user_id", user?.id);
 
         if (deathCowError) {
             console.log(deathCowError);
@@ -217,12 +254,6 @@ export const databaseService = {
 
         const alive = aliveCowData ?? [];
         const dead = deathCowData ?? [];
-
-        console.log([
-            ...new Map(
-                [...alive, ...dead].map((item) => [item.EarringNo, item]),
-            ).values(),
-        ]);
 
         return [
             ...new Map(
@@ -232,10 +263,12 @@ export const databaseService = {
     },
 
     async getBullsName(): Promise<any[]> {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data: aliveBullData, error: aliveBullError } = await supabase
             .from("Animals")
             .select("Name")
-            .eq("Type", "bull");
+            .eq("Type", "bull")
+            .eq("user_id", user?.id);
 
         if (aliveBullError) {
             console.log(
@@ -247,7 +280,8 @@ export const databaseService = {
         const { data: deathBullData, error: deathBullError } = await supabase
             .from("DeletedAnimals")
             .select("Name")
-            .eq("Type", "bull");
+            .eq("Type", "bull")
+            .eq("user_id", user?.id);
 
         if (deathBullError) {
             console.log(
@@ -265,13 +299,122 @@ export const databaseService = {
             ).values(),
         ];
     },
+
+    async getCounts() {
+        const {data: { user } } = await supabase.auth.getUser();
+        const { data } = await supabase.from("Animals").select("Type").eq("user_id", user?.id);
+
+        const counts = data?.reduce((acc: Record<string, number>, row) => {
+            acc[row.Type] = (acc[row.Type] || 0) + 1;
+            return acc;
+        }, {});
+
+        return counts
+    },
+
+    async getUpcomingEvents() {
+    const today = new Date();
+
+    const { data: heifers } = await supabase
+        .from("Heifers")
+        .select("EarringNo, Name, LastBirthDate")
+        .not("LastBirthDate", "is", null);
+
+    const emptyHeifers = (heifers ?? [])
+        .map((h: any) => ({
+            name: h.Name,
+            earringNo: h.EarringNo,
+            daysLeft: Math.ceil((today.getTime() - new Date(h.LastBirthDate).getTime()) / 86400000),
+        }))
+        .filter((h: any) => h.daysLeft > 60);
+
+    const { data: cows } = await supabase
+        .from("Cows")
+        .select("EarringNo, Name, InseminationDate, LastBirthDate");
+
+    const emptyCows = (cows ?? [])
+        .filter((c: any) => c.LastBirthDate && !c.InseminationDate)
+        .map((c: any) => ({
+            name: c.Name,
+            earringNo: c.EarringNo,
+            daysLeft: Math.ceil((today.getTime() - new Date(c.LastBirthDate).getTime()) / 86400000),
+        }))
+        .filter((c: any) => c.daysLeft > 60);
+
+    const upcomingCows = (cows ?? [])
+        .filter((c: any) => c.InseminationDate)
+        .map((c: any) => {
+            const birth = new Date(c.InseminationDate);
+            birth.setDate(birth.getDate() + 280);
+            const daysLeft = Math.ceil((birth.getTime() - today.getTime()) / 86400000);
+            return { name: c.Name, earringNo: c.EarringNo, daysLeft };
+        })
+        .filter((c: any) => c.daysLeft <= 20);
+
+    return { heifers: emptyHeifers, cows: upcomingCows, emptyCows };
+    },
+
+    async getActivityLogs() {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
+
+    // 365+ günlük buzağıları bul
+    const { data: calves } = await supabase
+        .from("Calves")
+        .select("*, Animals(*)");
+
+    const oldCalves = (calves ?? []).filter((c: any) => {
+        const age = Math.ceil((today.getTime() - new Date(c.BirthDate).getTime()) / 86400000);
+        return age >= 365;
+    });
+
+    // Her biri için statü güncelle
+    for (const calf of oldCalves) {
+        const newType = calf.Gender === true ? "heifer" : "bull";
+
+        // Animals tablosunu güncelle
+        await supabase.from("Animals").update({ Type: newType }).eq("Id", calf.AnimalId);
+
+        // Calves tablosundan sil
+        await supabase.from("Calves").delete().eq("Id", calf.Id);
+
+        if (newType === "heifer") {
+            // Heifers tablosuna ekle
+            await supabase.from("Heifers").insert({
+                AnimalId: calf.AnimalId,
+                EarringNo: calf.Animals?.EarringNo,
+                Name: calf.Animals?.Name,
+                LastBirthDate: null,
+            });
+        }
+
+        // ActivityLogs tablosuna kaydet
+        await supabase.from("ActivityLogs").insert({
+            AnimalId: calf.AnimalId,
+            EarringNo: calf.Animals?.EarringNo,
+            AnimalName: calf.Animals?.Name,
+            OldType: "calf",
+            NewType: newType,
+            ChangedAt: today.toISOString(),
+        });
+    }
+
+    // Son 7 günün loglarını getir
+    const { data: logs } = await supabase
+        .from("ActivityLogs")
+        .select("*")
+        .gte("ChangedAt", sevenDaysAgo)
+        .order("ChangedAt", { ascending: false });
+
+    return logs ?? [];
+    }
 };
 
 export const addDataServices = {
-    async addAnimal(datas: any[]): Promise<boolean> {
-        // const { data: { user }, error: userError } = await supabase.auth.getUser();
-        // datas.animalDatas.user_id = user.id;
+    async addAnimal(datas: any): Promise<boolean> {
+        const {data: { user } } = await supabase.auth.getUser();
 
+        datas.animalDatas.user_id = user?.id;
         const { data, error } = await supabase
             .from("Animals")
             .insert(datas.animalDatas)
@@ -282,17 +425,16 @@ export const addDataServices = {
             return false;
         }
 
-        console.log(datas);
         if (datas.animalDatas.Type === "cow") {
             datas.cowDatas.Id = data[0].Id;
-            // datas.cowDatas.user_id = user.id;
+            datas.cowDatas.user_id = user?.id;
 
-            const { data: cowsData, error: cowsError } = await supabase
+            const { error: cowsError } = await supabase
                 .from("Cows")
                 .insert(datas.cowDatas);
 
             if (cowsError) {
-                const result = await supabase
+                await supabase
                     .from("Animals")
                     .delete()
                     .eq("Id", datas.cowDatas.Id);
@@ -301,12 +443,14 @@ export const addDataServices = {
             }
         } else if (datas.animalDatas.Type == "heifer") {
             datas.heiferDatas.Id = data[0].Id;
-            // user_id
+            datas.heiferDatas.user_id = user?.id;
 
-            const { data: heiferData, error: heiferError } = await supabase.from("Heifers").insert(datas.heiferDatas);
+            const { error: heiferError } = await supabase
+                .from("Heifers")
+                .insert(datas.heiferDatas);
 
             if (heiferError) {
-                const result = await supabase
+                await supabase
                     .from("Animals")
                     .delete()
                     .eq("Id", datas.heiferDatas.Id);
@@ -315,17 +459,20 @@ export const addDataServices = {
             }
         } else if (datas.animalDatas.Type == "calf") {
             datas.calfDatas.Id = data[0].Id;
-            // user_id
+            datas.calfDatas.user_id = user?.id;
 
-            const { data: calfData, error: calfError } = await supabase.from("Calves").insert(datas.calfDatas);
+            const { error: calfError } = await supabase
+                .from("Calves")
+                .insert(datas.calfDatas);
 
             if (calfError) {
-                const result = await supabase
+                await supabase
                     .from("Animals")
                     .delete()
+                    .eq("user_id", user?.id)
                     .eq("Id", datas.calfDatas.Id);
 
-                return false;                
+                return false;
             }
         }
         return true;
@@ -334,49 +481,74 @@ export const addDataServices = {
 
 export const animalDetailServices = {
     async getAnimalDetail(animalId: number) {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data: animalData, error: animalError } = await supabase
             .from("Animals")
             .select("*")
             .eq("Id", animalId)
+            .eq("user_id", user?.id)
             .single();
+
+        if (animalError) console.log(animalError);
+
         earringNoForCalves = animalData.EarringNo;
-        console.log(animalData);
+
+        if (animalData.Type === 'cow') {
+            const { data: cowData, error: cowError} = await supabase.from("Cows").select("InseminationDate, LastBirthDate, CheckedDate").eq("user_id", user?.id).eq("Id", animalId).single();
+            if (cowError) return [];
+            return { ...animalData, ...cowData }
+        }
+        else if (animalData.Type === 'heifer') {
+            const { data: heiferData, error: heiferError} = await supabase.from("Heifers").select("LastBirthDate").eq("user_id", user?.id).eq("Id", animalId).single();
+
+            if (heiferError) return [];
+
+            return { ...animalData, ...heiferData }
+        }
+        else if (animalData.Type === 'calf') {
+            const { data: calfData, error: calfError} = await supabase.from("Calves").select("Gender").eq("user_id", user?.id).eq("Id", animalId).single();
+
+            if (calfError) return [];
+
+            return { ...animalData, ...calfData }
+        }
+
         return animalData;
-
-        // if (animalData.Type === 'cow' || animalData.Type === 'heifer') {
-        //     const {data: calvesData, error: calvesError } = await supabase.from("Animals").select('EarringNo, Name, BirthDate').eq("MotherEarringNo", animalData.EarringNo);
-        //     allData.calvesData = calvesData;
-        // }
-
-        // const { data: vaccinesData, error: vaccinesError } = await supabase.from("Vaccines").select("VaccineName, VaccineDate").eq("AnimalId", animalId)
     },
 
     async getAnimalVaccines(animalId: number) {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data: vaccinesData, error: vaccinesError } = await supabase
             .from("Vaccines")
             .select("VaccineName, VaccineDate")
+            .eq("user_id", user?.id)
             .eq("AnimalId", animalId);
+
         if (vaccinesError) return [];
-        console.log(vaccinesData);
         return vaccinesData;
     },
 
-    async getAnimalCalves(animalId: number) {
+    async getAnimalCalves() {
+        const {data: { user } } = await supabase.auth.getUser();
         if (earringNoForCalves) {
             const { data: calvesData, error: calvesError } = await supabase
                 .from("Animals")
                 .select("EarringNo, Name, BirthDate")
-                .eq("MotherEarringNo", earringNoForCalves);
+                .eq("MotherEarringNo", earringNoForCalves)
+                .eq("user_id", user?.id);
+
             if (calvesError) return [];
 
             const { data: deathCalvesData, error: deathCalvesError } =
                 await supabase
                     .from("DeletedAnimals")
                     .select("EarringNo, Name, BirthDate, DeathDate, Reason")
-                    .eq("MotherEarringNo", earringNoForCalves);
-            console.log(calvesData);
+                    .eq("MotherEarringNo", earringNoForCalves)
+                    .eq("user_id", user?.id);
 
-            const allCalvesData = calvesData.concat(deathCalvesData);
+            if (deathCalvesError) console.log(deathCalvesError);
+
+            const allCalvesData = calvesData.concat(deathCalvesData || []);
             return allCalvesData;
         }
         return [];
@@ -385,11 +557,16 @@ export const animalDetailServices = {
 
 export const updateAnimalService = {
     async getAnimalDatas(animalId: number) {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data: animalData, error: animalError } = await supabase
             .from("Animals")
             .select("*")
             .eq("Id", animalId)
+            .eq("user_id", user?.id)
             .single();
+
+        if (animalError) console.log(animalError);
+
         earringNoForCalves = animalData.EarringNo;
 
         typeForUpdate = animalData.Type;
@@ -398,12 +575,16 @@ export const updateAnimalService = {
     },
 
     async getDataAsType(animalId: number) {
+        const {data: { user } } = await supabase.auth.getUser();
         if (typeForUpdate == "cow") {
             const { data, error } = await supabase
                 .from("Cows")
                 .select("*")
                 .eq("Id", animalId)
+                .eq("user_id", user?.id)
                 .single();
+
+            if (error) console.log(error);
 
             return data;
         } else if (typeForUpdate == "heifer") {
@@ -411,7 +592,10 @@ export const updateAnimalService = {
                 .from("Heifers")
                 .select("*")
                 .eq("Id", animalId)
+                .eq("user_id", user?.id)
                 .single();
+
+            if (error) console.log(error);
 
             return data;
         } else if (typeForUpdate == "calf") {
@@ -419,13 +603,17 @@ export const updateAnimalService = {
                 .from("Calves")
                 .select("*")
                 .eq("Id", animalId)
+                .eq("user_id", user?.id)
                 .single();
+
+            if (error) console.log(error);
 
             return data;
         }
     },
 
     async updateAnimal(animalData: any) {
+        const {data: { user } } = await supabase.auth.getUser();
         try {
             const { animalDatas, cowDatas, heiferDatas, calfDatas } =
                 animalData;
@@ -442,6 +630,7 @@ export const updateAnimalService = {
                     Breed: animalDatas.Breed,
                     Note: animalDatas.Note,
                 })
+                .eq("user_id", user?.id)
                 .eq("Id", animalDatas.Id);
 
             if (animalError) throw animalError;
@@ -455,6 +644,7 @@ export const updateAnimalService = {
                         BullName: cowDatas.BullName,
                         CheckedDate: cowDatas.CheckedDate,
                     })
+                    .eq("user_id", user?.id)
                     .eq("Id", cowDatas.Id);
 
                 if (cowError) throw cowError;
@@ -464,6 +654,7 @@ export const updateAnimalService = {
                     .update({
                         LastBirthDate: heiferDatas.LastBirthDate,
                     })
+                    .eq("user_id", user?.id)
                     .eq("Id", heiferDatas.Id);
 
                 if (heiferError) throw heiferError;
@@ -473,6 +664,7 @@ export const updateAnimalService = {
                     .update({
                         Gender: calfDatas.Gender,
                     })
+                    .eq("user_id", user?.id)
                     .eq("Id", calfDatas.Id);
 
                 if (calfError) throw calfError;
@@ -488,25 +680,29 @@ export const updateAnimalService = {
 
 export const vaccineService = {
     async getAnimalsData() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Animals")
-            .select("Id, EarringNo, Name, MotherEarringNo, MotherName");
-        console.log(data);
+            .select("Id, EarringNo, Name, MotherEarringNo, MotherName")
+            .eq("user_id", user?.id);
+
+        if (error) console.log(error);
+
         return data;
     },
 
     async addVaccine(vaccineData: any) {
+        const {data: { user } } = await supabase.auth.getUser();
         const { animalIds, vaccineName, vaccineDate } = vaccineData;
 
         const records = animalIds.map((animalId: number) => ({
             AnimalId: animalId,
             VaccineName: vaccineName,
             VaccineDate: new Date(vaccineDate),
+            user_id: user?.id,
         }));
 
         const { error } = await supabase.from("Vaccines").insert(records);
-
-        console.log(error);
 
         if (error) {
             return false;
@@ -515,9 +711,11 @@ export const vaccineService = {
     },
 
     async deleteVaccine(vaccineId: number) {
+        const {data: { user } } = await supabase.auth.getUser();
         const { error } = await supabase
             .from("Vaccines")
             .delete()
+            .eq("user_id", user?.id)
             .eq("Id", vaccineId);
 
         if (error) return false;
@@ -527,37 +725,60 @@ export const vaccineService = {
 
 export const deletedAnimalsService = {
     async getDeletedAnimals() {
+        const {data: { user } } = await supabase.auth.getUser();
         const { data, error } = await supabase
             .from("Animals")
             .select("*")
             .eq("IsDeleted", true)
+            .eq("user_id", user?.id)
             .order("DeathDate", { ascending: false });
+
+        if (error) console.log(error);
+
         return data;
     },
 };
 
 export const AnimalService = {
     async removeAnimal(Id: number, DeathDate: Date, Reason: string) {
-        const { error } = await supabase.from("Animals").update({"IsDeleted": true, "DeathDate": DeathDate, "Reason": Reason }).eq("Id", Id);
-        console.log(error)
+        const {data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase
+            .from("Animals")
+            .update({ IsDeleted: true, DeathDate: DeathDate, Reason: Reason })
+            .eq("user_id", user?.id)
+            .eq("Id", Id);
         if (error) return false;
         return true;
     },
 
     async deleteAnimal(id: number, type: string) {
-        
-        if (type == 'cow') {
-            const { error } = await supabase.from("Cows").delete().eq("Id", id);
+        const {data: { user } } = await supabase.auth.getUser();
+        if (type == "cow") {
+            const { error } = await supabase.from("Cows")
+                            .delete()
+                            .eq("user_id", user?.id)
+                            .eq("Id", id);
             if (error) return false;
-        } else if (type == 'calf') {
-            const { error } = await supabase.from("Calves").delete().eq("Id", id);
+        } else if (type == "calf") {
+            const { error } = await supabase
+                .from("Calves")
+                .delete()
+                .eq("user_id", user?.id)
+                .eq("Id", id);
             if (error) return false;
-        } else if (type == 'heifer') {
-            const { error } = await supabase.from("Heifers").delete().eq("Id", id);
-            if (error) return false; 
+        } else if (type == "heifer") {
+            const { error } = await supabase
+                .from("Heifers")
+                .delete()
+                .eq("user_id", user?.id)
+                .eq("Id", id);
+            if (error) return false;
         }
 
-        const { error } = await supabase.from("Animals").delete().eq("Id", id);
+        const { error } = await supabase.from("Animals")
+                            .delete()
+                            .eq("user_id", user?.id)
+                            .eq("Id", id);
 
         if (error) {
             console.log(error);
@@ -567,38 +788,121 @@ export const AnimalService = {
     },
 
     async revertAnimal(id: number) {
-        const { error } = await supabase.from("Animals").update({"IsDeleted": false}).eq("Id", id);
+        const {data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase
+            .from("Animals")
+            .update({ IsDeleted: false })
+            .eq("user_id", user?.id)
+            .eq("Id", id);
+
         if (error) return false;
         return true;
     },
 
     async applyInsemination(data: any) {
-        const {data: animalData, error: animalError } = await supabase.from("Animals").update({"Type": 'cow'}).eq("Id", data.Id).select().single();
+        const {data: { user } } = await supabase.auth.getUser();
+        const { data: animalData, error: animalError } = await supabase
+            .from("Animals")
+            .update({ Type: "cow" })
+            .eq("Id", data.Id)
+            .eq("user_id", user?.id)
+            .select()
+            .single();
+
         if (animalError) console.log(animalError);
 
-        const { data: heiferData, error: heiferError } = await supabase.from("Cows").insert({"EarringNo": animalData.EarringNo, "Name": animalData.Name, "Id": animalData.Id, "InseminationDate": data.InseminationDate, "BullName": data.BullName, "CheckedDate": data.CheckedDate, "LastBirthDate": data.LastBirthDate });
+        const { error: heiferError } = await supabase
+            .from("Cows")
+            .insert({
+                EarringNo: animalData.EarringNo,
+                Name: animalData.Name,
+                Id: animalData.Id,
+                InseminationDate: data.InseminationDate,
+                BullName: data.BullName,
+                CheckedDate: data.CheckedDate,
+                LastBirthDate: data.LastBirthDate,
+                user_id: user?.id
+            });
         if (heiferError) return false;
 
-        const { error } = await supabase.from("Heifers").delete().eq("Id", data.Id);
+        const { error } = await supabase
+            .from("Heifers")
+            .delete()
+            .eq("user_id", user?.id)
+            .eq("Id", data.Id);
         if (error) return false;
         return true;
     },
 
     async gaveBirth(allData: any) {
-        const {data: animalData, error: animalError } = await supabase.from("Animals").update({"Type": 'heifer'}).eq("Id", allData.MotherId).select().single();
+        const {data: { user } } = await supabase.auth.getUser();
+        const { data: animalData, error: animalError } = await supabase
+            .from("Animals")
+            .update({ Type: "heifer" })
+            .eq("user_id", user?.id)
+            .eq("Id", allData.MotherId)
+            .select()
+            .single();
         if (animalError) console.log(animalError);
 
-        const { data: changedData, error: changedError } = await supabase.from("Heifers").insert({"Id": animalData.Id, "EarringNo": animalData.EarringNo, "Name": animalData.Name, "LastBirthDate": allData.CalfDatas.BirthDate});
-        if (changedError) {console.log(changedError); return false}
+        const { error: changedError } = await supabase
+            .from("Heifers")
+            .insert({
+                Id: animalData.Id,
+                EarringNo: animalData.EarringNo,
+                Name: animalData.Name,
+                LastBirthDate: allData.CalfDatas.BirthDate,
+                user_id: user?.id
+            });
+        if (changedError) {
+            console.log(changedError);
+            return false;
+        }
 
-        const { error } = await supabase.from("Cows").delete().eq("Id", allData.MotherId);
-        if (error) {console.log(error); return false}
-        
-        const { data: calfData, error: calfError } = await supabase.from("Animals").insert({"BirthDate": allData.CalfDatas.BirthDate, "MotherEarringNo": animalData.EarringNo, "MotherName": animalData.Name, "Type": 'calf', "Breed": animalData.Breed, "IsDeleted": false, "EarringNo": allData.CalfDatas.EarringNo, "Name": allData.CalfDatas.Name}).select().single();
-        if (calfError) {console.log(calfError);return false};
+        const { error } = await supabase
+            .from("Cows")
+            .delete()
+            .eq("user_id", user?.id)
+            .eq("Id", allData.MotherId);
+        if (error) {
+            console.log(error);
+            return false;
+        }
 
-        const { data: calvesData, error: calvesError } = await supabase.from("Calves").insert({"EarringNo": allData.CalfDatas.EarringNo, "Name": allData.CalfDatas.Name, "BirthDate": allData.CalfDatas.BirthDate, "Gender": allData.CalfDatas.Gender, "Id": calfData.Id});
-        if (calvesError) {console.log(calvesError);return false};
+        const { data: calfData, error: calfError } = await supabase
+            .from("Animals")
+            .insert({
+                BirthDate: allData.CalfDatas.BirthDate,
+                MotherEarringNo: animalData.EarringNo,
+                MotherName: animalData.Name,
+                Type: "calf",
+                Breed: animalData.Breed,
+                IsDeleted: false,
+                EarringNo: allData.CalfDatas.EarringNo,
+                Name: allData.CalfDatas.Name,
+                user_id: user?.id
+            })
+            .select()
+            .single();
+        if (calfError) {
+            console.log(calfError);
+            return false;
+        }
+
+        const { error: calvesError } = await supabase
+            .from("Calves")
+            .insert({
+                EarringNo: allData.CalfDatas.EarringNo,
+                Name: allData.CalfDatas.Name,
+                BirthDate: allData.CalfDatas.BirthDate,
+                Gender: allData.CalfDatas.Gender,
+                Id: calfData.Id,
+                user_id: user?.id
+            });
+        if (calvesError) {
+            console.log(calvesError);
+            return false;
+        }
         return true;
-    }
+    },
 };

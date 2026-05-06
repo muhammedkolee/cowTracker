@@ -60,7 +60,10 @@
             "!src/**/*",
             "!electron/**/*",
             "icon.ico",
-            "icon.png"
+            "icon.png",
+            "dist/**/*",          
+            "dist-electron/**/*", 
+            "package.json"
         ],
         "win": {
             "target": "nsis",

@@ -289,6 +289,7 @@ export default function CalfPage() {
                                     if (!trashData.Reason)
                                         return alert("Lütfen neden girin");
                                     await window.animalServiceAPI.removeAnimal(trashData);
+                                    fetchCalves();
                                     setIsTrashModalOpen(false);
                                 }}
                             >

@@ -189,14 +189,10 @@ export default function HeiferPage() {
                     maxHeight="calc(100vh - 160px)"
                     rowClassName={(item: Heifer) => {
                         if (item.LastBirthDate) {
-                            const daysLeft = Math.ceil(
-                                (new Date(item.LastBirthDate).setDate(
-                                    new Date(item.LastBirthDate).getDate() +
-                                        280,
-                                ) -
-                                    Date.now()) /
-                                    (1000 * 60 * 60 * 24),
-                            );
+                            const daysLeft = Math.ceil((new Date().getTime() - new Date(item.LastBirthDate).getTime()) /
+                            (1000 * 60 * 60 * 24)
+                                )
+                            
                             if (daysLeft < 0) return "bg-purple-400";
                             if (daysLeft < 20) return "bg-yellow-400";
                             if (daysLeft < 60) return "bg-green-400";
@@ -278,6 +274,7 @@ export default function HeiferPage() {
                                     if (!trashData.Reason)
                                         return alert("Lütfen neden girin");
                                     await window.animalServiceAPI.removeAnimal(trashData);
+                                    fetchHeifers();
                                     setIsTrashModalOpen(false);
                                 }}
                             >

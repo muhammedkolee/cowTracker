@@ -13,7 +13,7 @@ import AuthPage from './features/Auth/AuthPage';
 
 function App() {
 	const [isLoading, setIsLoading] = useState(true);
-    const [session, setSession] = useState(null);
+    const [session, setSession] = useState<any>(null);
 
     useEffect(() => {
         const checkSession = async () => {

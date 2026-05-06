@@ -162,7 +162,7 @@ export default function AnimalPage() {
 
             <footer className="mt-4 text-slate-500 text-xs text-right">
                 <button
-                    onClick={() => window.api.openAddAnimalWindow("")}
+                    onClick={() => window.api.openAddAnimalWindow('')}
                     className="bg-green-600 hover:cursor-pointer hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium transition"
                 >
                     Yeni Hayvan Ekle
@@ -234,8 +234,8 @@ export default function AnimalPage() {
                                     if (!trashData.Reason)
                                         return alert("Lütfen neden girin");
                                     await window.animalServiceAPI.removeAnimal(trashData);
-                                    setIsTrashModalOpen(false);
                                     fetchAnimals();
+                                    setIsTrashModalOpen(false);
                                 }}
                             >
                                 Çöp Kutusuna Taşı

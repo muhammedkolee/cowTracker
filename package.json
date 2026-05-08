@@ -68,7 +68,7 @@
         "win": {
             "target": "nsis",
             "artifactName": "${name}-Setup-${version}.${ext}",
-            "icon": "icon.ico"
+            "icon": "public/icon.ico"
         },
         "nsis": {
             "oneClick": false,

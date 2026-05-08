@@ -52,7 +52,7 @@ let win: BrowserWindow | null;
 
 function createWindow() {
     win = new BrowserWindow({
-        icon: path.join(process.env.VITE_PUBLIC || '', "electron-vite.svg"),
+        icon: path.join(__dirname, '../public/icon.ico'),
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
         },
@@ -254,6 +254,7 @@ ipcMain.on("open-add-animal-window", async (_, type) => {
         height: 800,
         show: true,
         autoHideMenuBar: true,
+        icon: path.join(__dirname, '../public/icon.ico'),
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
         },
@@ -296,6 +297,7 @@ ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
     const detailWindow = new BrowserWindow({
         width: 1200,
         height: 800,
+        icon: path.join(__dirname, '../public/icon.ico'),
         backgroundColor: "#f8fafc",
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
@@ -339,6 +341,7 @@ ipcMain.on("open-update-animal-window", async (_, animalId: number) => {
     const updateWindow = new BrowserWindow({
         width: 1200,
         height: 800,
+        icon: path.join(__dirname, '../public/icon.ico'),
         backgroundColor: "#f8fafc",
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
@@ -380,6 +383,7 @@ ipcMain.on("open-add-vaccine-window", async () => {
     const addVaccineWindow = new BrowserWindow({
         width: 1200,
         height: 800,
+        icon: path.join(__dirname, '../public/icon.ico'),
         backgroundColor: "#f8fafc",
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),

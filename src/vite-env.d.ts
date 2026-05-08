@@ -40,6 +40,18 @@ declare global {
             // vite-env.d.ts
         };
 
+        updateAPI: {
+            onUpdateAvailable: (callback: any) => any,
+
+            onDownloadProgress: (callback: any) => any,
+
+            onUpdateDownloaded: (callback: any) => any,
+
+            startDownload: () => any,
+
+            quitAndInstall: () => any
+        };
+
         addAnimalAPI: {
             getMothersEarringNo: () => Promise<any>;
             getBullsName: () => Promise<any>;

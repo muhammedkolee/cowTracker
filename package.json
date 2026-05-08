@@ -13,6 +13,7 @@
         "@supabase/supabase-js": "^2.103.0",
         "dotenv": "^17.4.1",
         "electron-store": "^11.0.2",
+        "electron-updater": "^6.8.3",
         "lucide-react": "^1.8.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -61,8 +62,8 @@
             "!electron/**/*",
             "icon.ico",
             "icon.png",
-            "dist/**/*",          
-            "dist-electron/**/*", 
+            "dist/**/*",
+            "dist-electron/**/*",
             "package.json"
         ],
         "win": {

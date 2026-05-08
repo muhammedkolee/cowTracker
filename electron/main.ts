@@ -2,7 +2,10 @@
 import { app, BrowserWindow } from "electron";
 // import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { autoUpdater } from 'electron-updater';
 import path from "node:path";
+
+autoUpdater.autoDownload = false;
 
 // const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -50,6 +53,26 @@ Store.initRenderer();
 
 let win: BrowserWindow | null;
 
+function checkUpdates(mainWindow: BrowserWindow) {
+  // Güncelleme kontrolünü başlat
+  autoUpdater.checkForUpdatesAndNotify();
+
+  // Güncelleme bulunduğunda
+  autoUpdater.on('update-available', (info) => {
+    mainWindow.webContents.send('update_available', info.version);
+  });
+
+  // İndirme ilerlemesi
+  autoUpdater.on('download-progress', (progressObj) => {
+    mainWindow.webContents.send('download_progress', progressObj.percent);
+  });
+
+  // İndirme bittiğinde
+  autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('update_downloaded');
+  });
+}
+
 function createWindow() {
     win = new BrowserWindow({
         icon: path.join(__dirname, '../public/icon.ico'),
@@ -59,15 +82,17 @@ function createWindow() {
     });
 
     // Test active push message to Renderer-process.
-    win.webContents.on("did-finish-load", () => {
-        win?.webContents.send(
-            "main-process-message",
-            new Date().toLocaleString(),
-        );
-    });
+    // win.webContents.on("did-finish-load", () => {
+    //     win?.webContents.send(
+    //         "main-process-message",
+    //         new Date().toLocaleString(),
+    //     );
+    // });
 
     win.setMenu(null);
     win.maximize();
+
+    checkUpdates(win);
 
     win.webContents.on(
         "before-input-event",
@@ -111,7 +136,11 @@ app.on("activate", () => {
 
 app.whenReady().then(createWindow);
 
-// IPC Handler'lar (Örnekler)
+// IPC Handlers
+ipcMain.handle('start-download', () => autoUpdater.downloadUpdate());
+
+ipcMain.handle('quit-and-install', () => autoUpdater.quitAndInstall());
+
 ipcMain.handle("get-settings-data", async () => {
     settingsStore.set("email", await authService.getEmail());
     // console.log(await authService.getEmail());

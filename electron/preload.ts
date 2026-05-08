@@ -68,6 +68,18 @@ contextBridge.exposeInMainWorld("api", {
     getActivityLogs: () => ipcRenderer.invoke("get-activity-logs"),
 });
 
+contextBridge.exposeInMainWorld('updateAPI', {
+    onUpdateAvailable: (callback: any) => ipcRenderer.on('update_available', (_, ver) => callback(ver)),
+
+    onDownloadProgress: (callback: any) => ipcRenderer.on('download_progress', (_, pct) => callback(pct)),
+
+    onUpdateDownloaded: (callback: any) => ipcRenderer.on('update_downloaded', () => callback()),
+
+    startDownload: () => ipcRenderer.invoke('start-download'),
+
+    quitAndInstall: () => ipcRenderer.invoke('quit-and-install')
+});
+
 contextBridge.exposeInMainWorld('addAnimalAPI', {
     receiveAnimalType: (callback: any) => 
         ipcRenderer.on('animal-type-to-open', (_event, value) => callback(value)),

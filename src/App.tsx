@@ -10,6 +10,7 @@ import SettingsPage from './features/settings/SettingPage';
 import VaccinePage from './features/vaccines/VaccinePage';
 import DeletedAnimalsPage from './features/deletedAnimals/DeletedAnimals';
 import AuthPage from './features/Auth/AuthPage';
+import { UpdateNotifier } from './components/UpdateNotifier';
 
 function App() {
 	const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +40,7 @@ function App() {
 	return (
 		<Router>
 			<main className="h-screen w-screen bg-slate-100 overflow-x-hidden">
+				<UpdateNotifier />
 				<Routes>
 				{/* Main Page */}
 				<Route path="/" element={session ? <DashboardPage /> : <AuthPage />} />

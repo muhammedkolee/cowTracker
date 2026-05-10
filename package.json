@@ -67,7 +67,7 @@
             "package.json"
         ],
         "win": {
-            "target": "nsis",
+            "target": ["nsis"],
             "artifactName": "${name}-Setup-${version}.${ext}",
             "icon": "public/icon.ico"
         },

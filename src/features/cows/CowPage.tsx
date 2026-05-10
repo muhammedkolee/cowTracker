@@ -8,6 +8,8 @@ import { Info, Edit, Trash2, Baby } from "lucide-react";
 
 export default function CowPage() {
     const [cows, setCows] = useState<Cow[]>([]);
+    const [gestationDays, setGestationDays] = useState<number>(280);
+    const [dryOffDays, setDryOffDays] = useState<number>(220);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
@@ -25,6 +27,9 @@ export default function CowPage() {
     const fetchCows = async () => {
         try {
             const data = await window.api.getCows();
+            const settingsData = await window.settingsAPI.getSettingsData();
+            setGestationDays(settingsData.gestationDays);
+            setDryOffDays(settingsData.dryOffDays);
             setCows(data);
         } catch (err: any) {
             console.error("Veri çekme hatası:", err);
@@ -89,7 +94,7 @@ export default function CowPage() {
             },
             render: (item: Cow) => {
                 let date = new Date(item.InseminationDate);
-                date.setDate(date.getDate() + 280);
+                date.setDate(date.getDate() + gestationDays);
                 return date.toLocaleDateString("tr-TR");
             },
         },
@@ -98,7 +103,7 @@ export default function CowPage() {
             key: "LeftDay" as const,
             sortValue: (item: Cow) => {
                 const date = new Date(item.InseminationDate);
-                date.setDate(date.getDate() + 280);
+                date.setDate(date.getDate() + gestationDays);
                 return Math.ceil(
                     (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
                 );
@@ -107,7 +112,7 @@ export default function CowPage() {
                 let date = new Date(item.InseminationDate);
                 let today = new Date();
 
-                date.setDate(date.getDate() + 280);
+                date.setDate(date.getDate() + gestationDays);
                 return Math.ceil(
                     (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
                 );
@@ -133,7 +138,7 @@ export default function CowPage() {
             },
             render: (item: Cow) => {
                 let date = new Date(item.InseminationDate);
-                date.setDate(date.getDate() + 210);
+                date.setDate(date.getDate() + dryOffDays);
                 return date.toLocaleDateString("tr-TR");
             },
         },
@@ -255,7 +260,7 @@ export default function CowPage() {
                     rowClassName={(item: Cow) => {
                         const daysLeft = Math.ceil(
                             (new Date(item.InseminationDate).setDate(
-                                new Date(item.InseminationDate).getDate() + 280,
+                                new Date(item.InseminationDate).getDate() + gestationDays,
                             ) -
                                 Date.now()) /
                                 (1000 * 60 * 60 * 24),

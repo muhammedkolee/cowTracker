@@ -94,6 +94,8 @@ function createWindow() {
 
     checkUpdates(win);
 
+    // Dev
+    /*
     win.webContents.on(
         "before-input-event",
         (_event: Electron.Event, input: Electron.Input) => {
@@ -102,16 +104,13 @@ function createWindow() {
             }
         },
     );
+    */
+    
 
-    // globalShortcut.register("F12", () => {
-    //     const win = BrowserWindow.getFocusedWindow();
-    //     if (win) win.webContents.toggleDevTools();
-    // });
 
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL);
     } else {
-        // win.loadFile('dist/index.html')
         win.loadFile(path.join(RENDERER_DIST, "index.html"));
     }
 }
@@ -289,6 +288,9 @@ ipcMain.on("open-add-animal-window", async (_, type) => {
         },
     });
 
+
+    // Dev
+    /* 
     addAnimalWindow.webContents.on(
         "before-input-event",
         (_event: Electron.Event, input: Electron.Input) => {
@@ -297,11 +299,12 @@ ipcMain.on("open-add-animal-window", async (_, type) => {
             }
         },
     );
+    */
 
     if (VITE_DEV_SERVER_URL) {
         addAnimalWindow.loadURL(`${VITE_DEV_SERVER_URL}src/add-animal.html`);
     } else {
-        addAnimalWindow.loadFile(path.join(RENDERER_DIST, "add-animal.html"));
+        addAnimalWindow.loadFile(path.join(RENDERER_DIST, "src/add-animal.html"));
     }
 
     addAnimalWindow.once("ready-to-show", () => {
@@ -340,6 +343,8 @@ ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
     const vaccines = await animalDetailServices.getAnimalVaccines(animalId);
     const calves = await animalDetailServices.getAnimalCalves();
 
+    // Dev
+    /*
     detailWindow.webContents.on(
         "before-input-event",
         (_event: Electron.Event, input: Electron.Input) => {
@@ -348,11 +353,12 @@ ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
             }
         },
     );
+    */
 
     if (VITE_DEV_SERVER_URL) {
         detailWindow.loadURL(`${VITE_DEV_SERVER_URL}src/animal-detail.html`);
     } else {
-        detailWindow.loadFile(path.join(RENDERER_DIST, "animal-detail.html"));
+        detailWindow.loadFile(path.join(RENDERER_DIST, "src/animal-detail.html"));
     }
 
     detailWindow.once("ready-to-show", () => {
@@ -383,6 +389,8 @@ ipcMain.on("open-update-animal-window", async (_, animalId: number) => {
     const animal = await updateAnimalService.getAnimalDatas(animalId);
     const datasForType = await updateAnimalService.getDataAsType(animalId);
 
+    // Dev
+    /*
     updateWindow.webContents.on(
         "before-input-event",
         (_event: Electron.Event, input: Electron.Input) => {
@@ -391,11 +399,12 @@ ipcMain.on("open-update-animal-window", async (_, animalId: number) => {
             }
         },
     );
+    */
 
     if (VITE_DEV_SERVER_URL) {
         updateWindow.loadURL(`${VITE_DEV_SERVER_URL}src/update-animal.html`);
     } else {
-        updateWindow.loadFile(path.join(RENDERER_DIST, "update-animal.html"));
+        updateWindow.loadFile(path.join(RENDERER_DIST, "src/update-animal.html"));
     }
 
     updateWindow.once("ready-to-show", () => {
@@ -421,6 +430,9 @@ ipcMain.on("open-add-vaccine-window", async () => {
 
     addVaccineWindow.setMenu(null);
 
+
+    // Dev
+    /*
     addVaccineWindow.webContents.on(
         "before-input-event",
         (_event: Electron.Event, input: Electron.Input) => {
@@ -429,6 +441,7 @@ ipcMain.on("open-add-vaccine-window", async () => {
             }
         },
     );
+    */
 
     const animals = await vaccineService.getAnimalsData();
     const vaccinesName = await databaseService.getVaccinesName();
@@ -436,7 +449,7 @@ ipcMain.on("open-add-vaccine-window", async () => {
     if (VITE_DEV_SERVER_URL) {
         addVaccineWindow.loadURL(`${VITE_DEV_SERVER_URL}src/add-vaccine.html`);
     } else {
-        addVaccineWindow.loadFile(path.join(RENDERER_DIST, "add-vaccine.html"));
+        addVaccineWindow.loadFile(path.join(RENDERER_DIST, "src/add-vaccine.html"));
     }
 
     addVaccineWindow.once("ready-to-show", () => {

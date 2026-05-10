@@ -7,6 +7,7 @@ import { Info, Edit, Trash2 } from "lucide-react";
 
 export default function CalfPage() {
     const [calves, setCalves] = useState<Calf[]>([]);
+    const [calfWeaningDays, setCalfWeaningDays] = useState<number>(90);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
@@ -20,6 +21,8 @@ export default function CalfPage() {
     const fetchCalves = async () => {
         try {
             const data = await window.api.getCalves();
+            const settingsData = await window.settingsAPI.getSettingsData();
+            setCalfWeaningDays(settingsData.calfWeaningDays);
             setCalves(data);
         } catch (err: any) {
             console.error("Veri çekme hatası:", err);
@@ -93,7 +96,7 @@ export default function CalfPage() {
             render: (item: Calf) => {
                 let date = new Date(item.BirthDate);
 
-                date.setDate(date.getDate() + 90);
+                date.setDate(date.getDate() + calfWeaningDays);
                 return date.toLocaleDateString("tr-TR");
             },
         },
@@ -103,7 +106,7 @@ export default function CalfPage() {
             sortValue: (item: Calf) => item.BirthDate,
             render: (item: Calf) => {
                 let date = new Date(item.BirthDate);
-                date.setDate(date.getDate() + 90);
+                date.setDate(date.getDate() + calfWeaningDays);
                 let today = new Date();
 
                 return Math.ceil(

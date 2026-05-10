@@ -22,14 +22,12 @@ export const DashboardPage: React.FC = () => {
     useEffect(() => {
         const fetchAll = async () => {
             try {
-                // Verileri çekerken "as any" veya hedef tipine "as" ile zorluyoruz
                 const [countsData, eventsData, logsData] = await Promise.all([
-                    window.api.getCounts() as Promise<any>,
-                    window.api.getUpcomingEvents() as Promise<any>,
-                    window.api.getActivityLogs() as Promise<any[]>,
+                    window.api.getCounts(),
+                    window.api.getUpcomingEvents(),
+                    window.api.getActivityLogs(),
                 ]);
 
-                // Burada "as any" kullanarak TS'in tip kontrolünü esnetiyoruz
                 setCounts(countsData as any);
                 setUpcomingEvents(eventsData as any);
                 setActivityLogs(logsData);

@@ -1,6 +1,6 @@
 // This file exist for database operations.
 import { createClient } from "@supabase/supabase-js";
-import { authSessionStore } from "./store";
+import { authSessionStore, settingsStore } from "./store";
 
 // Rehbere göre electron-vite'da modern yol budur:
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -355,17 +355,17 @@ export const databaseService = {
     },
 
     async getActivityLogs() {
-    const today = new Date();
-    const sevenDaysAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
+        const today = new Date();
+        const sevenDaysAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
 
-    // 365+ günlük buzağıları bul
-    const { data: calves } = await supabase
-        .from("Calves")
-        .select("*, Animals(*)");
+        // 365+ günlük buzağıları bul
+        const { data: calves } = await supabase
+            .from("Calves")
+            .select("*, Animals(*)");
 
-    const oldCalves = (calves ?? []).filter((c: any) => {
-        const age = Math.ceil((today.getTime() - new Date(c.BirthDate).getTime()) / 86400000);
-        return age >= 365;
+        const oldCalves = (calves ?? []).filter((c: any) => {
+            const age = Math.ceil((today.getTime() - new Date(c.BirthDate).getTime()) / 86400000);
+            return age >= settingsStore.get("calfToAdultDays");
     });
 
     // Her biri için statü güncelle

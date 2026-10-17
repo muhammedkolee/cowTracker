@@ -1,4 +1,3 @@
-// src/features/cows/CowPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "../../components/DataTable";
@@ -17,9 +16,10 @@ export default function AnimalPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
     const [trashData, setTrashData] = useState({
 		Id: -1,
-        DeathDate: new Date().toISOString().split("T")[0],
+        DeathDate: new Date().toLocaleDateString("sv-SE"),
         Reason: "",
     });
     const navigate = useNavigate();
@@ -38,11 +38,9 @@ export default function AnimalPage() {
     };
 
     useEffect(() => {
-        // İlk yükleme
         setLoading(true);
         fetchAnimals();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchAnimals();
         });
@@ -98,7 +96,7 @@ export default function AnimalPage() {
 
                     {/* Düzenleme Butonu */}
                     <button
-					    onClick={() => window.api.openUpdateAnimalWindow(item.Id)}
+                        onClick={() => window.api.openUpdateAnimalWindow(item.Id)}
                         className="text-yellow-300 hover:cursor-pointer hover:text-amber-300 transition-colors p-1 hover:bg-amber-400/10 rounded"
                         title="Düzenle"
                     >
@@ -152,7 +150,7 @@ export default function AnimalPage() {
                     columns={animalColumns}
                     maxHeight="calc(100vh - 160px)"
                     rowClassName={(item: Animal) => {
-                        if (item.Type == "bull") return "bg-red-400";
+                        if (item.Type == "bull") return "bg-rose-200";
                         if (item.Type == "calf") return "bg-yellow-400";
                         if (item.Type == "cow") return "bg-green-400";
                         return "bg-blue-600";
@@ -221,6 +219,10 @@ export default function AnimalPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -231,9 +233,16 @@ export default function AnimalPage() {
                             <button
                                 className="flex-1 py-3 bg-red-600 hover:cursor-pointer text-white font-bold rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.Reason)
-                                        return alert("Lütfen neden girin");
-                                    await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!trashData.Reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setTrashError("");
                                     fetchAnimals();
                                     setIsTrashModalOpen(false);
                                 }}

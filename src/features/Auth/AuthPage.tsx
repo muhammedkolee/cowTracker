@@ -32,11 +32,13 @@ export default function AuthPage() {
         confirmPassword: "",
     });
     const [errors, setErrors] = useState<FormErrors>({});
+    const [successMessage, setSuccessMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
     const switchMode = (newMode: Mode) => {
         setMode(newMode);
         setErrors({});
+        setSuccessMessage("");
     };
 
     const validateLogin = (): boolean => {
@@ -70,6 +72,7 @@ export default function AuthPage() {
         if (!validateLogin()) return;
         setLoading(true);
         setErrors({});
+        setSuccessMessage("");
         try {
             await window.authAPI.login({
                 email: loginForm.email,
@@ -87,12 +90,19 @@ export default function AuthPage() {
         if (!validateSignup()) return;
         setLoading(true);
         setErrors({});
+        setSuccessMessage("");
         try {
-            await window.authAPI.signup({
+            const result = await window.authAPI.signup({
                 fullName: signupForm.fullName,
                 email: signupForm.email,
                 password: signupForm.password,
             });
+            if (result.requiresEmailConfirmation) {
+                setSuccessMessage("Kayıt oluşturuldu. Giriş yapmadan önce e-posta adresinizi doğrulayın.");
+                setMode("login");
+            } else {
+                window.location.reload();
+            }
         } catch {
             setErrors({ general: "Bir hata oluştu. Tekrar deneyiniz." });
         } finally {
@@ -152,6 +162,12 @@ export default function AuthPage() {
                     {errors.general && (
                         <div className="mb-5 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
                             {errors.general}
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="mb-5 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 text-sm">
+                            {successMessage}
                         </div>
                     )}
 

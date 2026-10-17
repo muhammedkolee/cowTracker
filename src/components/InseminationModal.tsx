@@ -1,4 +1,3 @@
-// src/components/InseminationModal.tsx
 import { useState, useEffect } from "react";
 
 interface InseminationData {
@@ -22,28 +21,29 @@ export default function InseminationModal({
     onConfirm,
     onCancel,
 }: InseminationModalProps) {
-    const today = new Date().toISOString().split("T")[0];
-
     const [formData, setFormData] = useState<InseminationData>({
         Id: -1,
-        InseminationDate: today,
+        InseminationDate: new Date().toLocaleDateString("sv-SE"),
         BullName: "",
         CheckedDate: null,
         LastBirthDate: null,
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (isOpen && animal) {
+            const today = new Date().toLocaleDateString("sv-SE");
             setFormData({
                 Id: animal.Id,
                 InseminationDate: today,
                 BullName: "",
                 CheckedDate: null,
                 LastBirthDate: animal.LastBirthDate
-                    ? new Date(animal.LastBirthDate).toISOString().split("T")[0]
+                    ? animal.LastBirthDate.slice(0, 10)
                     : null,
             });
+            setError("");
         }
     }, [isOpen, animal]);
 
@@ -59,8 +59,11 @@ export default function InseminationModal({
 
     const handleConfirm = async () => {
         setLoading(true);
+        setError("");
         try {
             await onConfirm(formData);
+        } catch {
+            setError("Tohumlama kaydı oluşturulamadı. Bilgileri kontrol edip tekrar deneyiniz.");
         } finally {
             setLoading(false);
         }
@@ -152,6 +155,12 @@ export default function InseminationModal({
                 </div>
 
                 <div className="my-5 border-t border-slate-100" />
+
+                {error && (
+                    <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+                        {error}
+                    </p>
+                )}
 
                 {/* Butonlar */}
                 <div className="flex gap-2.5">

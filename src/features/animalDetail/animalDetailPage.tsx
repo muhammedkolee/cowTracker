@@ -6,20 +6,27 @@ export default function AnimalDetailPage() {
     const [vaccines, setVaccines] = useState<any[]>([]);
     const [calves, setCalves] = useState<any[]>([]);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
+    const [gestationDays, setGestationDays] = useState(280);
+    const [calfWeaningDays, setCalfWeaningDays] = useState(90);
     const [trashData, setTrashData] = useState({
-        deathDate: new Date().toISOString().split("T")[0],
+        deathDate: new Date().toLocaleDateString("sv-SE"),
         reason: "",
     });
 
     useEffect(() => {
-        window.animalDetailAPI.receiveData(
+        const unsubscribe = window.animalDetailAPI.receiveData(
             (data: { animal: any; vaccines: any[]; calves: any[] }) => {
-                console.log(data)
                 setAnimal(data.animal);
                 setVaccines(data.vaccines);
                 setCalves(data.calves);
             },
         );
+        window.settingsAPI.getSettingsData().then((settings) => {
+            setGestationDays(settings.gestationDays);
+            setCalfWeaningDays(settings.calfWeaningDays);
+        });
+        return unsubscribe;
     }, []);
 
     if (!animal) {
@@ -33,7 +40,6 @@ export default function AnimalDetailPage() {
         );
     }
 
-    // --- Yardımcı Fonksiyonlar ---
     const dayDiff = (from: string, to?: string) => {
         const f = new Date(from).getTime();
         const t = to ? new Date(to).getTime() : Date.now();
@@ -49,7 +55,6 @@ export default function AnimalDetailPage() {
     const fmt = (dateStr: string) =>
         dateStr ? new Date(dateStr).toLocaleDateString("tr-TR") : "-";
 
-    // --- Tüm Hayvanlar için Ortak Satır ---
     const InfoRow = ({ label, value, highlight }: { label: string; value: React.ReactNode; highlight?: boolean }) => (
         <p className="flex justify-between items-center">
             <span className="font-bold">{label}:</span>
@@ -57,12 +62,11 @@ export default function AnimalDetailPage() {
         </p>
     );
 
-    // --- Türe Özel Ek Bilgiler ---
     const renderTypeSpecific = () => {
         switch (animal.Type) {
             case "cow": {
                 const daysPregnant = animal.InseminationDate ? dayDiff(animal.InseminationDate) : null;
-                const daysLeft = animal.InseminationDate ? 280 - (daysPregnant ?? 0) : null;
+                const daysLeft = animal.InseminationDate ? gestationDays - (daysPregnant ?? 0) : null;
                 const emptyDays = animal.InseminationDate && animal.LastBirthDate
                     ? dayDiff(animal.LastBirthDate, animal.InseminationDate)
                     : null;
@@ -80,7 +84,7 @@ export default function AnimalDetailPage() {
                             label="Kaç Günlük Hamile"
                             value={daysPregnant !== null ? `${daysPregnant} Gün` : "-"}
                         />
-                        <InfoRow label="Tahmini Doğum" value={animal.InseminationDate ? addDays(animal.InseminationDate, 280) : "-"} />
+                        <InfoRow label="Tahmini Doğum" value={animal.InseminationDate ? addDays(animal.InseminationDate, gestationDays) : "-"} />
                         <InfoRow label="Gebelik Kontrol" value={fmt(animal.CheckedDate)} />
                         <hr className="border-blue-200" />
                         <InfoRow label="Son Doğurduğu" value={fmt(animal.LastBirthDate)} />
@@ -110,7 +114,7 @@ export default function AnimalDetailPage() {
 
             case "calf": {
                 const ageDays = animal.BirthDate ? dayDiff(animal.BirthDate) : null;
-                const weaningDaysLeft = animal.BirthDate ? 90 - (ageDays ?? 0) : null;
+                const weaningDaysLeft = animal.BirthDate ? calfWeaningDays - (ageDays ?? 0) : null;
                 const genderLabel = animal.Gender === true || animal.Gender === "true"
                     ? "Dişi"
                     : animal.Gender === false || animal.Gender === "false"
@@ -127,7 +131,7 @@ export default function AnimalDetailPage() {
                         />
                         <InfoRow
                             label="Sütten Kesilme"
-                            value={animal.BirthDate ? addDays(animal.BirthDate, 90) : "-"}
+                            value={animal.BirthDate ? addDays(animal.BirthDate, calfWeaningDays) : "-"}
                         />
                         <InfoRow
                             label="Sütten Kesmeye Kalan"
@@ -211,7 +215,6 @@ export default function AnimalDetailPage() {
                         </div>
                     </div>
 
-                    {/* 3. SÜTUN: BUZAĞILAR */}
                     <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 shadow-sm">
                         <h2 className="text-xl font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-2">
                             <Hash size={20} className="text-purple-600" /> Buzağı Bilgisi
@@ -261,7 +264,10 @@ export default function AnimalDetailPage() {
                 <div className="flex justify-end gap-3 mt-10 pt-6">
                     <button
                         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95"
-                        onClick={() => {}}
+                        onClick={() => {
+                            window.api.openUpdateAnimalWindow(animal.Id);
+                            window.close();
+                        }}
                     >
                         <Edit size={18} /> Düzenle
                     </button>
@@ -303,6 +309,10 @@ export default function AnimalDetailPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -313,7 +323,19 @@ export default function AnimalDetailPage() {
                             <button
                                 className="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.reason) return alert("Lütfen neden girin");
+                                    if (!trashData.reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal({
+                                        Id: animal.Id,
+                                        DeathDate: trashData.deathDate,
+                                        Reason: trashData.reason.trim(),
+                                    });
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
                                     window.close();
                                 }}
                             >

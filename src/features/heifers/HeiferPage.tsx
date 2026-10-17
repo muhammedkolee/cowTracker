@@ -1,4 +1,3 @@
-// src/features/cows/CowPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "../../components/DataTable";
@@ -11,9 +10,10 @@ export default function HeiferPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
     const [trashData, setTrashData] = useState({
 		Id: -1,
-        DeathDate: new Date().toISOString().split("T")[0],
+        DeathDate: new Date().toLocaleDateString("sv-SE"),
         Reason: "",
     });
     const [inseminationModal, setInseminationModal] = useState<{
@@ -35,11 +35,9 @@ export default function HeiferPage() {
     };
 
     useEffect(() => {
-        // İlk yükleme
         setLoading(true);
         fetchHeifers();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchHeifers();
         });
@@ -48,9 +46,10 @@ export default function HeiferPage() {
     }, []);
 
     const handleApplyInsemination = async (data: any) => {
-        await window.animalServiceAPI.applyInsemination(data);
+        const saved = await window.animalServiceAPI.applyInsemination(data);
+        if (!saved) throw new Error("Tohumlama kaydı oluşturulamadı.");
         setInseminationModal({ isOpen: false, heifer: null });
-        fetchHeifers();
+        await fetchHeifers();
     };
 
     const heiferColumns = [
@@ -79,8 +78,8 @@ export default function HeiferPage() {
             sortValue: (item: Heifer) => item.LastBirthDate,
             render: (item: Heifer) => {
                 if (item.LastBirthDate) {
-                    let date = new Date(item.LastBirthDate);
-                    let today = new Date();
+                    const date = new Date(item.LastBirthDate);
+                    const today = new Date();
 
                     return Math.ceil(
                         (today.getTime() - date.getTime()) /
@@ -154,8 +153,6 @@ export default function HeiferPage() {
         },
     ];
 
-    console.log("Tanımlanan Kolon Sayısı:", heiferColumns.length);
-
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center bg-slate-950">
@@ -178,7 +175,7 @@ export default function HeiferPage() {
         <div className="p-4 w-full h-screen flex flex-col bg-slate-200">
             <header className="flex justify-center items-center mb-6">
                 <h1 className="text-slate-900 text-xl font-bold">
-                    Toplam {heifers.length} boş inek/düve var.
+                    Toplam {heifers.length} düve ve boş inek var.
                 </h1>
             </header>
 
@@ -196,7 +193,7 @@ export default function HeiferPage() {
                             if (daysLeft < 0) return "bg-purple-400";
                             if (daysLeft < 20) return "bg-yellow-400";
                             if (daysLeft < 60) return "bg-green-400";
-                            return "bg-red-500";
+                            return "bg-rose-200";
                         }
                         return "bg-blue-400";
                     }}
@@ -205,7 +202,7 @@ export default function HeiferPage() {
 
             <footer className="mt-4 text-slate-500 text-xs text-right">
                 <button onClick={() => window.api.openAddAnimalWindow("heifer")} className="bg-green-600 hover:cursor-pointer hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium transition">
-                    Yeni Düve Ekle
+                    Yeni Düve / Boş İnek Ekle
                 </button>
                 <button
                     onClick={() => navigate("/")}
@@ -261,6 +258,10 @@ export default function HeiferPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -271,9 +272,17 @@ export default function HeiferPage() {
                             <button
                                 className="flex-1 py-3 hover:cursor-pointer bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.Reason)
-                                        return alert("Lütfen neden girin");
-                                    await window.animalServiceAPI.removeAnimal(trashData);
+                                    setIsTrashModalOpen(false);
+                                    if (!trashData.Reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setTrashError("");
                                     fetchHeifers();
                                     setIsTrashModalOpen(false);
                                 }}

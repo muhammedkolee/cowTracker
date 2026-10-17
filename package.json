@@ -1,16 +1,17 @@
 {
     "name": "cowtracker",
     "productName": "Hayvan Yönetimi",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build && electron-builder",
+        "release": "tsc && vite build && electron-builder --publish always",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
     },
     "dependencies": {
-        "@supabase/supabase-js": "^2.103.0",
+        "@supabase/supabase-js": "2.103.0",
         "dotenv": "^17.4.1",
         "electron-store": "^11.0.2",
         "electron-updater": "^6.8.3",

@@ -1,4 +1,3 @@
-// src/features/cows/CowPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "../../components/DataTable";
@@ -13,9 +12,10 @@ export default function CowPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
     const [trashData, setTrashData] = useState({
 		Id: -1,
-        DeathDate: new Date().toISOString().split("T")[0],
+        DeathDate: new Date().toLocaleDateString("sv-SE"),
         Reason: "",
     });
     const [birthModal, setBirthModal] = useState<{
@@ -40,11 +40,9 @@ export default function CowPage() {
     };
 
     useEffect(() => {
-        // İlk yükleme
         setLoading(true);
         fetchCows();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchCows();
         });
@@ -53,12 +51,13 @@ export default function CowPage() {
     }, []);
 
     const handleGaveBirth = async (motherId: number, calfData: any) => {
-        await window.animalServiceAPI.gaveBirth({
+        const saved = await window.animalServiceAPI.gaveBirth({
             MotherId: motherId,
             CalfDatas: calfData,
         });
+        if (!saved) throw new Error("Doğum kaydı oluşturulamadı.");
         setBirthModal({ isOpen: false, cow: null });
-        fetchCows();
+        await fetchCows();
     };
 
     const cowColumns = [
@@ -93,7 +92,7 @@ export default function CowPage() {
                 return item.InseminationDate;
             },
             render: (item: Cow) => {
-                let date = new Date(item.InseminationDate);
+                const date = new Date(item.InseminationDate);
                 date.setDate(date.getDate() + gestationDays);
                 return date.toLocaleDateString("tr-TR");
             },
@@ -109,8 +108,8 @@ export default function CowPage() {
                 );
             },
             render: (item: Cow) => {
-                let date = new Date(item.InseminationDate);
-                let today = new Date();
+                const date = new Date(item.InseminationDate);
+                const today = new Date();
 
                 date.setDate(date.getDate() + gestationDays);
                 return Math.ceil(
@@ -137,7 +136,7 @@ export default function CowPage() {
                 return item.InseminationDate;
             },
             render: (item: Cow) => {
-                let date = new Date(item.InseminationDate);
+                const date = new Date(item.InseminationDate);
                 date.setDate(date.getDate() + dryOffDays);
                 return date.toLocaleDateString("tr-TR");
             },
@@ -224,8 +223,6 @@ export default function CowPage() {
         },
     ];
 
-    console.log("Tanımlanan Kolon Sayısı:", cowColumns.length);
-
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center bg-slate-950">
@@ -265,7 +262,7 @@ export default function CowPage() {
                                 Date.now()) /
                                 (1000 * 60 * 60 * 24),
                         );
-                        if (daysLeft < 0) return "bg-red-400";
+                        if (daysLeft < 0) return "bg-rose-200";
                         if (daysLeft < 20) return "bg-yellow-400";
                         if (daysLeft < 60) return "bg-green-400";
                         return "bg-blue-600";
@@ -331,6 +328,10 @@ export default function CowPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -341,9 +342,17 @@ export default function CowPage() {
                             <button
                                 className="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl hover:cursor-pointer shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.Reason)
-                                        return alert("Lütfen neden girin");
-                                    await window.animalServiceAPI.removeAnimal(trashData);
+                                    setIsTrashModalOpen(false);
+                                    if (!trashData.Reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setTrashError("");
                                     fetchCows();
                                     setIsTrashModalOpen(false);
                                 }}

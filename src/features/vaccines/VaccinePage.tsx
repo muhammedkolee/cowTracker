@@ -4,8 +4,6 @@ import { Trash2 } from "lucide-react";
 import { DataTable } from "../../components/DataTable";
 import { Vaccine } from "../../../shared/interfaces";
 
-var c = 0;
-
 export default function VaccinePage() {
     const [data, setData] = useState<any[]>([]);
     const [vaccineNames, setVaccineNames] = useState<string[]>([]);
@@ -13,6 +11,8 @@ export default function VaccinePage() {
     const navigate = useNavigate();
 
     const [search, setSearch] = useState("");
+    const [pendingDelete, setPendingDelete] = useState<{ id: number; date: string; name: string } | null>(null);
+    const [deleteError, setDeleteError] = useState("");
 
     const filteredData = useMemo(() => {
         if (!search.trim()) return data;
@@ -40,7 +40,6 @@ export default function VaccinePage() {
                 );
                 const row: any = {
                     AnimalId: animalId,
-                    // Animals nesnesini de taşı
                     Animals: thisAnimalVaccines[0]?.Animals,
                 };
                 names.forEach((vName) => {
@@ -63,7 +62,6 @@ export default function VaccinePage() {
         setLoading(true);
         fetchAll();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchAll();
         });
@@ -71,7 +69,6 @@ export default function VaccinePage() {
         return unsubscribe;
     }, []);
 
-    // Sabit kolonlar
     const staticColumns: any[] = [
         {
             header: "#",
@@ -98,7 +95,6 @@ export default function VaccinePage() {
         },
     ];
 
-    // Dinamik aşı kolonları
     const vaccineColumns: any[] = vaccineNames.map((name) => ({
         header: name,
         key: name,
@@ -108,8 +104,9 @@ export default function VaccinePage() {
                 {item[name] && item[name].length > 0 ? (
                     item[name].map((v: any) => (
                         <button
-                            onClick={() => { 
-                                window.vaccineAPI.deleteVaccine(v.id)
+                            onClick={() => {
+                                setDeleteError("");
+                                setPendingDelete({ id: v.id, date: v.date, name });
                             }}
                             key={v.id}
                             className="hover:bg-green-600/60 px-2 py-1 rounded text-s font-bold flex items-center gap-2 transition"
@@ -184,14 +181,9 @@ export default function VaccinePage() {
                     data={filteredData}
                     columns={columns}
                     maxHeight="calc(100vh - 160px)"
-                    rowClassName={() => {
-                        if (c % 2) {
-                            c++;
-                            return "bg-mist-400";
-                        }
-                        c++;
-                        return "bg-mist-500";
-                    }}
+                    rowClassName={(_, index) =>
+                        index % 2 ? "bg-slate-100" : "bg-slate-200"
+                    }
                 />
             </div>
 
@@ -208,6 +200,43 @@ export default function VaccinePage() {
                     Ana Menü
                 </button>
             </footer>
+
+            {pendingDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                        <h2 className="text-lg font-bold text-slate-800">Aşı kaydını sil</h2>
+                        <p className="mt-2 text-sm text-slate-600">
+                            {pendingDelete.name} aşısının{" "}
+                            {new Date(pendingDelete.date).toLocaleDateString("tr-TR")} tarihli kaydı silinsin mi?
+                        </p>
+                        {deleteError && (
+                            <p className="mt-3 text-sm font-semibold text-red-600">{deleteError}</p>
+                        )}
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                onClick={() => setPendingDelete(null)}
+                                className="rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300"
+                            >
+                                Vazgeç
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    const deleted = await window.vaccineAPI.deleteVaccine(pendingDelete.id);
+                                    if (!deleted) {
+                                        setDeleteError("Aşı kaydı silinemedi. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setPendingDelete(null);
+                                    await fetchAll();
+                                }}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                            >
+                                Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

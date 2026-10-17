@@ -6,6 +6,7 @@ import { autoUpdater } from 'electron-updater';
 import path from "node:path";
 
 autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +22,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // │
 process.env.APP_ROOT = path.join(__dirname, "..");
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
@@ -52,25 +52,106 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 Store.initRenderer();
 
 let win: BrowserWindow | null;
+let updateCheckTimer: NodeJS.Timeout | null = null;
+let isCheckingForUpdates = false;
 
-function checkUpdates(mainWindow: BrowserWindow) {
-  // Güncelleme kontrolünü başlat
-  autoUpdater.checkForUpdatesAndNotify();
+type UpdateState = {
+    status: "none" | "checking" | "available" | "downloading" | "finished" | "error";
+    version?: string;
+    progress?: number;
+    releaseNotes?: string;
+    message?: string;
+};
 
-  // Güncelleme bulunduğunda
-  autoUpdater.on('update-available', (info) => {
-    mainWindow.webContents.send('update_available', info.version);
-  });
+let updateState: UpdateState = { status: "none" };
 
-  // İndirme ilerlemesi
-  autoUpdater.on('download-progress', (progressObj) => {
-    mainWindow.webContents.send('download_progress', progressObj.percent);
-  });
+function normalizeReleaseNotes(releaseNotes: unknown): string | undefined {
+    if (typeof releaseNotes === "string") return releaseNotes;
+    if (Array.isArray(releaseNotes)) {
+        const notes = releaseNotes
+            .map((item) => {
+                if (typeof item === "string") return item;
+                if (item && typeof item === "object" && "note" in item) {
+                    return String(item.note);
+                }
+                return "";
+            })
+            .filter(Boolean)
+            .join("\n");
+        return notes || undefined;
+    }
+    return undefined;
+}
 
-  // İndirme bittiğinde
-  autoUpdater.on('update-downloaded', () => {
-    mainWindow.webContents.send('update_downloaded');
-  });
+function sendUpdateState(mainWindow = win) {
+    if (!mainWindow || mainWindow.isDestroyed() || mainWindow.webContents.isDestroyed()) return;
+    mainWindow.webContents.send("update_state", updateState);
+}
+
+function setupUpdater() {
+    autoUpdater.on("checking-for-update", () => {
+        updateState = { status: "checking" };
+    });
+
+    autoUpdater.on("update-available", (info) => {
+        updateState = {
+            status: "available",
+            version: info.version,
+            progress: 0,
+            releaseNotes: normalizeReleaseNotes(info.releaseNotes),
+        };
+        sendUpdateState();
+    });
+
+    autoUpdater.on("update-not-available", () => {
+        updateState = { status: "none" };
+    });
+
+    autoUpdater.on("download-progress", (progress) => {
+        updateState = {
+            ...updateState,
+            status: "downloading",
+            progress: progress.percent,
+        };
+        sendUpdateState();
+    });
+
+    autoUpdater.on("update-downloaded", (info) => {
+        updateState = {
+            ...updateState,
+            status: "finished",
+            version: info.version,
+            progress: 100,
+        };
+        sendUpdateState();
+    });
+
+    autoUpdater.on("error", (error) => {
+        console.error("Güncelleme hatası:", error);
+        updateState = {
+            ...updateState,
+            status: "error",
+            message: "Güncelleme işlemi tamamlanamadı. İnternet bağlantınızı kontrol edip uygulamayı yeniden başlatın.",
+        };
+        sendUpdateState();
+    });
+}
+
+async function checkUpdates(): Promise<boolean> {
+    if (!app.isPackaged) return false;
+    if (isCheckingForUpdates || updateState.status === "downloading" || updateState.status === "finished") {
+        return false;
+    }
+    isCheckingForUpdates = true;
+    try {
+        await autoUpdater.checkForUpdates();
+        return true;
+    } catch (error) {
+        console.error("Güncelleme kontrolü başlatılamadı:", error);
+        return false;
+    } finally {
+        isCheckingForUpdates = false;
+    }
 }
 
 function createWindow() {
@@ -92,8 +173,6 @@ function createWindow() {
     win.setMenu(null);
     win.maximize();
 
-    checkUpdates(win);
-
     // Dev
     /*
     win.webContents.on(
@@ -113,12 +192,20 @@ function createWindow() {
     } else {
         win.loadFile(path.join(RENDERER_DIST, "index.html"));
     }
+
+    win.webContents.once("did-finish-load", () => {
+        void checkUpdates();
+    });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+    if (updateCheckTimer) {
+        clearInterval(updateCheckTimer);
+        updateCheckTimer = null;
+    }
     if (process.platform !== "darwin") {
         app.quit();
         win = null;
@@ -133,12 +220,30 @@ app.on("activate", () => {
     }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    setupUpdater();
+    createWindow();
+    updateCheckTimer = setInterval(() => void checkUpdates(), 4 * 60 * 60 * 1000);
+});
 
 // IPC Handlers
-ipcMain.handle('start-download', () => autoUpdater.downloadUpdate());
+ipcMain.handle("get-update-state", () => updateState);
 
-ipcMain.handle('quit-and-install', () => autoUpdater.quitAndInstall());
+ipcMain.handle("check-for-updates", () => checkUpdates());
+
+ipcMain.handle('start-download', async () => {
+    if (updateState.status !== "available" && updateState.status !== "error") {
+        return false;
+    }
+    updateState = { ...updateState, status: "downloading", progress: 0 };
+    sendUpdateState();
+    await autoUpdater.downloadUpdate();
+    return true;
+});
+
+ipcMain.handle('quit-and-install', () => {
+    autoUpdater.quitAndInstall(false, true);
+});
 
 ipcMain.handle("get-settings-data", async () => {
     settingsStore.set("email", await authService.getEmail());
@@ -146,8 +251,9 @@ ipcMain.handle("get-settings-data", async () => {
     return settingsStore.store;
 });
 
-ipcMain.on("save-settings-data", (_, newSettingsData) => {
+ipcMain.handle("save-settings-data", (_, newSettingsData) => {
     settingsStore.set(newSettingsData);
+    return true;
 });
 
 ipcMain.handle("get-cows", async () => {
@@ -199,8 +305,9 @@ ipcMain.handle("add-vaccine", async (_, vaccineData) => {
 });
 
 ipcMain.handle("delete-vaccine", async (_, vaccineId) => {
-    await vaccineService.deleteVaccine(vaccineId);
-    if (win) win.webContents.send("refresh-all-data");
+    const deleted = await vaccineService.deleteVaccine(vaccineId);
+    if (deleted && win) win.webContents.send("refresh-all-data");
+    return deleted;
 });
 
 ipcMain.on("close-window", (event) => {
@@ -212,35 +319,37 @@ ipcMain.on("close-window", (event) => {
     if (currentWin) currentWin.close();
 });
 
-ipcMain.on("remove-animal", async (_, trashData: {Id: number, DeathDate: Date, Reason: string}) => {
-    await AnimalService.removeAnimal(trashData.Id, trashData.DeathDate, trashData.Reason);
-})
+ipcMain.handle("remove-animal", async (_, trashData: {Id: number, DeathDate: Date, Reason: string}) => {
+    const removed = await AnimalService.removeAnimal(trashData.Id, trashData.DeathDate, trashData.Reason);
+    if (removed && win) win.webContents.send("refresh-all-data");
+    return removed;
+});
 
-// Silinen hayvanları getir
 ipcMain.handle("deathAnimals:getAll", async () => {
     return await deletedAnimalsService.getDeletedAnimals();
 });
 
-// Geri al — IsDeleted = false yap, DeletedAnimals'tan sil
 ipcMain.handle("deathAnimals:restore", async (_, id) => {
     return await AnimalService.revertAnimal(id);
 });
 
-// Kalıcı sil — DeletedAnimals + Animals + Type tablosundan sil
 ipcMain.handle(
     "deathAnimals:permanentDelete",
     async (_, payload: { id: number; type: string }) => {
-        return await AnimalService.deleteAnimal(payload.id, payload.type);
+        return await AnimalService.deleteAnimal(payload.id);
     },
 );
 
-ipcMain.on("gave-birth", async (__dirname, allData: any) => {
-    await AnimalService.gaveBirth(allData);
+ipcMain.handle("gave-birth", async (_, allData: any) => {
+    const saved = await AnimalService.gaveBirth(allData);
+    if (saved && win) win.webContents.send("refresh-all-data");
+    return saved;
 });
 
-ipcMain.on("apply-insemination", async (__dirname, data: any) => {
-    await AnimalService.applyInsemination(data);
-    // console.log(data)
+ipcMain.handle("apply-insemination", async (_, data: any) => {
+    const saved = await AnimalService.applyInsemination(data);
+    if (saved && win) win.webContents.send("refresh-all-data");
+    return saved;
 });
 
 ipcMain.handle("log-in", async (_, loginData: any) => {
@@ -251,28 +360,24 @@ ipcMain.handle("sign-up", async (_, signupData: any) => {
     return await authService.signup(signupData.fullName, signupData.mail, signupData.password);
 });
 
-ipcMain.handle("get-auth", async (_) => {
+ipcMain.handle("get-auth", async () => {
     return await authService.getAuth();
 });
 
-ipcMain.handle("get-counts", async (_) => {
+ipcMain.handle("get-counts", async () => {
     return await databaseService.getCounts();
 });
 
-ipcMain.handle("get-upcoming-events", async (_) => {
+ipcMain.handle("get-upcoming-events", async () => {
     return await databaseService.getUpcomingEvents();
 });
 
-ipcMain.handle("get-activity-logs", async (_) => {
+ipcMain.handle("get-activity-logs", async () => {
     return await databaseService.getActivityLogs();
 });
 
-ipcMain.on("log-out", async (_) => {
-    const result = await authService.logout();
-    console.log(result);
-    // if (result) {
-        
-    // }
+ipcMain.handle("log-out", async () => {
+    return await authService.logout();
 });
 
 // electron/main.ts
@@ -310,11 +415,8 @@ ipcMain.on("open-add-animal-window", async (_, type) => {
     addAnimalWindow.once("ready-to-show", () => {
         addAnimalWindow.show();
 
-        // KRİTİK NOKTA: Pencere hazır olduğunda tipi gönderiyoruz
         addAnimalWindow.webContents.send("animal-type-to-open", type);
 
-        // Form için gerekli listeleri de hemen gönderelim (Veya AddAnimalPage içinde useEffect ile de çekebilirsin)
-        // databaseService'den verileri alıp gönderiyoruz:
         // databaseService.getMothersEarringNo().then(mothers => {
         //    addAnimalWindow.webContents.send('mothers-data', mothers);
         // });
@@ -338,10 +440,9 @@ ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
 
     detailWindow.setMenu(null);
 
-    // Veritabanından tüm ilişkili verileri çek
     const animal = await animalDetailServices.getAnimalDetail(animalId);
     const vaccines = await animalDetailServices.getAnimalVaccines(animalId);
-    const calves = await animalDetailServices.getAnimalCalves();
+    const calves = await animalDetailServices.getAnimalCalves(animal.EarringNo);
 
     // Dev
     /*
@@ -363,7 +464,6 @@ ipcMain.on("open-animal-detail-window", async (_, animalId: number) => {
 
     detailWindow.once("ready-to-show", () => {
         detailWindow.show();
-        // Veriyi pencereye fırlat
         detailWindow.webContents.send("animal-detail-data", {
             animal,
             vaccines,
@@ -385,9 +485,8 @@ ipcMain.on("open-update-animal-window", async (_, animalId: number) => {
 
     updateWindow.setMenu(null);
 
-    // Veritabanından tüm ilişkili verileri çek
     const animal = await updateAnimalService.getAnimalDatas(animalId);
-    const datasForType = await updateAnimalService.getDataAsType(animalId);
+    const datasForType = await updateAnimalService.getDataAsType(animalId, animal.Type);
 
     // Dev
     /*
@@ -454,7 +553,6 @@ ipcMain.on("open-add-vaccine-window", async () => {
 
     addVaccineWindow.once("ready-to-show", () => {
         addVaccineWindow.show();
-        // Veriyi pencereye fırlat
         addVaccineWindow.webContents.send("animals-datas-for-vaccine", {
             animals,
             vaccinesName,

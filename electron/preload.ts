@@ -54,10 +54,9 @@ contextBridge.exposeInMainWorld("api", {
     closeWindow: () => ipcRenderer.send("close-window"),
 
     onRefreshData: (callback: any) => {
-        const subscription = (_event: any) => callback();
+        const subscription = () => callback();
         ipcRenderer.on('refresh-all-data', subscription);
         
-        // Temizlik için bir fonksiyon döndür
         return () => ipcRenderer.removeListener('refresh-all-data', subscription);
     },
 
@@ -69,11 +68,15 @@ contextBridge.exposeInMainWorld("api", {
 });
 
 contextBridge.exposeInMainWorld('updateAPI', {
-    onUpdateAvailable: (callback: any) => ipcRenderer.on('update_available', (_, ver) => callback(ver)),
+    getState: () => ipcRenderer.invoke('get-update-state'),
 
-    onDownloadProgress: (callback: any) => ipcRenderer.on('download_progress', (_, pct) => callback(pct)),
+    checkNow: () => ipcRenderer.invoke('check-for-updates'),
 
-    onUpdateDownloaded: (callback: any) => ipcRenderer.on('update_downloaded', () => callback()),
+    onStateChanged: (callback: any) => {
+        const subscription = (_event: Electron.IpcRendererEvent, state: unknown) => callback(state);
+        ipcRenderer.on('update_state', subscription);
+        return () => ipcRenderer.removeListener('update_state', subscription);
+    },
 
     startDownload: () => ipcRenderer.invoke('start-download'),
 
@@ -81,8 +84,12 @@ contextBridge.exposeInMainWorld('updateAPI', {
 });
 
 contextBridge.exposeInMainWorld('addAnimalAPI', {
-    receiveAnimalType: (callback: any) => 
-        ipcRenderer.on('animal-type-to-open', (_event, value) => callback(value)),
+    receiveAnimalType: (callback: any) => {
+        const subscription = (_event: Electron.IpcRendererEvent, value: string) =>
+            callback(value);
+        ipcRenderer.on('animal-type-to-open', subscription);
+        return () => ipcRenderer.removeListener('animal-type-to-open', subscription);
+    },
 
     getMothersEarringNo: () => ipcRenderer.invoke('get-mothers-earring-no'),
     
@@ -92,18 +99,32 @@ contextBridge.exposeInMainWorld('addAnimalAPI', {
 }); 
 
 contextBridge.exposeInMainWorld('animalDetailAPI', {
-    receiveData: (callback: any) => 
-        ipcRenderer.on('animal-detail-data', (_event, value) => callback(value)),
+    receiveData: (callback: any) => {
+        const subscription = (_event: Electron.IpcRendererEvent, value: any) =>
+            callback(value);
+        ipcRenderer.on('animal-detail-data', subscription);
+        return () => ipcRenderer.removeListener('animal-detail-data', subscription);
+    },
 });
 
 contextBridge.exposeInMainWorld('updateAnimalAPI', {
-    receiveData: (callback: any) => ipcRenderer.on('update-animal-data', (_event, value) => callback(value)),
+    receiveData: (callback: any) => {
+        const subscription = (_event: Electron.IpcRendererEvent, value: any) =>
+            callback(value);
+        ipcRenderer.on('update-animal-data', subscription);
+        return () => ipcRenderer.removeListener('update-animal-data', subscription);
+    },
 
     updateAnimal: (animalData: any) => ipcRenderer.invoke('update-animal-data', animalData),
 });
 
 contextBridge.exposeInMainWorld('vaccineAPI', {
-    getAnimalsData: (callback: any) => ipcRenderer.on('animals-datas-for-vaccine', (_event, value) => callback(value.animals, value.vaccinesName)),
+    getAnimalsData: (callback: any) => {
+        const subscription = (_event: Electron.IpcRendererEvent, value: any) =>
+            callback(value.animals, value.vaccinesName);
+        ipcRenderer.on('animals-datas-for-vaccine', subscription);
+        return () => ipcRenderer.removeListener('animals-datas-for-vaccine', subscription);
+    },
 
     addVaccine: (vaccineData: any) => ipcRenderer.invoke('add-vaccine', vaccineData),
 
@@ -121,15 +142,15 @@ contextBridge.exposeInMainWorld("deathAnimalsAPI", {
 contextBridge.exposeInMainWorld("settingsAPI", {
     getSettingsData: (settingsData: SettingsData) => ipcRenderer.invoke("get-settings-data", settingsData),
 
-    saveSettings: (settingsData: SettingsData) => ipcRenderer.send("save-settings-data", settingsData),
+    saveSettings: (settingsData: SettingsData) => ipcRenderer.invoke("save-settings-data", settingsData),
 });
 
 contextBridge.exposeInMainWorld("animalServiceAPI", {
-    removeAnimal: (trashData: any) => ipcRenderer.send("remove-animal", trashData),
+    removeAnimal: (trashData: any) => ipcRenderer.invoke("remove-animal", trashData),
 
-    gaveBirth: (allData: any) => ipcRenderer.send("gave-birth", allData),
+    gaveBirth: (allData: any) => ipcRenderer.invoke("gave-birth", allData),
 
-    applyInsemination: (data: any) => ipcRenderer.send("apply-insemination", data),
+    applyInsemination: (data: any) => ipcRenderer.invoke("apply-insemination", data),
 });
 
 contextBridge.exposeInMainWorld("authAPI", {
@@ -139,5 +160,5 @@ contextBridge.exposeInMainWorld("authAPI", {
 
     getAuth: () => ipcRenderer.invoke("get-auth"),
 
-    logout: () => ipcRenderer.send("log-out"),
+    logout: () => ipcRenderer.invoke("log-out"),
 });

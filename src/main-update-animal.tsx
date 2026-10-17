@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import UpdateAnimalPage from './features/updateAnimal/updateAnimalPage' // Sadece bu sayfa!
-import './index.css' // CSS'i unutma
+import UpdateAnimalPage from './features/updateAnimal/updateAnimalPage'
+import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

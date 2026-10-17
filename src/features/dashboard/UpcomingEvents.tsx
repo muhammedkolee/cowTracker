@@ -3,21 +3,34 @@ import React from 'react';
 interface AnimalEvent {
     name: string;
     earringNo: string;
-    daysLeft: number;
+    days: number;
 }
 
 interface EventsData {
-    heifers: AnimalEvent[];   // Boş günü 60+ olan düveler
-    cows: AnimalEvent[];      // Doğumuna 20 günden az kalan inekler
-    emptyCows: AnimalEvent[]; // Boş günü 60+ olan inekler
+    heifers: AnimalEvent[];
+    cows: AnimalEvent[];
+    emptyCows: AnimalEvent[];
 }
 
-const EventItem: React.FC<{ item: AnimalEvent; color: string }> = ({ item, color }) => (
-    <div className={`bg-${color}-50 p-4 rounded-lg shadow-sm border-l-4 border-${color}-500 mb-2`}>
+const EventItem: React.FC<{
+    item: AnimalEvent;
+    variant: "birth" | "empty";
+}> = ({ item, variant }) => (
+    <div
+        className={`${
+            variant === "birth"
+                ? "bg-blue-50 border-blue-500"
+                : "bg-purple-50 border-purple-500"
+        } p-4 rounded-lg shadow-sm border-l-4 mb-2`}
+    >
         <p className="font-semibold text-slate-800">{item.name || item.earringNo || "-"}</p>
         <p className="text-sm text-slate-600">{item.earringNo}</p>
         <p className="text-xs text-slate-500 mt-1">
-            {item.daysLeft > 0 ? `${item.daysLeft} gündür boş.` : `${Math.abs(item.daysLeft)} gün geçti`}
+            {variant === "empty"
+                ? `${item.days} gündür boş.`
+                : item.days >= 0
+                    ? `Doğuma ${item.days} gün kaldı.`
+                    : `Tahmini doğum tarihi ${Math.abs(item.days)} gün geçti.`}
         </p>
     </div>
 );
@@ -32,7 +45,13 @@ export const UpcomingEvents: React.FC<{ events: EventsData }> = ({ events }) => 
                 </h3>
                 <div className="overflow-y-auto h-64">
                     {events.cows.length > 0
-                        ? events.cows.map((cow, i) => <EventItem key={i} item={cow} color="blue" />)
+                        ? events.cows.map((cow) => (
+                            <EventItem
+                                key={`${cow.earringNo}-${cow.name}`}
+                                item={cow}
+                                variant="birth"
+                            />
+                        ))
                         : <p className="text-slate-400 italic text-sm text-center pt-8">Yaklaşan doğum yok.</p>
                     }
                 </div>
@@ -46,7 +65,11 @@ export const UpcomingEvents: React.FC<{ events: EventsData }> = ({ events }) => 
                 <div className="overflow-y-auto h-64">
                     {[...events.heifers, ...events.emptyCows].length > 0
                         ? [...events.heifers, ...events.emptyCows].map((item, i) => (
-                            <EventItem key={i} item={item} color="purple" />
+                            <EventItem
+                                key={`${item.earringNo}-${item.name}-${i}`}
+                                item={item}
+                                variant="empty"
+                            />
                         ))
                         : <p className="text-slate-400 italic text-sm text-center pt-8">Boş hayvan yok.</p>
                     }

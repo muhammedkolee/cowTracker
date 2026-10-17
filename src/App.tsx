@@ -14,19 +14,17 @@ import { UpdateNotifier } from './components/UpdateNotifier';
 
 function App() {
 	const [isLoading, setIsLoading] = useState(true);
-    const [session, setSession] = useState<any>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         const checkSession = async () => {
-            // Hatırlarsan electron-store (auth-session.json) içine kaydetmiştik
-            const savedSession = await window.authAPI.getAuth(); 
-
-            // Eğer session varsa, geçerliliğini Supabase üzerinden de kontrol edebilirsin
-            if (savedSession) {
-                setSession(savedSession);
+            try {
+                setIsAuthenticated(await window.authAPI.getAuth());
+            } catch {
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
             }
-            
-            setIsLoading(false);
         };
 
         checkSession();
@@ -40,10 +38,12 @@ function App() {
 	return (
 		<Router>
 			<main className="h-screen w-screen bg-slate-100 overflow-x-hidden">
-				<UpdateNotifier />
-				<Routes>
+				{isAuthenticated ? (
+					<>
+						<UpdateNotifier />
+						<Routes>
 				{/* Main Page */}
-				<Route path="/" element={session ? <DashboardPage /> : <AuthPage />} />
+				<Route path="/" element={<DashboardPage />} />
 				
 				{/* Cows Page */}
 				<Route path="/cows" element={<CowPage />} />
@@ -68,7 +68,12 @@ function App() {
 
 				{/* Settings Page */}
 				<Route path="/settings" element={<SettingsPage />} />
-				</Routes>
+							<Route path="*" element={<DashboardPage />} />
+						</Routes>
+					</>
+				) : (
+					<AuthPage />
+				)}
 			</main>
 		</Router>
 	);

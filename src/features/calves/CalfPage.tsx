@@ -1,4 +1,3 @@
-// src/features/cows/CowPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "../../components/DataTable";
@@ -11,9 +10,10 @@ export default function CalfPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
     const [trashData, setTrashData] = useState({
 		Id: -1,
-        DeathDate: new Date().toISOString().split("T")[0],
+        DeathDate: new Date().toLocaleDateString("sv-SE"),
         Reason: "",
     });
     const navigate = useNavigate();
@@ -33,11 +33,9 @@ export default function CalfPage() {
     };
 
     useEffect(() => {
-        // İlk yükleme
         setLoading(true);
         fetchCalves();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchCalves();
         });
@@ -81,8 +79,8 @@ export default function CalfPage() {
             key: "AgeDay" as const,
             sortValue: (item: Calf) => item.BirthDate,
             render: (item: Calf) => {
-                let date = new Date(item.BirthDate);
-                let today = new Date();
+                const date = new Date(item.BirthDate);
+                const today = new Date();
 
                 return Math.ceil(
                     (today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
@@ -94,7 +92,7 @@ export default function CalfPage() {
             key: "CutMilkDate" as const,
             sortValue: (item: Calf) => item.BirthDate,
             render: (item: Calf) => {
-                let date = new Date(item.BirthDate);
+                const date = new Date(item.BirthDate);
 
                 date.setDate(date.getDate() + calfWeaningDays);
                 return date.toLocaleDateString("tr-TR");
@@ -105,9 +103,9 @@ export default function CalfPage() {
             key: "CutMilkDay" as const,
             sortValue: (item: Calf) => item.BirthDate,
             render: (item: Calf) => {
-                let date = new Date(item.BirthDate);
+                const date = new Date(item.BirthDate);
                 date.setDate(date.getDate() + calfWeaningDays);
-                let today = new Date();
+                const today = new Date();
 
                 return Math.ceil(
                     (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
@@ -176,8 +174,6 @@ export default function CalfPage() {
         },
     ];
 
-    console.log("Tanımlanan Kolon Sayısı:", calfColumns.length);
-
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center bg-slate-950">
@@ -212,7 +208,7 @@ export default function CalfPage() {
                     columns={calfColumns}
                     maxHeight="calc(100vh - 160px)"
                     rowClassName={(item: Calf) => {
-                        if (item.Gender) return "bg-pink-400";
+                        if (item.Gender) return "bg-pink-200";
                         return "bg-blue-400";
                     }}
                 />
@@ -279,6 +275,10 @@ export default function CalfPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -289,9 +289,17 @@ export default function CalfPage() {
                             <button
                                 className="flex-1 py-3 bg-red-600 hover:cursor-pointer text-white font-bold rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.Reason)
-                                        return alert("Lütfen neden girin");
-                                    await window.animalServiceAPI.removeAnimal(trashData);
+                                    setIsTrashModalOpen(false);
+                                    if (!trashData.Reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setTrashError("");
                                     fetchCalves();
                                     setIsTrashModalOpen(false);
                                 }}

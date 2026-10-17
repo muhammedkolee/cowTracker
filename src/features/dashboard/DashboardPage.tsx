@@ -11,8 +11,8 @@ declare const __APP_VERSION__: string;
 export const DashboardPage: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    // State tiplerini daha açık tanımlayalım
     const [counts, setCounts] = useState({ cow: 0, heifer: 0, bull: 0, calf: 0 });
     const [upcomingEvents, setUpcomingEvents] = useState<{ heifers: any[]; cows: any[]; emptyCows: any[] }>({ 
         heifers: [], cows: [], emptyCows: [] 
@@ -22,6 +22,7 @@ export const DashboardPage: React.FC = () => {
     useEffect(() => {
         const fetchAll = async () => {
             try {
+                setErrorMessage("");
                 const [countsData, eventsData, logsData] = await Promise.all([
                     window.api.getCounts(),
                     window.api.getUpcomingEvents(),
@@ -31,8 +32,8 @@ export const DashboardPage: React.FC = () => {
                 setCounts(countsData as any);
                 setUpcomingEvents(eventsData as any);
                 setActivityLogs(logsData);
-            } catch (err) {
-                console.error("Dashboard verisi yüklenemedi:", err);
+            } catch {
+                setErrorMessage("Pano verileri yüklenemedi. Bağlantınızı kontrol edip sayfayı yenileyiniz.");
             } finally {
                 setLoading(false);
             }
@@ -55,6 +56,11 @@ export const DashboardPage: React.FC = () => {
     return (
         <div className="p-2 bg-slate-300 min-h-screen text-slate-900 flex flex-col relative">
             <main className="flex-1">
+                {errorMessage && (
+                    <p className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                        {errorMessage}
+                    </p>
+                )}
                 <StatsCards counts={counts} />
                 <QuickMenu />
                 <div className="grid grid-cols-3 gap-4">

@@ -14,6 +14,7 @@ interface BullAnimal {
 export default function AddAnimalPage() {
     const [animalType, setAnimalType] = useState<AnimalType>("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const [mothers, setMothers] = useState<MotherAnimal[]>([]);
     const [bulls, setBulls] = useState<BullAnimal[]>([]);
 
@@ -33,7 +34,7 @@ export default function AddAnimalPage() {
     const [gender, setGender] = useState("");
 
     useEffect(() => {
-        window.addAnimalAPI.receiveAnimalType((type: string) => {
+        const unsubscribe = window.addAnimalAPI.receiveAnimalType((type: string) => {
             if (["cow", "heifer", "calf", "bull"].includes(type)) {
                 setAnimalType(type as AnimalType);
             }
@@ -41,6 +42,7 @@ export default function AddAnimalPage() {
 
         window.addAnimalAPI.getMothersEarringNo().then(setMothers);
         window.addAnimalAPI.getBullsName().then(setBulls);
+        return unsubscribe;
     }, []);
 
     const handleMotherEarringChange = (value: string) => {
@@ -50,6 +52,20 @@ export default function AddAnimalPage() {
     };
 
     const handleSubmit = async () => {
+        setError("");
+        if (!animalType || !breed.trim() || !birthDate) {
+            setError("Tür, cins ve doğum tarihi alanları zorunludur.");
+            return;
+        }
+        if (animalType === "cow" && !inseminationDate) {
+            setError("Gebe inek kaydı için tohumlama tarihi zorunludur.");
+            return;
+        }
+        if (animalType === "calf" && !gender) {
+            setError("Buzağı cinsiyetini seçiniz.");
+            return;
+        }
+
         const newAnimalDatas: any = {
             animalDatas: {
                 EarringNo: earringNo,
@@ -86,13 +102,18 @@ export default function AddAnimalPage() {
         }
 
         setLoading(true);
-        if (await window.addAnimalAPI.addAnimal(newAnimalDatas)) {
-            alert("Hayvan başarıyla eklendi!");
-        } else {
-            alert("Bir sorun oluştu!");
+        try {
+            const saved = await window.addAnimalAPI.addAnimal(newAnimalDatas);
+            if (saved) {
+                await window.api.closeWindow();
+                return;
+            }
+            setError("Hayvan kaydedilemedi. Bilgileri kontrol edip tekrar deneyiniz.");
+        } catch {
+            setError("Hayvan kaydedilirken beklenmeyen bir hata oluştu.");
+        } finally {
+            setLoading(false);
         }
-        await window.api.closeWindow();
-        
     };
 
     const inputClass =
@@ -127,6 +148,7 @@ export default function AddAnimalPage() {
                                 <label className={labelClass}>Türü</label>
                                 <select
                                     className={inputClass}
+                                    required
                                     value={animalType}
                                     onChange={(e) =>
                                         setAnimalType(
@@ -249,6 +271,7 @@ export default function AddAnimalPage() {
                                             placeholder="Küpe numarası seçildiğinde otomatik doldurulur"
                                             className={`${inputClass} ${motherName ? "bg-white" : "bg-gray-50"}`}
                                             value={motherName}
+                                            readOnly
                                         />
                                     </div>
 
@@ -341,6 +364,7 @@ export default function AddAnimalPage() {
                                             </label>
                                             <select
                                                 className={inputClass}
+                                                required
                                                 value={gender}
                                                 onChange={(e) =>
                                                     setGender(e.target.value)
@@ -363,10 +387,15 @@ export default function AddAnimalPage() {
                             )}
                         </div>
 
+                        {error && (
+                            <p className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                                {error}
+                            </p>
+                        )}
+
                         <div className="flex justify-center mt-8">
                             <button
                                 type="submit"
-                                // onClick={handleSubmit}
                                 className="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-md hover:shadow-lg transform hover:scale-105 duration-200 ease-in-out transition-colors"
                             >
                                 Ekle

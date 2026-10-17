@@ -1,0 +1,59 @@
+name: Windows Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@v4
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Uygulama ortamını hazırla
+        shell: pwsh
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SUPABASE_URL) -or [string]::IsNullOrWhiteSpace($env:SUPABASE_ANON_KEY)) {
+            throw "VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY repository secret'ları tanımlanmalıdır."
+          }
+          @(
+            "VITE_SUPABASE_URL=$env:SUPABASE_URL"
+            "VITE_SUPABASE_ANON_KEY=$env:SUPABASE_ANON_KEY"
+          ) | Set-Content -Path .env -Encoding utf8
+
+      - name: Taslak release oluştur
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          gh release create $env:GITHUB_REF_NAME --draft --title "Version $version" --notes "Çeşitli düzeltmeler ve iyileştirmeler."
+
+      - name: Windows paketini oluştur ve yükle
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release'i yayınla
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit $env:GITHUB_REF_NAME --draft=false

@@ -20,16 +20,18 @@ export default function AddVaccinePage() {
     const [vaccineName, setVaccineName] = useState("");
     const [vaccineNames, setVaccineNames] = useState<string[]>([]);
     const [vaccineDate, setVaccineDate] = useState(
-        new Date().toISOString().split("T")[0]
+        new Date().toLocaleDateString("sv-SE")
     );
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
 
     useEffect(() => {
-        window.vaccineAPI.getAnimalsData((data: AnimalData[], names: string[]) => {
+        const unsubscribe = window.vaccineAPI.getAnimalsData((data: AnimalData[], names: string[]) => {
             setAnimals(Array.isArray(data) ? data : []);
             setVaccineNames(Array.isArray(names) ? names : []);
         });
+        return unsubscribe;
     }, []);
 
     const filteredAnimals = animals.filter((a) => {
@@ -41,7 +43,6 @@ export default function AddVaccinePage() {
     });
 
     const toggleAnimal = (id: number) => {
-        // Grup seçimi varsa temizle, tekil seçime geç
         setGroupFilter(null);
         setSelectedIds((prev) => {
             const next = new Set(prev);
@@ -52,48 +53,49 @@ export default function AddVaccinePage() {
 
     const handleGroupFilter = (filter: GroupFilter) => {
         setGroupFilter(filter);
-        setSelectedIds(new Set()); // tekil seçimleri temizle
+        setSelectedIds(new Set());
     };
 
-    // Backend'e gönderilecek AnimalId listesini hesapla
     const getTargetIds = (): number[] => {
         if (groupFilter === "all") return animals.map((a) => a.Id);
         if (groupFilter) return animals.filter((a) => a.Type === groupFilter).map((a) => a.Id);
         return Array.from(selectedIds);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setError("");
         if (!vaccineName.trim()) {
-            alert("Aşı adını giriniz.");
+            setError("Aşı adını giriniz.");
+            return;
+        }
+        if (!vaccineDate) {
+            setError("Aşı tarihini seçiniz.");
             return;
         }
         const targetIds = getTargetIds();
         if (targetIds.length === 0) {
-            alert("En az bir hayvan seçiniz.");
+            setError("En az bir hayvan seçiniz.");
             return;
         }
 
         setLoading(true);
-        window.vaccineAPI.addVaccine({
-            animalIds: targetIds,
-            vaccineName: vaccineName.trim(),
-            vaccineDate,
-        });
-
-        window.api.closeWindow();
+        try {
+            const saved = await window.vaccineAPI.addVaccine({
+                animalIds: targetIds,
+                vaccineName: vaccineName.trim(),
+                vaccineDate,
+            });
+            if (saved) {
+                await window.api.closeWindow();
+                return;
+            }
+            setError("Aşı kaydı eklenemedi. Tekrar deneyiniz.");
+        } catch {
+            setError("Aşı kaydı eklenirken beklenmeyen bir hata oluştu.");
+        } finally {
+            setLoading(false);
+        }
     };
-
-    useEffect(() => {
-        // window.vaccineAPI.addVaccineResult((result: boolean) => {
-        //     setLoading(false);
-        //     if (result) {
-        //         window.confirm("Aşı kaydı başarıyla eklendi!");
-        //         window.close();
-        //     } else {
-        //         alert("Bir hata oluştu, tekrar deneyiniz.");
-        //     }
-        // });
-    }, []);
 
     const inputClass =
         "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200";
@@ -205,7 +207,7 @@ export default function AddVaccinePage() {
                                 [
                                     { value: "all", label: "Tüm Hayvanlar", radio: true },
                                     { value: "cow", label: "İnekler", radio: false },
-                                    { value: "heifer", label: "Düveler", radio: false },
+                                    { value: "heifer", label: "Düveler ve Boş İnekler", radio: false },
                                     { value: "bull", label: "Danalar", radio: false },
                                     { value: "calf", label: "Buzağılar", radio: false },
                                 ] as { value: GroupFilter; label: string; radio: boolean }[]
@@ -228,6 +230,12 @@ export default function AddVaccinePage() {
                         </div>
                     </div>
                 </div>
+
+                {error && (
+                    <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                        {error}
+                    </p>
+                )}
             </div>
 
             {/* Footer Butonu */}

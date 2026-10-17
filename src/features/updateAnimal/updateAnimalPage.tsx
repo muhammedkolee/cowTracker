@@ -22,8 +22,8 @@ interface AnimalFormData {
 const typeLabels: Record<AnimalType, string> = {
     cow: "İnek",
     heifer: "Düve",
-    bull: "Boğa",
-    calf: "Dana",
+    bull: "Dana",
+    calf: "Buzağı",
 };
 
 const fieldConfig: {
@@ -66,13 +66,13 @@ const fieldConfig: {
     {
         key: "Type",
         label: "Türü",
-        enabledFor: ["cow", "heifer", "bull", "calf"],
+        enabledFor: "none",
         type: "select",
         options: [
             { value: "cow", label: "İnek" },
             { value: "heifer", label: "Düve" },
-            { value: "bull", label: "Boğa" },
-            { value: "calf", label: "Dana" },
+            { value: "bull", label: "Dana" },
+            { value: "calf", label: "Buzağı" },
         ],
     },
     {
@@ -157,7 +157,7 @@ export default function UpdateAnimalPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        window.updateAnimalAPI.receiveData(
+        const unsubscribe = window.updateAnimalAPI.receiveData(
             (data: { animal: any; datasForType: any }) => {
                 const newFormData: AnimalFormData = {
                     Id: data.animal.Id || "",
@@ -197,6 +197,7 @@ export default function UpdateAnimalPage() {
                 setLoading(false);
             },
         );
+        return unsubscribe;
     }, []);
 
     const handleChange = (key: keyof AnimalFormData, value: string) => {
@@ -213,6 +214,18 @@ export default function UpdateAnimalPage() {
         try {
             setError(null);
             setSaved(false);
+            if (!formData.Breed.trim() || !formData.BirthDate) {
+                setError("Cins ve doğum tarihi alanları zorunludur.");
+                return;
+            }
+            if (formData.Type === "cow" && !formData.InseminationDate) {
+                setError("Gebe inek kaydı için tohumlama tarihi zorunludur.");
+                return;
+            }
+            if (formData.Type === "calf" && !formData.Gender) {
+                setError("Buzağı cinsiyetini seçiniz.");
+                return;
+            }
 
             const updateData: any = {
                 animalDatas: {
@@ -234,6 +247,7 @@ export default function UpdateAnimalPage() {
                     InseminationDate: formData.InseminationDate || null,
                     BullName: formData.BullName,
                     CheckedDate: formData.CheckedDate || null,
+                    LastBirthDate: formData.LastBirthDate || null,
                 };
             } else if (formData.Type === "heifer") {
                 updateData.heiferDatas = {
@@ -281,7 +295,6 @@ export default function UpdateAnimalPage() {
 
     const currentType = formData.Type;
 
-    // Split fields into two columns
     const leftFields = fieldConfig.filter((_, i) => i % 2 === 0);
     const rightFields = fieldConfig.filter((_, i) => i % 2 !== 0);
 

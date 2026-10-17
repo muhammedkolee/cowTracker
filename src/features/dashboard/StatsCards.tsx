@@ -24,7 +24,7 @@ export const StatsCards: React.FC<{ counts: Counts }> = ({ counts }) => {
     const stats = [
         { title: "inek", count: counts.cow, bgColor: "bg-blue-600" },
         { title: "buzağı", count: counts.calf, bgColor: "bg-green-600" },
-        { title: "düve", count: counts.heifer, bgColor: "bg-yellow-500" },
+        { title: "düve/boş inek", count: counts.heifer, bgColor: "bg-yellow-500" },
         { title: "dana", count: counts.bull, bgColor: "bg-red-600" },
     ];
 

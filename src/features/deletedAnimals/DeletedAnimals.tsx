@@ -28,6 +28,7 @@ const typeTranslations: Record<string, string> = {
 export default function DeletedAnimalsPage() {
     const [data, setData] = useState<DeletedAnimal[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
     const [modal, setModal] = useState<{
         isOpen: boolean;
@@ -44,23 +45,28 @@ export default function DeletedAnimalsPage() {
     };
 
     const handleModalConfirm = async () => {
-        setLoading(true);
         if (!modal.animal) return;
+        setLoading(true);
+        setErrorMessage("");
         setModal((m) => ({ ...m, isOpen: false }));
+        let success: boolean;
         if (modal.variant === "restore") {
-            await window.deathAnimalsAPI.restoreAnimal(modal.animal.Id);
+            success = await window.deathAnimalsAPI.restoreAnimal(modal.animal.Id);
         } else {
-            await window.deathAnimalsAPI.permanentDelete({ id: modal.animal.Id, type: modal.animal.Type });
+            success = await window.deathAnimalsAPI.permanentDelete({ id: modal.animal.Id, type: modal.animal.Type });
         }
-        fetchData();
+        if (!success) {
+            setErrorMessage("İşlem tamamlanamadı. Tekrar deneyiniz.");
+        }
+        await fetchData();
     };
 
     const fetchData = async () => {
         try {
             const result = await window.deathAnimalsAPI.getDeletedAnimals();
             setData(Array.isArray(result) ? result : []);
-        } catch (err) {
-            console.error("Silinen hayvanlar yüklenemedi:", err);
+        } catch {
+            setErrorMessage("Silinen hayvanlar yüklenemedi.");
         } finally {
             setLoading(false);
         }
@@ -171,6 +177,11 @@ export default function DeletedAnimalsPage() {
 
     return (
         <div className="p-4 w-full h-screen flex flex-col bg-slate-200">
+            {errorMessage && (
+                <p className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                    {errorMessage}
+                </p>
+            )}
             <header className="flex justify-center items-center mb-6">
                 <h1 className="text-red-600 text-xl font-bold">
                     Arşivde toplam {data.length} silinmiş kayıt var.

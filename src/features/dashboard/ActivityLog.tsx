@@ -5,7 +5,7 @@ interface LogEntry {
     earringNo: string;
     oldType: "calf";
     newType: "bull" | "heifer";
-    changedAt: string; // ISO string
+    changedAt: string;
 }
 
 const LogItem: React.FC<{ log: LogEntry }> = ({ log }) => {

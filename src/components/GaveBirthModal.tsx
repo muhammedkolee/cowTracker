@@ -1,4 +1,3 @@
-// src/components/GaveBirthModal.tsx
 import { useState, useEffect } from "react";
 
 interface CalfData {
@@ -29,9 +28,10 @@ export default function GaveBirthModal({
         Name: "",
         EarringNo: "",
         Gender: true,
-        BirthDate: new Date().toISOString().split("T")[0],
+        BirthDate: new Date().toLocaleDateString("sv-SE"),
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (isOpen) {
@@ -39,8 +39,9 @@ export default function GaveBirthModal({
                 Name: "",
                 EarringNo: "",
                 Gender: true,
-                BirthDate: new Date().toISOString().split("T")[0],
+                BirthDate: new Date().toLocaleDateString("sv-SE"),
             });
+            setError("");
         }
     }, [isOpen]);
 
@@ -56,8 +57,11 @@ export default function GaveBirthModal({
 
     const handleConfirm = async () => {
         setLoading(true);
+        setError("");
         try {
             await onConfirm(motherId, calfData);
+        } catch {
+            setError("Doğum kaydı oluşturulamadı. Bilgileri kontrol edip tekrar deneyiniz.");
         } finally {
             setLoading(false);
         }
@@ -167,6 +171,12 @@ export default function GaveBirthModal({
                 </div>
 
                 <div className="my-5 border-t border-slate-100" />
+
+                {error && (
+                    <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+                        {error}
+                    </p>
+                )}
 
                 {/* Butonlar */}
                 <div className="flex gap-2.5">

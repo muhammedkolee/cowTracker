@@ -6,7 +6,6 @@ import { SettingsData } from "../../../shared/interfaces";
 export default function SettingsPage() {
     const navigate = useNavigate();
 
-    // State'i başlangıçta boş obje yerine interface ile tanımlıyoruz
     const [settings, setSettings] = useState<SettingsData>({
         gestationDays: 0,
         dryOffDays: 0,
@@ -14,55 +13,60 @@ export default function SettingsPage() {
         calfToAdultDays: 0,
         email: ''
     });
+    const [errorMessage, setErrorMessage] = useState("");
 
     // const [userEmail, setUserEmail] = useState("muhammed@mansurciftlik.com");
 
     useEffect(() => {
-        // Veriyi asenkron olarak çekiyoruz
         const fetchSettings = async () => {
             try {
                 const data = await window.settingsAPI.getSettingsData();
-                console.log("Gelen Veri:", data);
                 if (data) {
                     setSettings(data);
                 }
-            } catch (error) {
-                console.error("Ayarlar yüklenirken hata oluştu:", error);
+            } catch {
+                setErrorMessage("Ayarlar yüklenemedi.");
             }
         };
 
         fetchSettings();
     }, []);
 
-    // Input değişikliklerini yakalayan fonksiyon
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setSettings((prev) => ({
             ...prev,
-            [id]: parseInt(value) || 0, // NaN gelmesini önlemek için || 0
+            [id]: parseInt(value) || 0,
         }));
     };
 
     const handleSave = async () => {
+        const numericValues = [
+            settings.gestationDays,
+            settings.dryOffDays,
+            settings.calfWeaningDays,
+            settings.calfToAdultDays,
+        ];
+        if (numericValues.some((value) => value < 1)) {
+            setErrorMessage("Tüm gün değerleri 1 veya daha büyük olmalıdır.");
+            return;
+        }
         try {
-            // Main process'e kaydetme isteği gönder
-            console.log(settings);
-            await window.settingsAPI.saveSettings(settings);
-            console.log("Ayarlar Başarıyla Kaydedildi");
+            setErrorMessage("");
+            const saved = await window.settingsAPI.saveSettings(settings);
+            if (!saved) throw new Error("Ayarlar kaydedilemedi.");
             navigate("/");
-        } catch (error) {
-            console.error("Kaydedilirken hata:", error);
+        } catch {
+            setErrorMessage("Ayarlar kaydedilemedi. Tekrar deneyiniz.");
         }
     };
 
-    const handleLogout = () => {
-        window.authAPI.logout();
-        navigate("/");
-        window.location.reload();
+    const handleLogout = async () => {
+        const success = await window.authAPI.logout();
+        if (success) window.location.reload();
     };
 
     return (
-        // İstediğin bg-slate-300 rengi burada uygulandı
         <div className="min-h-screen bg-slate-300 flex items-center justify-center p-6 text-slate-800">
             <div className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-8 border border-slate-200 flex flex-col justify-between">
                 
@@ -96,6 +100,7 @@ export default function SettingsPage() {
                             </label>
                             <input
                                 type="number"
+                                min="1"
                                 id={item.id}
                                 value={settings[item.id as keyof SettingsData] || ""}
                                 onChange={handleChange}
@@ -104,6 +109,12 @@ export default function SettingsPage() {
                         </div>
                     ))}
                 </div>
+
+                {errorMessage && (
+                    <p className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                        {errorMessage}
+                    </p>
+                )}
 
                 <hr className="my-8 border-slate-100" />
 

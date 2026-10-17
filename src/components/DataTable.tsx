@@ -5,15 +5,15 @@ interface Column<T> {
     header: string;
     key: keyof T | "index" | "actions";
     render?: (item: T, index: number) => React.ReactNode;
-    sortable?: boolean; // false verirsen o kolon sıralanmaz (index, actions gibi)
-    sortValue?: (item: T) => string | number; // render varsa ama sıralamak istiyorsan
+    sortable?: boolean;
+    sortValue?: (item: T) => string | number;
 }
 
 interface DataTableProps<T> {
     data: T[];
     columns: Column<T>[];
     maxHeight?: string;
-    rowClassName?: (item: T, index: number) => string; // satır rengi için
+    rowClassName?: (item: T, index: number) => string;
 }
 
 type SortDir = "asc" | "desc" | null;
@@ -84,7 +84,6 @@ export function DataTable<T extends object>({
                 <table className="w-full text-sm text-slate-300">
                     <colgroup>
                         {columns.map((col, idx) => {
-                            // Sabit genişlik istediğin kolonlar için buraya ekle
                             const fixedWidths: Partial<Record<string, string>> =
                                 {
                                     index: "3%",
@@ -145,7 +144,7 @@ export function DataTable<T extends object>({
                           isLongText
                               ? "whitespace-normal wrap-break-word"
                               : isShort
-                                ? "whitespace-nowrap w-px" // içeriğe göre küçül, kesme
+                                ? "whitespace-nowrap w-px"
                                 : "whitespace-nowrap overflow-hidden text-ellipsis"
                       }`}
                                             >

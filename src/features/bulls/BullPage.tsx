@@ -1,20 +1,20 @@
-// src/features/cows/CowPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "../../components/DataTable";
 import { Bull } from "../../../shared/interfaces";
 import { Info, Edit, Trash2 } from "lucide-react";
 
-var c = 0;
+let c = 0;
 
 export default function BullPage() {
     const [bulls, setBulls] = useState<Bull[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [trashError, setTrashError] = useState("");
     const [trashData, setTrashData] = useState({
 		Id: -1,
-        DeathDate: new Date().toISOString().split("T")[0],
+        DeathDate: new Date().toLocaleDateString("sv-SE"),
         Reason: "",
     });
     const navigate = useNavigate();
@@ -33,11 +33,9 @@ export default function BullPage() {
     };
 
     useEffect(() => {
-        // İlk yükleme
         setLoading(true);
         fetchBulls();
 
-        // Refresh listener
         const unsubscribe = window.api.onRefreshData(() => {
             fetchBulls();
         });
@@ -67,10 +65,10 @@ export default function BullPage() {
             key: "Age" as const,
 			sortValue: (item: Bull) => (item.BirthDate),
             render: (item: Bull) => {
-				let date = new Date(item.BirthDate);
-				let today = new Date();
+				const date = new Date(item.BirthDate);
+				const today = new Date();
 
-				let age = Math.ceil(
+				const age = Math.ceil(
                     (today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
                 );
 				return `${age} (${Math.round(age/30)} ay)`
@@ -222,6 +220,10 @@ export default function BullPage() {
                             </div>
                         </div>
 
+                        {trashError && (
+                            <p className="mb-4 text-sm font-semibold text-red-600">{trashError}</p>
+                        )}
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsTrashModalOpen(false)}
@@ -232,9 +234,17 @@ export default function BullPage() {
                             <button
                                 className="flex-1 py-3 bg-red-600 text-white hover:cursor-pointer font-bold rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
                                 onClick={async () => {
-                                    if (!trashData.Reason)
-                                        return alert("Lütfen neden girin");
-                                    await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!trashData.Reason.trim()) {
+                                        setTrashError("Lütfen ayrılma nedenini giriniz.");
+                                        return;
+                                    }
+                                    const removed = await window.animalServiceAPI.removeAnimal(trashData);
+                                    if (!removed) {
+                                        setTrashError("Hayvan sürüden ayrılamadı. Tekrar deneyiniz.");
+                                        return;
+                                    }
+                                    setTrashError("");
+                                    fetchBulls();
                                     setIsTrashModalOpen(false);
                                 }}
                             >

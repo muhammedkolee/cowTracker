@@ -19,12 +19,12 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                // Ana pencere
+                // Main Window
                 main: path.resolve(__dirname, "index.html"),
-                // Yeni pencereler (Buraya istediğin kadar ekleyebilirsin)
                 addAnimalWindow: path.resolve(__dirname, 'src/add-animal.html'),
                 animalDetailWindow: path.resolve(__dirname, 'src/animal-detail.html'),
                 updateAnimalWindow: path.resolve(__dirname, 'src/update-animal.html'),
+                addVaccineWindow: path.resolve(__dirname, 'src/add-vaccine.html'),
             },
         },
     },
